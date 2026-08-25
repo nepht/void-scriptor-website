@@ -1,0 +1,80 @@
+{
+  "brand": "Void Scriptor",
+  "asset_role": "official emblem and provisional lockups",
+  "canonical_master": "void_scriptor_emblem_master.png",
+  "source_dimensions": [
+    1024,
+    1024
+  ],
+  "variants": [
+    "BRAND_SPEC.md",
+    "_preview_svg.html",
+    "brand_manifest.json",
+    "void_scriptor_emblem.png",
+    "void_scriptor_emblem.svg",
+    "void_scriptor_emblem_color.svg",
+    "void_scriptor_emblem_ink.png",
+    "void_scriptor_emblem_ink.svg",
+    "void_scriptor_emblem_master.png",
+    "void_scriptor_emblem_mono.svg",
+    "void_scriptor_emblem_purple.png",
+    "void_scriptor_emblem_purple.svg",
+    "void_scriptor_emblem_transparent.png",
+    "void_scriptor_emblem_white.png",
+    "void_scriptor_emblem_white.svg",
+    "void_scriptor_icon_128.png",
+    "void_scriptor_icon_16.png",
+    "void_scriptor_icon_256.png",
+    "void_scriptor_icon_32.png",
+    "void_scriptor_icon_512.png",
+    "void_scriptor_icon_64.png",
+    "void_scriptor_lockup_dark.png",
+    "void_scriptor_lockup_light.png"
+  ],
+  "palette": {
+    "void_ink": "#0F0C19",
+    "void_purple": "#8B5CF6",
+    "violet_highlight": "#C4B5FD",
+    "scriptor_white": "#F5F0FF"
+  },
+  "typography": {
+    "family": "Space Grotesk",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "source": "Google Fonts (OFL), bundled at assets/fonts/SpaceGrotesk/SpaceGrotesk-Variable.ttf",
+    "status": "approved wordmark font"
+  },
+  "usage": {
+    "primary": "transparent emblem on dark surfaces",
+    "app_icon": "dark square icon exports",
+    "monochrome": "purple, white, and ink variants"
+  },
+  "known_limitations": [
+    "Supplied source is raster, not vector.",
+    "Wordmark font is provisional.",
+    "Clear-space and minimum-size rules are initial recommendations."
+  ],
+  "svg": {
+    "mono": "void_scriptor_emblem_mono.svg",
+    "color": "void_scriptor_emblem_color.svg",
+    "purple": "void_scriptor_emblem_purple.svg",
+    "viewBox": "0 0 619 846",
+    "generator": "vtracer 0.6.12, spline, speckle 8, alpha-cropped",
+    "note": "Auto-traced from raster master; for pixel-perfect reproduction keep PNG master as canonical."
+  },
+  "vector": {
+    "engine": "vtracer spline stacked",
+    "colormode": "color",
+    "files": [
+      "void_scriptor_emblem.svg",
+      "void_scriptor_emblem_purple.svg",
+      "void_scriptor_emblem_white.svg",
+      "void_scriptor_emblem_ink.svg"
+    ]
+  },
+  "last_updated": "2026-08-23T06:16:29.042736Z"
+}

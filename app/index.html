@@ -1,47 +1,46 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<meta name="description" content="Area terlindungi Void Scriptor — workspace web.">
-<title>Void Scriptor — Web Workspace</title>
-<style>
-:root{--void:#050507;--violet:#5a2dff;--purple:#a347ff;--white:#fff8ff;--muted:rgba(240,233,255,.66);--faint:rgba(240,233,255,.4);--line:rgba(163,71,255,.22)}
-*{box-sizing:border-box}html,body{margin:0;background:var(--void);color:var(--white);font-family:Inter,system-ui,"Segoe UI",sans-serif}
-body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 30%,rgba(90,45,255,.16),transparent 40%),var(--void)}
-.top{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid rgba(163,71,255,.13);background:rgba(5,5,7,.8)}
-.brand{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:700;letter-spacing:.19em}
-.brand img{width:32px;height:40px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(163,71,255,.6))}
-.card{position:relative;max-width:560px;width:100%;border:1px solid var(--line);border-radius:14px;padding:44px 40px;text-align:center;background:linear-gradient(160deg,rgba(17,11,34,.9),rgba(8,7,16,.94))}
-.badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.21em;color:#ae73ff;border:1px solid rgba(163,71,255,.4);border-radius:20px;padding:7px 14px;margin-bottom:22px}
-h1{margin:0 0 14px;font-size:clamp(26px,4vw,38px);line-height:1.08;letter-spacing:-.03em;text-transform:uppercase}
-h1 span{color:#d8caff;text-shadow:0 0 35px rgba(90,45,255,.35)}
-p{color:var(--muted);font-size:14px;line-height:1.75;margin:0 auto 26px;max-width:430px}
-.steps{text-align:left;display:grid;gap:10px;margin:0 0 30px;padding:0;list-style:none;color:var(--muted);font-size:13px}
-.steps li{display:flex;gap:11px;align-items:start}
-.steps b{color:#d8c9ff;font-weight:600}
-.mark{flex:none;width:18px;height:18px;border-radius:50%;border:1px solid rgba(163,71,255,.5);display:grid;place-items:center;font-size:10px;color:#c9a6ff;margin-top:1px}
-.done{background:linear-gradient(135deg,var(--violet),var(--purple));border-color:transparent;color:#fff}
-.back{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(163,71,255,.58);border-radius:6px;padding:13px 22px;color:#cfb2ff;font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.075em;text-decoration:none}
-.back:hover{background:rgba(90,45,255,.08)}
-.lock{width:54px;height:54px;margin:0 auto 20px;border-radius:50%;border:1px solid rgba(163,71,255,.55);display:grid;place-items:center;background:rgba(90,45,255,.09)}
-.lock svg{width:24px;height:24px;fill:none;stroke:#d8c4ff;stroke-width:1.6}
-</style>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/app/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="void_scriptor">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>void_scriptor</title>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-<div class="top"><div class="brand"><img src="../assets/void_scriptor_emblem.webp" alt="">VOID SCRIPTOR</div></div>
-<main class="card">
-  <div class="lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-  <span class="badge">WEB WORKSPACE · TAHAP PERSIAPAN</span>
-  <h1>Void Scriptor <span>di browser Anda</span></h1>
-  <p>Area ini adalah rumah masa depan Void Scriptor versi web. Seluruh area akan dilindungi login — hanya identitas terverifikasi yang dapat masuk.</p>
-  <ul class="steps">
-    <li><i class="mark done">✓</i><b>Situs publik aktif</b><span>&nbsp;— voidscriptor.pages.dev</span></li>
-    <li><i class="mark">•</i><b>Gerbang login</b><span>&nbsp;— Cloudflare Access (OTP email, ≤50 tester)</span></li>
-    <li><i class="mark">•</i><b>Port Flutter Web</b><span>&nbsp;— audit kompatibilitas lalu build modul pertama</span></li>
-    <li><i class="mark">•</i><b>Rilis workspace</b><span>&nbsp;— Void Scriptor berjalan penuh di browser</span></li>
-  </ul>
-  <a class="back" href="/">← Kembali ke halaman utama</a>
-</main>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
