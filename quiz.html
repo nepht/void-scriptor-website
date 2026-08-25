@@ -28,6 +28,8 @@ pre{white-space:pre-wrap;word-wrap:break-word;border:1px solid rgba(155,115,230,
 .timeline{list-style:none;margin:0;padding:0;position:relative}.timeline:before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--purple),transparent)}.timeline li{position:relative;padding:0 0 18px 32px}.timeline li:before{content:"";position:absolute;left:2px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--void);border:2px solid var(--purple)}.timeline .t-date{font-size:10px;font-weight:800;letter-spacing:.14em;color:#ae73ff;text-transform:uppercase}.timeline p{margin:3px 0 0;color:var(--muted);font-size:13px;line-height:1.65}.timeline p b{color:#efe7ff}
 .clear-box{border:1px solid rgba(66,232,255,.35);border-radius:12px;padding:26px;background:linear-gradient(145deg,rgba(8,20,26,.7),rgba(8,7,16,.92));display:flex;gap:18px;align-items:center;flex-wrap:wrap}.badge{border:1px solid var(--cyan);color:var(--cyan);border-radius:5px;padding:5px 12px;font-size:10px;font-weight:800;letter-spacing:.18em}.clear-box p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
 footer{padding:34px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.footbrand{display:flex;align-items:center;gap:10px}.footbrand img{width:36px;height:45px}.footbrand strong{display:block;font-size:12px;letter-spacing:.16em}.footbrand span{display:block;font-size:10px;color:var(--faint)}.footlinks{display:flex;gap:22px;font-size:11px;color:var(--muted)}.copyline{width:100%;margin-top:18px;padding-top:16px;border-top:1px solid rgba(155,115,230,.1);color:rgba(240,233,255,.28);font-size:10px}
+.chip{display:none;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:5px 12px 5px 5px}.chip i{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-style:normal;font-size:12px}.chip b{font-size:12px}.btn-out{border:1px solid rgba(163,71,255,.4);border-radius:5px;padding:7px 12px;background:none;color:#cfb2ff;font-size:11px;display:none}
+.lockwrap{min-height:calc(100vh - 72px);display:grid;place-items:center;padding:40px 0}.lockcard{width:min(430px,100%);border:1px solid rgba(163,71,255,.46);border-radius:14px;background:#0a0812;padding:34px;text-align:center;box-shadow:0 0 60px rgba(90,45,255,.25)}.lockcard img{width:70px;height:84px;margin:auto;display:block;filter:drop-shadow(0 0 18px rgba(163,71,255,.6))}.lockcard h2{margin:18px 0 8px;font-size:22px}.lockcard>p{color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.7}.lockcard form{display:grid;gap:14px;text-align:left}.lockcard label{display:grid;gap:7px;color:#d8c9eb;font-size:11px}.lockcard input{border:1px solid rgba(163,71,255,.22);border-radius:6px;background:rgba(255,255,255,.035);color:white;padding:13px;font:inherit}.lockcard .primary{width:100%;border:1px solid #b77bff;background:linear-gradient(135deg,#7429ff,#4f18c9);box-shadow:0 0 25px rgba(90,45,255,.45);min-height:50px;border-radius:6px;text-transform:uppercase;letter-spacing:.075em;font-size:12px;font-weight:750;color:white}.locknote{display:block;color:var(--faint);font-size:9px;margin-top:14px}.plain-gate{background:none;border:0;color:#d8c9eb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.plain-gate:hover{color:white}.outline-gate{border:1px solid rgba(163,71,255,.75);border-radius:6px;padding:10px 16px;background:none;color:#d9b8ff;font-size:11px;font-weight:700;text-transform:uppercase}.outline-gate:hover{background:rgba(90,45,255,.12)}.switch-gate{width:100%;border:0;background:none;color:#c59cff;margin-top:16px;font-size:12px}
 @media(max-width:900px){.law-grid,.cards3{grid-template-columns:1fr}.dice{display:none}nav{display:none}}
 </style>
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
@@ -37,7 +39,7 @@ footer{padding:34px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 <meta name="theme-color" content="#050507">
 </head>
 <body>
-<header><div class="shell navrow"><a class="brand" href="/"><img src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR<small data-i18n="brand-sub">QOWNER ARCHIVE</small></span></a><nav><a href="#kanon" data-i18n="nav-kanon">Kanon</a><a href="#tier" data-i18n="nav-tier">Sistem Tier</a><a href="#format" data-i18n="nav-format">Format</a><a href="#governance" data-i18n="nav-gov">Aturan</a><a href="#kronologi" data-i18n="nav-krono">Kronologi</a></nav><div style="margin-left:auto;display:flex;gap:8px"><button class="btn-lang" id="btnID" style="display:none">ID</button><button class="btn-lang" id="btnEN">EN</button></div></div></header>
+<header><div class="shell navrow"><a class="brand" href="/"><img src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR<small data-i18n="brand-sub">QOWNER ARCHIVE</small></span></a><nav><a href="#kanon" data-i18n="nav-kanon">Kanon</a><a href="#tier" data-i18n="nav-tier">Sistem Tier</a><a href="#format" data-i18n="nav-format">Format</a><a href="#governance" data-i18n="nav-gov">Aturan</a><a href="#kronologi" data-i18n="nav-krono">Kronologi</a></nav><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><button class="plain-gate" id="btnMasuk" data-i18n="btn-masuk">Masuk</button><button class="outline-gate" id="btnDaftar" data-i18n="btn-daftar">Buat akun</button><span class="chip" id="chip"><i id="chipInitial">V</i><b id="chipName">Creator</b><button class="btn-out" id="btnKeluar" data-i18n="btn-keluar">Keluar</button></span><button class="btn-lang" id="btnID" style="display:none">ID</button><button class="btn-lang" id="btnEN">EN</button></div></div></header>
 
 <section class="hero"><div class="grid"></div><div class="shell" style="position:relative">
 <div class="eyebrow" data-i18n="hero-eyebrow">QOWNER · THE QUIZ MAKER OF THE VOID</div>
@@ -48,7 +50,9 @@ footer{padding:34px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 <svg class="dice" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#a347ff" stroke-width="2"><rect x="18" y="18" width="64" height="64" rx="12" transform="rotate(8 50 50)" fill="rgba(90,45,255,.08)"/><circle cx="38" cy="40" r="5" fill="#42e8ff" stroke="none"/><circle cx="62" cy="40" r="5" fill="#a347ff" stroke="none"/><circle cx="50" cy="52" r="5" fill="#d8caff" stroke="none"/><circle cx="38" cy="64" r="5" fill="#a347ff" stroke="none"/><circle cx="62" cy="64" r="5" fill="#42e8ff" stroke="none"/></g></svg>
 </div></section>
 
-<main class="shell">
+<div class="lockwrap" id="lock"><div class="shell"><div class="lockcard"><img src="assets/void_scriptor_emblem.webp" alt=""><h2 data-i18n="lock-title">Area terlarang bagi yang belum siap.</h2><p data-i18n="lock-desc">Dokumentasi QOWNER hanya terbuka bagi mereka yang memasuki Void dengan identitas sejati. Masuk atau buat akun untuk melihat kanon, sistem tier, dan seluruh arsip.</p><form id="gateForm"><label><span data-i18n="lock-name" id="nameLabel" style="display:none">Nama tampilan</span><input id="fName" name="name" autocomplete="nickname" style="display:none" placeholder="Nama Anda"></label><label><span data-i18n="lock-email">Email</span><input name="email" type="email" required autocomplete="email" placeholder="nama@email.com"></label><label><span data-i18n="lock-pass">Kata sandi</span><input name="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Minimal 6 karakter"></label><button class="primary" type="submit" data-i18n="lock-btn">Masuk ke Void</button></form><button class="switch-gate" id="gateSwitch" data-i18n="lock-switch">Belum punya akun? Buat akun</button><small class="locknote" data-i18n="lock-note">Prototype lokal — akun tersimpan di peramban ini, belum terhubung ke server.</small></div></div></div>
+
+<main class="shell" id="gateContent" hidden>
 <section id="kanon"><div class="sec-head"><span class="kicker" data-i18n="k-kanon">KANON RESMI</span><h2 data-i18n="kanon-h2">QOWNER, sang Kelana Antar Dimensi.</h2></div>
 <div class="canon">
 <b data-i18n="kanon-p1b">Siapa QOWNER?</b> <span data-i18n="kanon-p1">Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa — ia menawarkan. Dan setiap tawarannya memiliki harga.</span>
@@ -170,6 +174,12 @@ id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','n
 'tl9':'Konsep Hard Quiz tanpa clue dipermanenkan — dipin lifetime, status CLEAR.',
 'tl10':'Arsip identitas lengkap disusun; dokumentasi ini menjadi fondasi resmi ke depan.',
 'foot-tagline':'Build beyond the known.','foot-home':'Beranda','foot-duka':'Dukungan',
+'btn-masuk':'Masuk','btn-daftar':'Buat akun','btn-keluar':'Keluar',
+'lock-title':'Area terlarang bagi yang belum siap.','lock-desc':'Dokumentasi QOWNER hanya terbuka bagi mereka yang memasuki Void dengan identitas sejati. Masuk atau buat akun untuk melihat kanon, sistem tier, dan seluruh arsip.',
+'lock-name':'Nama tampilan','lock-email':'Email','lock-pass':'Kata sandi',
+'lock-btn':'Masuk ke Void','lock-btn-daftar':'Buat akun Void',
+'lock-switch':'Belum punya akun? Buat akun','lock-switch-to-masuk':'Sudah punya akun? Masuk',
+'lock-note':'Prototype lokal — akun tersimpan di peramban ini, belum terhubung ke server.',
 'foot-copy':'© 2026 Void Scriptor Corporation · Choirudin — QOWNER canon & quiz identity.'},
 en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','nav-format':'Formats','nav-gov':'Rules','nav-krono':'Timeline',
 'hero-eyebrow':'QOWNER · THE QUIZ MAKER OF THE VOID','hero-h1a':'Every question has an answer.','hero-h1b':'Are you worthy to find it?',
@@ -216,15 +226,69 @@ en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','n
 'tl9':'Clueless Hard Quiz made permanent — pinned for life, CLEAR status.',
 'tl10':'Full identity archive compiled; this documentation becomes the official foundation.',
 'foot-tagline':'Build beyond the known.','foot-home':'Home','foot-duka':'Support',
+'btn-masuk':'Sign In','btn-daftar':'Sign Up','btn-keluar':'Sign Out',
+'lock-title':'Forbidden ground for those unready.','lock-desc':'The QOWNER archive opens only to those who enter the Void under their true identity. Sign in or create an account to read the canon, the tier system, and the full archive.',
+'lock-name':'Display name','lock-email':'Email','lock-pass':'Password',
+'lock-btn':'Enter the Void','lock-btn-daftar':'Create your Void account',
+'lock-switch':"Don't have an account? Sign up",'lock-switch-to-masuk':'Already have an account? Sign in',
+'lock-note':'Local prototype — accounts are stored in this browser only, not connected to a server.',
 'foot-copy':'© 2026 Void Scriptor Corporation · Choirudin — QOWNER canon & quiz identity.'}};
 var lang=localStorage.getItem('vs-lang')||'id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
 document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
+if(typeof window.__grender==='function')window.__grender();
 var idBtn=document.getElementById('btnID'),enBtn=document.getElementById('btnEN');
 if(idBtn)idBtn.style.display=(l==='en')?'inline-block':'none';
 if(enBtn)enBtn.style.display=(l==='id')?'inline-block':'none';}
 document.getElementById('btnID').onclick=function(){setLang('id')};
 document.getElementById('btnEN').onclick=function(){setLang('en')};
+/* ---- Gerbang login QOWNER (prototype lokal) ---- */
+(function(){
+var KEY='void-scriptor-profile',mode='signin',
+    lock=document.getElementById('lock'),content=document.getElementById('gateContent'),
+    chip=document.getElementById('chip'),
+    btnIn=document.getElementById('btnMasuk'),btnUp=document.getElementById('btnDaftar'),
+    btnOut=document.getElementById('btnKeluar'),form=document.getElementById('gateForm'),
+    sw=document.getElementById('gateSwitch'),fName=document.getElementById('fName'),
+    nameLbl=document.getElementById('nameLabel');
+function render(){
+  var s=(mode==='signup');
+  if(nameLbl)nameLbl.style.display=s?'inline':'none';
+  if(fName)fName.style.display=s?'block':'none';
+  var d=dict[lang];
+  form.querySelector('.primary').textContent=d[s?'lock-btn-daftar':'lock-btn'];
+  sw.textContent=d[s?'lock-switch-to-masuk':'lock-switch'];
+}
+window.__grender=render;
+function show(name){
+  lock.style.display='none';content.hidden=false;
+  chip.style.display='flex';
+  document.getElementById('chipName').textContent=name;
+  document.getElementById('chipInitial').textContent=name.charAt(0).toUpperCase();
+}
+function gate(){
+  lock.style.display='grid';content.hidden=true;chip.style.display='none';
+}
+function refresh(){
+  var n=localStorage.getItem(KEY);
+  if(n){show(n);}else{gate();}
+  render();
+}
+function openMode(m){mode=m;render()}
+btnIn.onclick=function(){openMode('signin')};
+btnUp.onclick=function(){openMode('signup')};
+sw.onclick=function(){mode=(mode==='signin')?'signup':'signin';render()};
+form.onsubmit=function(e){
+  e.preventDefault();
+  var fd=new FormData(form),mail=String(fd.get('email')||''),
+      name=mode==='signup'?String(fd.get('name')||''):mail.split('@')[0];
+  if(!name)name='Creator';
+  localStorage.setItem(KEY,name);
+  refresh();
+};
+btnOut.onclick=function(){localStorage.removeItem(KEY);refresh();window.scrollTo(0,0)};
+refresh();
+})();
 setLang(lang);
 })();</script>
 </body>
