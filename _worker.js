@@ -29,15 +29,18 @@ const BASE_HEADERS = {
 
 // Strict policy for our own hand-written pages. They are fully self-contained
 // (inline CSS/JS, same-origin images), so this needs no external allowances.
+// Two exceptions, both for GitHub sign-in: avatars.githubusercontent.com so the
+// header can show the person's real avatar, and github.com for form-action
+// during the authorize POST. Every other image on the site is same-origin.
 const CSP_SITE = [
   "default-src 'self'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
   "connect-src 'self'",
   "font-src 'self' data:",
   "base-uri 'self'",
-  "form-action 'self'",
+  "form-action 'self' https://github.com",
   "frame-ancestors 'none'",
   "object-src 'none'",
   "manifest-src 'self'",
@@ -60,11 +63,301 @@ function harden(res, pathname, isHtml) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// GitHub OAuth
+//
+// Flow (authorization code; the GitHub token never reaches the browser):
+//   1. GET  /api/auth/github         -> random state into a short-lived cookie,
+//                                       302 to github.com/login/oauth/authorize
+//   2. GET  /api/auth/github/callback-> verify state, exchange code for a token
+//                                       server-side, read profile, 302 back to /
+//   3. GET  /api/auth/session        -> JSON identity for the header badge
+//   4. POST /api/auth/logout         -> clear the session cookie
+//
+// The access token is used once to read the profile and then discarded. Nothing
+// token-shaped is stored or sent to the client: the session is an HMAC-signed,
+// expiring cookie carrying only public profile fields. So there is no database
+// and no server-side session store. The trade-off: a session cannot be revoked
+// individually before its 7-day expiry; rotating SESSION_SECRET ends every
+// session at once.
+// ---------------------------------------------------------------------------
+
+const OAUTH_STATE_COOKIE = 'vs_oauth_state';
+const SESSION_COOKIE = 'vs_session';
+const SESSION_TTL = 7 * 24 * 60 * 60; // 7 days, in seconds
+const STATE_TTL = 600; // 10 minutes to finish the round trip
+const GITHUB_AUTHORIZE = 'https://github.com/login/oauth/authorize';
+const GITHUB_TOKEN = 'https://github.com/login/oauth/access_token';
+const GITHUB_API = 'https://api.github.com';
+
+// read:user + user:email is the minimum to identify who signed in. Deliberately
+// no repo or org scopes: signing in should not imply any access to their code.
+const GITHUB_SCOPE = 'read:user user:email';
+
+function parseCookies(req) {
+  const out = {};
+  const raw = req.headers.get('cookie');
+  if (!raw) return out;
+  for (const part of raw.split(';')) {
+    const i = part.indexOf('=');
+    if (i < 0) continue;
+    out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+  }
+  return out;
+}
+
+function cookie(name, value, { maxAge, clear = false } = {}) {
+  const bits = [
+    `${name}=${clear ? '' : encodeURIComponent(value)}`,
+    'Path=/',
+    'HttpOnly',
+    'Secure',
+    'SameSite=Lax',
+  ];
+  if (clear) bits.push('Max-Age=0');
+  else bits.push(`Max-Age=${maxAge}`);
+  return bits.join('; ');
+}
+
+function b64url(bytes) {
+  let s = '';
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64urlDecode(str) {
+  const pad = str.length % 4 ? '='.repeat(4 - (str.length % 4)) : '';
+  const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/') + pad);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function hmacKey(secret) {
+  return crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign', 'verify'],
+  );
+}
+
+// Constant-time compare so a wrong state cannot be probed byte by byte.
+function timingSafeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function signSession(payload, secret) {
+  const body = b64url(new TextEncoder().encode(JSON.stringify(payload)));
+  const sig = await crypto.subtle.sign(
+    'HMAC',
+    await hmacKey(secret),
+    new TextEncoder().encode(body),
+  );
+  return `${body}.${b64url(new Uint8Array(sig))}`;
+}
+
+// The identity, or null for anything that is not a valid, unexpired,
+// correctly-signed session cookie.
+async function readSession(req, secret) {
+  const raw = parseCookies(req)[SESSION_COOKIE];
+  if (!raw) return null;
+  const dot = raw.lastIndexOf('.');
+  if (dot < 1) return null;
+  const body = raw.slice(0, dot);
+  const sig = raw.slice(dot + 1);
+  let ok = false;
+  try {
+    ok = await crypto.subtle.verify(
+      'HMAC',
+      await hmacKey(secret),
+      b64urlDecode(sig),
+      new TextEncoder().encode(body),
+    );
+  } catch {
+    return null;
+  }
+  if (!ok) return null;
+  let payload;
+  try {
+    payload = JSON.parse(new TextDecoder().decode(b64urlDecode(body)));
+  } catch {
+    return null;
+  }
+  if (!payload || typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) {
+    return null;
+  }
+  return payload;
+}
+
+function json(status, obj) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { 'content-type': 'application/json; charset=utf-8', ...BASE_HEADERS },
+  });
+}
+
+function redirect(location, extraHeaders = {}) {
+  return new Response(null, {
+    status: 302,
+    headers: { location, ...BASE_HEADERS, ...extraHeaders },
+  });
+}
+
+function authConfigured(env) {
+  return Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET && env.SESSION_SECRET);
+}
+
+function callbackUrl(url) {
+  return `${url.origin}/api/auth/github/callback`;
+}
+
+async function handleAuth(request, url, env) {
+  const path = url.pathname;
+  const configured = authConfigured(env);
+
+  // The header badge polls this on every page load, so an unconfigured
+  // deployment must answer cleanly ("nobody is signed in, sign-in is off")
+  // rather than 500. The sign-in endpoints themselves fail loudly.
+  if (path === '/api/auth/session') {
+    if (!configured) {
+      return json(200, { ok: true, configured: false, authenticated: false, user: null });
+    }
+    const session = await readSession(request, env.SESSION_SECRET);
+    return json(200, {
+      ok: true,
+      configured: true,
+      authenticated: Boolean(session),
+      user: session || null,
+    });
+  }
+
+  if (!configured) {
+    return json(500, {
+      ok: false,
+      error: 'auth_not_configured',
+      message:
+        'GitHub sign-in is not configured yet. Set GITHUB_CLIENT_ID, ' +
+        'GITHUB_CLIENT_SECRET and SESSION_SECRET as Worker secrets.',
+    });
+  }
+
+  // --- start the round trip -------------------------------------------------
+  if (path === '/api/auth/github') {
+    const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
+    const q = new URLSearchParams({
+      client_id: env.GITHUB_CLIENT_ID,
+      redirect_uri: callbackUrl(url),
+      scope: GITHUB_SCOPE,
+      state,
+      allow_signup: 'true',
+    });
+    return redirect(`${GITHUB_AUTHORIZE}?${q}`, {
+      'set-cookie': cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+    });
+  }
+
+  // --- finish the round trip ------------------------------------------------
+  if (path === '/api/auth/github/callback') {
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state') || '';
+    const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
+    // Always drop the state cookie, either way, so it cannot be replayed.
+    const clearState = cookie(OAUTH_STATE_COOKIE, '', { clear: true });
+
+    if (url.searchParams.get('error')) {
+      return redirect('/?auth=cancelled', { 'set-cookie': clearState });
+    }
+    if (!code || !expected || !timingSafeEqual(state, expected)) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    // Exchange the code server-side. The token stays on this side.
+    const tokenRes = await fetch(GITHUB_TOKEN, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({
+        client_id: env.GITHUB_CLIENT_ID,
+        client_secret: env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: callbackUrl(url),
+      }),
+    });
+    const tokenJson = await tokenRes.json().catch(() => null);
+    const token = tokenJson && tokenJson.access_token;
+    if (!token) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    const ghHeaders = {
+      authorization: `Bearer ${token}`,
+      accept: 'application/vnd.github+json',
+      'user-agent': 'voidscriptor-site',
+    };
+
+    const profile = await (
+      await fetch(`${GITHUB_API}/user`, { headers: ghHeaders })
+    ).json().catch(() => null);
+
+    if (!profile || !profile.id) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    // GitHub keeps the address private unless the person made it public, so
+    // fall back to the emails endpoint and take the primary verified one.
+    let email = profile.email || null;
+    if (!email) {
+      const emails = await (
+        await fetch(`${GITHUB_API}/user/emails`, { headers: ghHeaders })
+      ).json().catch(() => []);
+      if (Array.isArray(emails)) {
+        const hit =
+          emails.find((e) => e.primary && e.verified) ||
+          emails.find((e) => e.verified) ||
+          emails.find((e) => e.primary);
+        if (hit) email = hit.email;
+      }
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const session = await signSession(
+      {
+        sub: String(profile.id),
+        login: profile.login || '',
+        name: profile.name || profile.login || '',
+        avatar: profile.avatar_url || '',
+        email,
+        iat: now,
+        exp: now + SESSION_TTL,
+      },
+      env.SESSION_SECRET,
+    );
+
+    return redirect('/?auth=ok', {
+      'set-cookie': [cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL }), clearState],
+    });
+  }
+
+  // --- sign out -------------------------------------------------------------
+  if (path === '/api/auth/logout') {
+    return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
+  }
+
+  return json(404, { ok: false, error: 'not_found' });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (INTERNAL.some((rx) => rx.test(url.pathname))) {
       return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+    }
+    if (url.pathname.startsWith('/api/auth/')) {
+      return handleAuth(request, url, env);
     }
     if (url.pathname.startsWith('/downloads/')) {
       const key = decodeURIComponent(url.pathname.slice('/downloads/'.length));
