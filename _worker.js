@@ -29,12 +29,12 @@ const BASE_HEADERS = {
 
 // Strict policy for our own hand-written pages. They are fully self-contained
 // (inline CSS/JS, same-origin images), so this needs no external allowances.
-// Two exceptions, both for GitHub sign-in: avatars.githubusercontent.com so the
-// header can show the person's real avatar, and github.com for form-action
+// The only exceptions are the two sign-in providers: their avatar hosts so the
+// header can show the person's real picture, and github.com for form-action
 // during the authorize POST. Every other image on the site is same-origin.
 const CSP_SITE = [
   "default-src 'self'",
-  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
+  "img-src 'self' data: blob: https://avatars.githubusercontent.com https://lh3.googleusercontent.com",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
   "connect-src 'self'",
@@ -93,6 +93,14 @@ const GITHUB_API = 'https://api.github.com';
 // read:user + user:email is the minimum to identify who signed in. Deliberately
 // no repo or org scopes: signing in should not imply any access to their code.
 const GITHUB_SCOPE = 'read:user user:email';
+
+// Google sign-in. `openid email profile` are all non-sensitive, so the OAuth
+// consent screen needs no Google review and the app works immediately. We ask
+// for nothing beyond identity — no Drive, no Gmail, no contacts.
+const GOOGLE_AUTHORIZE = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
+const GOOGLE_USERINFO = 'https://openidconnect.googleapis.com/v1/userinfo';
+const GOOGLE_SCOPE = 'openid email profile';
 
 function parseCookies(req) {
   const out = {};
@@ -212,25 +220,59 @@ function authConfigured(env) {
   return Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET && env.SESSION_SECRET);
 }
 
-function callbackUrl(url) {
-  return `${url.origin}/api/auth/github/callback`;
+function googleConfigured(env) {
+  return Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.SESSION_SECRET);
+}
+
+// Derived from the request origin, so moving to a custom domain needs only the
+// new URL added to each provider's console — no code change.
+function callbackUrl(url, provider = 'github') {
+  return `${url.origin}/api/auth/${provider}/callback`;
+}
+
+// One session shape for every provider. `provider` and `sub` together are the
+// account key; `email` is the cross-provider identity, so signing in with
+// GitHub and Google on the same address lands on the same account.
+async function finishSignIn(env, url, { sub, login, name, avatar, email, provider }) {
+  const now = Math.floor(Date.now() / 1000);
+  const session = await signSession(
+    {
+      sub: String(sub),
+      provider,
+      login: login || '',
+      name: name || login || '',
+      avatar: avatar || '',
+      email: email || null,
+      iat: now,
+      exp: now + SESSION_TTL,
+    },
+    env.SESSION_SECRET,
+  );
+  return redirect('/?auth=ok', {
+    'set-cookie': [
+      cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL }),
+      cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
+    ],
+  });
 }
 
 async function handleAuth(request, url, env) {
   const path = url.pathname;
-  const configured = authConfigured(env);
+  const ghOn = authConfigured(env);
+  const ggOn = googleConfigured(env);
+  const configured = ghOn || ggOn;
 
   // The header badge polls this on every page load, so an unconfigured
   // deployment must answer cleanly ("nobody is signed in, sign-in is off")
   // rather than 500. The sign-in endpoints themselves fail loudly.
   if (path === '/api/auth/session') {
-    if (!configured) {
-      return json(200, { ok: true, configured: false, authenticated: false, user: null });
-    }
-    const session = await readSession(request, env.SESSION_SECRET);
+    const session = configured ? await readSession(request, env.SESSION_SECRET) : null;
     return json(200, {
       ok: true,
-      configured: true,
+      configured,
+      // Which buttons the UI may show. Reported per provider so enabling only
+      // one does not advertise a button that would 500 on click.
+      providers: { github: ghOn, google: ggOn },
       authenticated: Boolean(session),
       user: session || null,
     });
@@ -254,22 +296,46 @@ async function handleAuth(request, url, env) {
       ok: false,
       error: 'auth_not_configured',
       message:
-        'GitHub sign-in is not configured yet. Set GITHUB_CLIENT_ID, ' +
-        'GITHUB_CLIENT_SECRET and SESSION_SECRET as Worker secrets.',
+        'Sign-in is not configured yet. Set GITHUB_CLIENT_ID/GITHUB_CLIENT_SECRET ' +
+        'and/or GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET, plus SESSION_SECRET, ' +
+        'as Worker secrets.',
     });
   }
 
   // --- start the round trip -------------------------------------------------
   if (path === '/api/auth/github') {
+    if (!ghOn) {
+      return json(500, { ok: false, error: 'provider_not_configured', provider: 'github' });
+    }
     const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
     const q = new URLSearchParams({
       client_id: env.GITHUB_CLIENT_ID,
-      redirect_uri: callbackUrl(url),
+      redirect_uri: callbackUrl(url, 'github'),
       scope: GITHUB_SCOPE,
       state,
       allow_signup: 'true',
     });
     return redirect(`${GITHUB_AUTHORIZE}?${q}`, {
+      'set-cookie': cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+    });
+  }
+
+  if (path === '/api/auth/google') {
+    if (!ggOn) {
+      return json(500, { ok: false, error: 'provider_not_configured', provider: 'google' });
+    }
+    const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
+    const q = new URLSearchParams({
+      client_id: env.GOOGLE_CLIENT_ID,
+      redirect_uri: callbackUrl(url, 'google'),
+      response_type: 'code',
+      scope: GOOGLE_SCOPE,
+      state,
+      // Show the account chooser instead of silently reusing the last session,
+      // so someone with several Google accounts can pick the right one.
+      prompt: 'select_account',
+    });
+    return redirect(`${GOOGLE_AUTHORIZE}?${q}`, {
       'set-cookie': cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
     });
   }
@@ -336,22 +402,68 @@ async function handleAuth(request, url, env) {
       }
     }
 
-    const now = Math.floor(Date.now() / 1000);
-    const session = await signSession(
-      {
-        sub: String(profile.id),
-        login: profile.login || '',
-        name: profile.name || profile.login || '',
-        avatar: profile.avatar_url || '',
-        email,
-        iat: now,
-        exp: now + SESSION_TTL,
-      },
-      env.SESSION_SECRET,
-    );
+    return finishSignIn(env, url, {
+      sub: profile.id,
+      provider: 'github',
+      login: profile.login || '',
+      name: profile.name || profile.login || '',
+      avatar: profile.avatar_url || '',
+      email,
+    });
+  }
 
-    return redirect('/?auth=ok', {
-      'set-cookie': [cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL }), clearState],
+  // --- finish the round trip (Google) ---------------------------------------
+  if (path === '/api/auth/google/callback') {
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state') || '';
+    const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
+    // Always drop the state cookie, either way, so it cannot be replayed.
+    const clearState = cookie(OAUTH_STATE_COOKIE, '', { clear: true });
+
+    if (url.searchParams.get('error')) {
+      return redirect('/?auth=cancelled', { 'set-cookie': clearState });
+    }
+    if (!code || !expected || !timingSafeEqual(state, expected)) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    // Exchange the code server-side, as a form post (Google's documented
+    // shape for the token endpoint). The token stays on this side.
+    const tokenRes = await fetch(GOOGLE_TOKEN, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: callbackUrl(url, 'google'),
+      }).toString(),
+    });
+    const tokenJson = await tokenRes.json().catch(() => null);
+    const token = tokenJson && tokenJson.access_token;
+    if (!token) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    const info = await (
+      await fetch(GOOGLE_USERINFO, { headers: { authorization: 'Bearer ' + token } })
+    ).json().catch(() => null);
+
+    // Google returns `sub` (stable numeric id) plus email_verified. Refuse an
+    // unverified address: it is the identity key we merge accounts on, so an
+    // unverified one could let someone claim another person's account.
+    if (!info || !info.sub || !info.email || info.email_verified === false) {
+      return redirect('/?auth=failed', { 'set-cookie': clearState });
+    }
+
+    return finishSignIn(env, url, {
+      sub: info.sub,
+      provider: 'google',
+      login: (info.email || '').split('@')[0],
+      name: info.name || info.email || '',
+      avatar: info.picture || '',
+      email: info.email,
     });
   }
 
