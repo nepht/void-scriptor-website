@@ -209,11 +209,22 @@ function json(status, obj) {
   });
 }
 
+// `set-cookie` is the one header that must never be comma-joined. A browser
+// treats a joined value as a SINGLE cookie and applies its duplicate attributes
+// in order, so pairing the session cookie with the state-clearing cookie in one
+// array produced one header ending in `Max-Age=0` -- which deleted the session
+// the instant it was created. Sign-in then looked like it did nothing. workerd
+// joins an array into a single header here, so append each value separately.
 function redirect(location, extraHeaders = {}) {
-  return new Response(null, {
-    status: 302,
-    headers: { location, ...BASE_HEADERS, ...extraHeaders },
-  });
+  const headers = new Headers({ location, ...BASE_HEADERS });
+  for (const [name, value] of Object.entries(extraHeaders)) {
+    if (name.toLowerCase() === 'set-cookie') {
+      for (const v of Array.isArray(value) ? value : [value]) headers.append('set-cookie', v);
+    } else {
+      headers.set(name, value);
+    }
+  }
+  return new Response(null, { status: 302, headers });
 }
 
 function authConfigured(env) {
