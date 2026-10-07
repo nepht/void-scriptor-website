@@ -521,20 +521,67 @@ export default {
     }
     if (url.pathname.startsWith('/downloads/')) {
       const key = decodeURIComponent(url.pathname.slice('/downloads/'.length));
-      const obj = await env.DOWNLOADS.get(key);
+      // A 30 MB installer over a flaky connection must be resumable, so honour
+      // `Range` and advertise it. Without this a dropped transfer restarts from
+      // zero every time; browsers and download managers both rely on 206s.
+      const rangeHeader = request.headers.get('range');
+      let range = null;
+      if (rangeHeader) {
+        const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+        if (m) {
+          const hasStart = m[1] !== '', hasEnd = m[2] !== '';
+          if (hasStart) {
+            const start = Number(m[1]);
+            const end = hasEnd ? Number(m[2]) : undefined;
+            range = { offset: start, length: hasEnd ? end - start + 1 : undefined };
+          } else if (hasEnd) {
+            // `bytes=-N` means the final N bytes; R2 needs an absolute offset,
+            // which requires knowing the size, so resolve it with a HEAD first.
+            const head = await env.DOWNLOADS.head(key);
+            if (head) range = { suffix: Number(m[2]), size: head.size };
+          }
+        }
+      }
+
+      let obj;
+      if (range && range.suffix !== undefined) {
+        const offset = Math.max(0, range.size - range.suffix);
+        obj = await env.DOWNLOADS.get(key, { range: { offset, length: range.size - offset } });
+      } else if (range) {
+        obj = await env.DOWNLOADS.get(key, { range });
+      } else {
+        obj = await env.DOWNLOADS.get(key);
+      }
+
       if (obj === null) {
         return new Response('Download not found: ' + key, {
           status: 404,
           headers: BASE_HEADERS,
         });
       }
+
       const headers = new Headers();
       obj.writeHttpMetadata(headers);
       headers.set('etag', obj.httpEtag);
       for (const [k, v] of Object.entries(BASE_HEADERS)) headers.set(k, v);
-      if (key.endsWith('.zip')) {
+      // Always advertise range support so a resumable client will try it.
+      headers.set('Accept-Ranges', 'bytes');
+      // Any downloadable artifact is offered as an attachment, not just .zip:
+      // the .exe installer must download rather than be treated as a page.
+      if (/\.(?:zip|exe|msi|dmg|appimage|deb|rpm|pkg|tar\.gz|tgz)$/i.test(key)) {
         headers.set('Content-Disposition', 'attachment; filename="' + key + '"');
       }
+
+      const served = obj.range;
+      if (served) {
+        const total = obj.size;
+        headers.set('Content-Range', `bytes ${served.offset}-${served.offset + served.length - 1}/${total}`);
+        headers.set('Content-Length', String(served.length));
+        if (request.method === 'HEAD') return new Response(null, { status: 206, headers });
+        return new Response(obj.body, { status: 206, headers });
+      }
+
+      if (request.method === 'HEAD') return new Response(null, { status: 200, headers });
       return new Response(obj.body, { headers });
     }
 
