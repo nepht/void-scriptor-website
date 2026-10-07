@@ -106,7 +106,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <article class="panel">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
-<a href="/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
+<a href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
 <a href="/quiz"><span data-i18n="dash-open-quiz">Buka QOWNER Quiz Maker</span><small data-i18n="dash-web">Web</small></a>
 </div>
 <div class="hashrow">
@@ -114,8 +114,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <button class="copy" id="copySha" type="button" data-i18n="dash-copy">Salin</button>
 </div>
 <label class="filepick">
-<input type="file" id="dashFile" accept=".zip,application/zip">
-<span data-i18n="dash-verify-pick">Pilih berkas ZIP yang sudah diunduh untuk memverifikasi SHA-256</span>
+<input type="file" id="dashFile" accept=".exe,application/octet-stream">
+<span data-i18n="dash-verify-pick">Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256</span>
 </label>
 <p class="vmsg" id="dashVerify" data-i18n="dash-verify-idle">Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.</p>
 </article>
@@ -254,7 +254,7 @@ function copyText(txt,btn){
 // hashed with WebCrypto, and only the resulting hex digest is compared to the
 // published sidecar. No upload, no server round-trip for the file itself.
 var EXPECTED_SHA='';
-fetch('/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip.sha256',{credentials:'same-origin'})
+fetch('/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe.sha256',{credentials:'same-origin'})
   .then(function(r){return r.ok?r.text():null})
   .then(function(t){ if(t){EXPECTED_SHA=(t.trim().split(/\s+/)[0]||'').toLowerCase(); var e=document.getElementById('dashSha'); if(e)e.textContent=EXPECTED_SHA;} },
         function(){});
@@ -336,7 +336,7 @@ var dict = {
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
     'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun — keluar kapan saja untuk mengakhirinya sekarang.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz':'Buka QOWNER Quiz Maker','dash-web':'Web',
-    'dash-copy':'Salin','dash-verify-pick':'Pilih berkas ZIP yang sudah diunduh untuk memverifikasi SHA-256',
+    'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
     'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
@@ -355,7 +355,7 @@ var dict = {
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
     'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database — sign out any time to end it now.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz':'Open QOWNER Quiz Maker','dash-web':'Web',
-    'dash-copy':'Copy','dash-verify-pick':'Choose the ZIP you downloaded to verify its SHA-256',
+    'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere — the hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
     'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
