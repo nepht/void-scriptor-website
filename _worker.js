@@ -50,12 +50,36 @@ const CSP_SITE = [
 // The /app/ bundle is a Flutter Web build (CanvasKit/skwasm). A strict CSP
 // would break its WebAssembly compilation, and it is already gated behind
 // Cloudflare Access, so it only receives the transport/anti-sniff headers.
+//
+// Caching: Pages serves every file with `max-age=0, must-revalidate`, so a
+// repeat visitor pays a round-trip per image even though the bytes never
+// changed. The filenames are NOT content-hashed, so a long immutable cache
+// would pin stale art after a deploy. The middle ground is a fresh window plus
+// stale-while-revalidate: repeat visits stop waiting on the network, while a
+// deploy still propagates (stale is served at most once, then replaced).
+//
+// Only heavy binary art and fonts are cached. CSS/JS are deliberately left on
+// Pages' revalidate-every-time default: they are small, and a stale stylesheet
+// is the one thing that makes a deploy look visibly broken. robots.txt and
+// sitemap.xml stay fresh too, so adding a page is not delayed by a day.
+const CACHE_ART = /\.(?:webp|png|jpe?g|svg|gif|ico|avif|woff2?|ttf|otf)$/i;
+function cachePolicy(pathname, isHtml, status) {
+  // Never cache anything but a real success: a cached 404 would outlive the fix.
+  if (status !== 200) return null;
+  // HTML is the entry point; /app/ owns its own cache via the Flutter SW.
+  if (isHtml || pathname.startsWith('/app/')) return null;
+  if (CACHE_ART.test(pathname)) return 'public, max-age=86400, stale-while-revalidate=604800';
+  return null;
+}
+
 function harden(res, pathname, isHtml) {
   const headers = new Headers(res.headers);
   for (const [k, v] of Object.entries(BASE_HEADERS)) headers.set(k, v);
   if (isHtml && !pathname.startsWith('/app/')) {
     headers.set('content-security-policy', CSP_SITE);
   }
+  const cc = cachePolicy(pathname, isHtml, res.status);
+  if (cc) headers.set('cache-control', cc);
   return new Response(res.body, {
     status: res.status,
     statusText: res.statusText,
