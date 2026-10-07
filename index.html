@@ -121,7 +121,7 @@ function applyUser(u){if(!u){gate();return}document.querySelectorAll('.plain,.ou
 function syncSession(){return fetch('/api/auth/session',{credentials:'same-origin'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&d.ok&&d.authenticated){applyUser(d.user);return d}gate();return d}).catch(function(){gate();return null})}
 function configureAuthButton(d){var gh=document.getElementById('ghSignIn'),gg=document.getElementById('ggSignIn'),p=(d&&d.providers)||{};if(gh){gh.hidden=false;if(p.github!==false&&d&&d.configured){gh.disabled=false;gh.onclick=function(){location.href='/api/auth/github'}}else{gh.disabled=true;gh.title='GitHub sign-in is not configured'}}if(gg){if(p.google){gg.hidden=false;gg.disabled=false;gg.onclick=function(){location.href='/api/auth/google'}}else{gg.hidden=true}}}
 document.querySelectorAll('[data-auth]').forEach(function(e){e.onclick=function(){open()}});document.getElementById('close').onclick=function(){backdrop.classList.remove('open')};backdrop.onclick=function(e){if(e.target===backdrop)backdrop.classList.remove('open')};document.getElementById('hamb').onclick=function(){var o=nav.classList.toggle('open');this.setAttribute('aria-expanded',o?'true':'false')};document.querySelectorAll('nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open')}});(function(){var w=document.getElementById('profileWrap'),c=document.getElementById('profile'),o=document.getElementById('btnSignOut');if(!w||!c)return;function shut(){w.classList.remove('open');c.setAttribute('aria-expanded','false')}c.onclick=function(ev){ev.stopPropagation();var op=w.classList.toggle('open');c.setAttribute('aria-expanded',op?'true':'false')};if(o)o.onclick=function(){o.disabled=true;fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}).catch(function(){}).then(function(){location.href='/'})};document.addEventListener('click',function(ev){if(w.classList.contains('open')&&!w.contains(ev.target))shut()});document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut()})})();syncSession().then(configureAuthButton);showAuthResult();})();
-var DL={'prod-studio-title':'/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip','hero-cta':'/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip'};document.querySelectorAll('.download').forEach(function(e){var c=e.closest('.card');var k=c?c.querySelector('h3[data-i18n]'):null;var t=k?k.getAttribute('data-i18n'):(e.getAttribute('data-i18n')||'');var h=DL[t];if(h){e.title='Void Scriptor Studio 1.2.0-rc.1 (Preview) - Windows x64 - 34,5 MB';e.onclick=function(){window.location.href=h}}else{e.onclick=function(){notice('Installer '+((k&&k.textContent)||'produk ini')+' akan tersedia pada rilis publik.')}}});
+var DL={'prod-studio-title':'/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip','hero-cta':'/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip'};document.querySelectorAll('.download').forEach(function(e){var c=e.closest('.card');var k=c?c.querySelector('h3[data-i18n]'):null;var t=k?k.getAttribute('data-i18n'):(e.getAttribute('data-i18n')||'');var h=DL[t];if(h){e.title='Void Scriptor Studio 1.2.0-rc.1 (Preview) - Windows x64 - portabel (.zip) - 32,5 MB';e.onclick=function(){window.location.href=h}}else{e.onclick=function(){notice('Installer '+((k&&k.textContent)||'produk ini')+' akan tersedia pada rilis publik.')}}});
 /* ---- Byte Assistant: random blink ---- */
 (function(){
   var img=document.querySelector('.byte-bot');
@@ -153,7 +153,7 @@ var dict = {
     'hero-eyebrow':'VOID SCRIPTOR CORPORATION','hero-h1a':'Bangun melampaui','hero-h1b':'yang dikenal.',
     'hero-lead':'Satu platform. Kemungkinan tanpa batas.',
     'hero-desc':'Kami membangun perangkat lunak kreatif yang menyatukan ide, data, dan alur kerja—agar setiap dunia yang Anda ciptakan tetap konsisten.',
-    'hero-cta':'⊞  Download untuk Windows','hero-explore':'Jelajahi produk ↗',
+    'hero-cta':'⊞  Unduh untuk Windows (portabel, .zip)','hero-explore':'Jelajahi produk ↗',
     'plat-avail':'Tersedia','plat-soon':'Segera',
     'win-studio':'Void Scriptor Studio','win-qowner':'Qowner Quiz Maker','win-byte':'Byte Assistant','win-devtools':'Developer Tools',
     'prod-kicker':'OUR PRODUCTS','prod-h2':'Satu ekosistem untuk setiap tahap penciptaan.','prod-cta':'Lihat visi perusahaan →',
@@ -182,7 +182,7 @@ var dict = {
     'hero-eyebrow':'VOID SCRIPTOR CORPORATION','hero-h1a':'Build beyond','hero-h1b':'the known.',
     'hero-lead':'One platform. Unlimited possibilities.',
     'hero-desc':'We build creative software that unites ideas, data, and workflows — so every world you create stays consistent.',
-    'hero-cta':'⊞  Download for Windows','hero-explore':'Explore products ↗',
+    'hero-cta':'⊞  Download for Windows (portable, .zip)','hero-explore':'Explore products ↗',
     'plat-avail':'Available','plat-soon':'Soon',
     'win-studio':'Void Scriptor Studio','win-qowner':'Qowner Quiz Maker','win-byte':'Byte Assistant','win-devtools':'Developer Tools',
     'prod-kicker':'OUR PRODUCTS','prod-h2':'One ecosystem for every stage of creation.','prod-cta':'View company vision →',
