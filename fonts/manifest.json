@@ -1,0 +1,23 @@
+[
+  {
+    "file": "dm-serif-display-latin-400-italic.woff2",
+    "family": "dm-serif-display",
+    "weight": "400",
+    "style": "italic",
+    "bytes": 24572
+  },
+  {
+    "file": "dm-serif-display-latin-400.woff2",
+    "family": "dm-serif-display",
+    "weight": "400",
+    "style": "normal",
+    "bytes": 24744
+  },
+  {
+    "file": "roboto-mono-latin-400.woff2",
+    "family": "roboto-mono",
+    "weight": "400",
+    "style": "normal",
+    "bytes": 32796
+  }
+]
