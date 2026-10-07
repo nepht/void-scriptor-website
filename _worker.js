@@ -19,6 +19,17 @@ const INTERNAL = [
   /^\/\.git\//,
 ];
 
+// Extensionless pretty URLs. Cloudflare Pages normally resolves /quiz ->
+// quiz.html on its own, but the mapping is declared explicitly here so the
+// site never depends on that implicit behaviour (and so a miss returns the
+// branded 404 instead of a bare platform 404).
+const PRETTY = {
+  '/privacy': '/privacy.html',
+  '/terms': '/terms.html',
+  '/contact': '/contact.html',
+  '/quiz': '/quiz.html',
+};
+
 const BASE_HEADERS = {
   'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
   'x-content-type-options': 'nosniff',
@@ -65,6 +76,16 @@ export default {
     const url = new URL(request.url);
     if (INTERNAL.some((rx) => rx.test(url.pathname))) {
       return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+    }
+    const pretty = PRETTY[url.pathname];
+    if (pretty) {
+      const rewrite = new URL(url.toString());
+      rewrite.pathname = pretty;
+      return harden(
+        await env.ASSETS.fetch(new Request(rewrite.toString(), request)),
+        pretty,
+        true,
+      );
     }
     if (url.pathname.startsWith('/downloads/')) {
       const key = decodeURIComponent(url.pathname.slice('/downloads/'.length));
