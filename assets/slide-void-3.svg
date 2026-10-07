@@ -19,12 +19,10 @@
 <circle cx="240" cy="184" r="52" fill="url(#vcore)"/>
 <circle cx="240" cy="184" r="52" fill="none" stroke="#ecdfff" stroke-opacity=".6" stroke-width="1.4"/>
 <circle cx="222" cy="166" r="16" fill="#ffffff" opacity=".35" filter="url(#vsoft2)"/>
-<g stroke="#c9a6ff" stroke-opacity=".5" stroke-width="1"><path d="M240 132 L240 96"/><path d="M292 184 L330 184"/><path d="M188 184 L150 184"/></g>
-<circle cx="240" cy="92" r="3.4" fill="#e9dcff"/>
-<circle cx="334" cy="184" r="3" fill="#e9dcff"/>
-<circle cx="146" cy="184" r="2.6" fill="#e9dcff"/>
-<circle cx="358" cy="150" r="6" fill="#c9a6ff"/>
-<circle cx="132" cy="226" r="5" fill="#ae73ff"/>
+<circle cx="366" cy="143" r="5.5" fill="#c9a6ff"/>
+<circle cx="114" cy="225" r="5" fill="#ae73ff"/>
+<circle cx="121" cy="126" r="4" fill="#e9dcff"/>
+<circle cx="359" cy="242" r="3.6" fill="#c9a6ff"/>
 </g>
 <rect x="0.5" y="0.5" width="479" height="359" rx="14" fill="none" stroke="rgba(163,71,255,.28)"/>
 </svg>
