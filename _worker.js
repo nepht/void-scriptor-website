@@ -343,9 +343,14 @@ async function handleAuth(request, url, env) {
   }
 
   // --- sign out -------------------------------------------------------------
-  if (path === '/api/auth/logout') {
-    return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
-  }
+    // POST only: a GET would let any third-party page log the user out with a
+    // plain <img src>, so the verb is enforced rather than merely documented.
+    if (path === '/api/auth/logout') {
+      if (request.method !== 'POST') {
+        return json(405, { ok: false, error: 'method_not_allowed' });
+      }
+      return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
+    }
 
   return json(404, { ok: false, error: 'not_found' });
 }
