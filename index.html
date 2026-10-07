@@ -307,7 +307,14 @@ document.addEventListener('DOMContentLoaded',function(){
   function render(){
     track.style.transform='translateX('+(-i*100)+'%)';
     [].forEach.call(dotsBox.children,function(d,k){d.classList.toggle('on',k===i);d.setAttribute('aria-selected',k===i?'true':'false')});
-    slides.forEach(function(s,k){s.setAttribute('aria-hidden',k===i?'false':'true')});
+    slides.forEach(function(s,k){
+      s.setAttribute('aria-hidden',k===i?'false':'true');
+      // Off-screen slides must not be keyboard-reachable: an aria-hidden element
+      // that still contains a focusable link is an aria-hidden-focus violation.
+      [].forEach.call(s.querySelectorAll('a,button'),function(el){
+        if(k===i)el.removeAttribute('tabindex');else el.setAttribute('tabindex','-1');
+      });
+    });
   }
   function go(k){i=(k+n)%n;render()}
   function stop(){if(timer){clearInterval(timer);timer=null}}
