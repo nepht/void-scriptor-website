@@ -236,6 +236,19 @@ async function handleAuth(request, url, env) {
     });
   }
 
+  // Sign-out needs no GitHub credentials — it only clears a cookie — so it must
+  // not sit behind the configured check, or a visitor cannot sign out of a
+  // session that predates a secret being removed.
+  //
+  // POST only: a GET would let any third-party page log the user out with a
+  // plain <img src>, so the verb is enforced rather than merely documented.
+  if (path === '/api/auth/logout') {
+    if (request.method !== 'POST') {
+      return json(405, { ok: false, error: 'method_not_allowed' });
+    }
+    return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
+  }
+
   if (!configured) {
     return json(500, {
       ok: false,
@@ -345,12 +358,7 @@ async function handleAuth(request, url, env) {
   // --- sign out -------------------------------------------------------------
     // POST only: a GET would let any third-party page log the user out with a
     // plain <img src>, so the verb is enforced rather than merely documented.
-    if (path === '/api/auth/logout') {
-      if (request.method !== 'POST') {
-        return json(405, { ok: false, error: 'method_not_allowed' });
-      }
-      return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
-    }
+    // (Handled above, ahead of the configured check.)
 
   return json(404, { ok: false, error: 'not_found' });
 }
