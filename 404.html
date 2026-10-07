@@ -64,10 +64,14 @@ p{color:var(--muted);font-size:15px;line-height:1.75;margin:14px auto 0;max-widt
     var t=dict[lang]||dict.id;
     document.querySelectorAll('[data-i18n]').forEach(function(e){var k=e.getAttribute('data-i18n');if(t[k])e.textContent=t[k]});
     btn.textContent=lang==='id'?'EN':'ID';
-    try{localStorage.setItem('void-scriptor-lang',lang)}catch(e){}
+    // Share the ONE language key every other page uses ('vs-lang'); writing a
+    // private key here meant the ID/EN choice silently reset on the error page.
+    try{localStorage.setItem('vs-lang',lang);localStorage.removeItem('void-scriptor-lang')}catch(e){}
   }
   var saved='id';
-  try{saved=localStorage.getItem('void-scriptor-lang')||'id'}catch(e){}
+  // Read the shared key first, then fall back to the retired one so a visitor
+  // who already chose a language on an older error page keeps it.
+  try{saved=localStorage.getItem('vs-lang')||localStorage.getItem('void-scriptor-lang')||'id'}catch(e){}
   if(!dict[saved])saved='id';
   apply(saved);
   btn.onclick=function(){apply(document.documentElement.lang==='id'?'en':'id')};
