@@ -314,7 +314,7 @@ form.onsubmit=function(e){
   localStorage.setItem(KEY,name);
   refresh();
 };
-btnOut.onclick=function(){localStorage.removeItem(KEY);refresh();window.scrollTo(0,0)};
+btnOut.onclick=function(){fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}).catch(function(){});localStorage.removeItem(KEY);refresh();window.scrollTo(0,0)};
 refresh();
 })();
 setLang(lang);
