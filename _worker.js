@@ -526,6 +526,7 @@ export default {
       // zero every time; browsers and download managers both rely on 206s.
       const rangeHeader = request.headers.get('range');
       let range = null;
+      let wantRange = false;
       if (rangeHeader) {
         const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
         if (m) {
@@ -534,11 +535,15 @@ export default {
             const start = Number(m[1]);
             const end = hasEnd ? Number(m[2]) : undefined;
             range = { offset: start, length: hasEnd ? end - start + 1 : undefined };
+            wantRange = true;
           } else if (hasEnd) {
             // `bytes=-N` means the final N bytes; R2 needs an absolute offset,
             // which requires knowing the size, so resolve it with a HEAD first.
             const head = await env.DOWNLOADS.head(key);
-            if (head) range = { suffix: Number(m[2]), size: head.size };
+            if (head) {
+              range = { suffix: Number(m[2]), size: head.size };
+              wantRange = true;
+            }
           }
         }
       }
@@ -572,8 +577,11 @@ export default {
         headers.set('Content-Disposition', 'attachment; filename="' + key + '"');
       }
 
+      // Only answer 206 when the client actually asked for a range. R2 populates
+      // `obj.range` even on a full read, so keying off it alone would turn every
+      // plain GET into a 206 and break ordinary downloads.
       const served = obj.range;
-      if (served) {
+      if (wantRange && served) {
         const total = obj.size;
         headers.set('Content-Range', `bytes ${served.offset}-${served.offset + served.length - 1}/${total}`);
         headers.set('Content-Length', String(served.length));
