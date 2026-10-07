@@ -503,6 +503,28 @@ export default {
       return new Response(obj.body, { headers });
     }
 
+    // Private area: the dashboard is only ever handed to a visitor holding a
+    // valid signed session cookie. The page re-checks the session before it
+    // renders, but gating here as well means an anonymous request never
+    // receives the markup at all -- and `.html` is gated too, otherwise
+    // /dashboard.html would be served straight from ASSETS and slip past it.
+    if (url.pathname === '/dashboard' || url.pathname === '/dashboard.html' || url.pathname === '/dashboard/') {
+      const session = env.SESSION_SECRET ? await readSession(request, env.SESSION_SECRET) : null;
+      if (!session) {
+        // no-store: a cached redirect must never bounce a signed-in visitor.
+        return redirect('/?auth=required', { 'cache-control': 'no-store' });
+      }
+      const dash = await env.ASSETS.fetch(new URL('/dashboard.html', url).toString());
+      if (!dash.ok) {
+        return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+      }
+      // no-store: the rendered identity is per-visitor and must not be cached
+      // by a shared proxy or the browser's back/forward cache.
+      const headers = new Headers(dash.headers);
+      headers.set('cache-control', 'no-store');
+      return harden(new Response(dash.body, { status: 200, headers }), '/dashboard', true);
+    }
+
     const res = await env.ASSETS.fetch(request);
     const contentType = res.headers.get('content-type') || '';
     const isHtml = contentType.includes('text/html');

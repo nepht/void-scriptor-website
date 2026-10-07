@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Private area: never indexed, and the worker refuses to serve it at all
+     unless the request carries a valid signed session cookie. -->
+<meta name="robots" content="noindex, nofollow">
+<title data-i18n="page-title">Dasbor — Void Scriptor Corporation</title>
+<style>
+:root{--void:#050507;--violet:#5a2dff;--purple:#a347ff;--cyan:#42e8ff;--white:#fff8ff;--muted:rgba(240,233,255,.66);--faint:rgba(240,233,255,.4);--line:rgba(163,71,255,.22)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--void)}body{margin:0;background:var(--void);color:var(--white);font-family:Inter,system-ui,"Segoe UI",sans-serif}button,input{font:inherit}button{color:inherit;cursor:pointer}a{color:inherit;text-decoration:none}.shell{width:min(1120px,calc(100% - 64px));margin:auto}.logo{object-fit:contain;filter:drop-shadow(0 0 18px rgba(163,71,255,.6))}
+header{height:82px;position:sticky;top:0;z-index:40;background:rgba(5,5,7,.84);backdrop-filter:blur(20px);border-bottom:1px solid rgba(163,71,255,.13)}.navrow{height:100%;display:flex;align-items:center;gap:34px}.brand{display:flex;align-items:center;gap:11px}.brand img{width:40px;height:50px}.brand span{font-size:16px;font-weight:700;letter-spacing:.19em;white-space:nowrap}nav{margin-left:auto;display:flex;gap:clamp(16px,2vw,32px)}nav a{font-size:13px;color:var(--muted)}nav a:hover{color:white}nav a[aria-current=page]{color:#d9b8ff}.account{display:flex;gap:10px;align-items:center}.plain,.outline,.avatar,.profile,.hamb{background:none;border:0}.avatar{width:40px;height:40px;border:1px solid var(--line);border-radius:50%}.profile-wrap{display:none;position:relative}.profile{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:5px 12px 5px 5px}.profile-menu{display:none;position:absolute;right:0;top:calc(100% + 10px);min-width:170px;padding:6px;border:1px solid var(--line);border-radius:10px;background:#0c0818;box-shadow:0 14px 34px rgba(0,0,0,.45);z-index:50}.profile-wrap.open .profile-menu{display:block}.profile-menu button,.profile-menu a{display:block;width:100%;border:0;border-radius:6px;padding:10px 12px;background:transparent;text-align:left;font-size:12px}.profile-menu button:hover,.profile-menu a:hover{background:rgba(163,71,255,.16)}.profile i{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-style:normal}.profile b{font-size:12px}.profile img{width:30px;height:30px;border-radius:50%;object-fit:cover}.hamb{display:none;margin-left:auto}.hamb i{display:block;width:24px;height:1px;background:white;margin:7px}
+.btn-lang{border:1px solid rgba(163,71,255,.45);border-radius:5px;padding:7px 12px;background:rgba(90,45,255,.08);color:#d8c4ff;font-size:11px;font-weight:700;letter-spacing:.08em}
+main.dash{padding:56px 0 90px}
+.dash-head{max-width:720px;margin-bottom:34px}
+.kicker{color:#ae73ff;font-size:10px;font-weight:800;letter-spacing:.21em}
+.dash-head h1{font-size:clamp(32px,4vw,52px);line-height:1.04;letter-spacing:-.035em;margin:12px 0 0;text-transform:none}
+.dash-head h1 b{color:#d8caff;font-weight:800}
+.lead{color:var(--muted);font-size:15px;line-height:1.7;margin:14px 0 0}
+.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.panel{border:1px solid rgba(155,115,230,.22);border-radius:12px;padding:24px;background:linear-gradient(145deg,rgba(20,14,38,.86),rgba(8,7,16,.92));min-height:150px}
+.panel h3{margin:0 0 16px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#c7a6ff}
+.panel.profile{grid-column:1/-1;display:flex;align-items:center;gap:20px;min-height:0}
+.panel.profile img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.panel.profile .ini{width:72px;height:72px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-size:26px;font-weight:800}
+.panel.profile .who{min-width:0}
+.panel.profile h2{margin:0;font-size:22px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.panel.profile p{margin:5px 0 0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;border:1px solid rgba(163,71,255,.5);border-radius:20px;padding:3px 11px;background:rgba(90,45,255,.14);color:#d3bcff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+dl{margin:0;display:grid;gap:12px}
+dl div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(163,71,255,.12);padding-bottom:11px}
+dl div:last-child{border-bottom:0;padding-bottom:0}
+dt{color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.09em;flex:0 0 auto}
+dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
+.note{margin:16px 0 0;color:var(--faint);font-size:11px;line-height:1.7}
+.plinks{display:grid;gap:12px}
+.plinks a{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(163,71,255,.32);border-radius:8px;padding:13px 15px;color:#d9c6ff;font-size:13px;background:rgba(90,45,255,.05)}
+.plinks a:hover{border-color:rgba(163,71,255,.7);background:rgba(163,71,255,.13)}
+.plinks a small{color:var(--faint);font-size:10px}
+.primary{min-height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;text-transform:uppercase;letter-spacing:.075em;font-size:11px;font-weight:750;border:1px solid #b77bff;background:linear-gradient(135deg,#7429ff,#4f18c9);box-shadow:0 0 25px rgba(90,45,255,.45)}
+.danger{background:none;border:1px solid rgba(255,120,120,.45);color:#ffc4c4;border-radius:6px;padding:12px 18px;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.075em}
+.danger:hover{border-color:rgba(255,120,120,.8);background:rgba(255,80,80,.1)}
+footer{padding:30px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:flex;align-items:center;justify-content:space-between;gap:25px;flex-wrap:wrap}.footbrand{display:flex;align-items:center;gap:10px}.footbrand img{width:40px;height:48px}.footbrand strong,.footbrand span{display:block}.footbrand strong{font-size:12px;letter-spacing:.16em}.footbrand span{font-size:10px;color:var(--faint)}.footlinks{display:flex;gap:25px;color:var(--muted);font-size:11px}.copyline{width:100%;border-top:1px solid rgba(155,115,230,.1);padding-top:18px;color:rgba(240,233,255,.28);font-size:10px}
+.toast{display:none;position:fixed;z-index:110;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 18px;border:1px solid rgba(163,71,255,.45);background:#0c0818;border-radius:7px;font-size:12px}
+@media(max-width:850px){.shell{width:min(100% - 36px,720px)}header{height:72px}.hamb{display:block}nav{display:none;position:absolute;left:18px;right:18px;top:72px;padding:18px;margin:0;background:#08060f;border:1px solid var(--line);flex-direction:column}nav.open{display:flex}.dash-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.panel{padding:19px}.panel.profile{flex-direction:column;align-items:flex-start}}
+</style>
+<link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-180x180.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#050507">
+</head>
+<body id="top">
+<header><div class="shell navrow"><a class="brand" href="/"><img class="logo" src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR</span></a><button class="hamb" id="hamb" aria-label="Buka menu navigasi" aria-controls="nav" aria-expanded="false"><i></i><i></i></button><nav id="nav"><a href="/#products" data-i18n="nav-produk">Produk</a><a href="/#downloads" data-i18n="nav-download">Download</a><a href="/quiz" data-i18n="nav-quiz">Quiz QOWNER</a><a href="/dashboard" aria-current="page" data-i18n="nav-dash">Dasbor</a><a href="/#company" data-i18n="nav-perusahaan">Perusahaan</a></nav><div class="account"><span class="profile-wrap" id="profileWrap" style="display:block"><button class="profile" id="profile" aria-haspopup="true" aria-expanded="false" aria-label="Menu profil"><img id="userAvatar" style="display:none" alt=""><i id="initial">V</i><b id="profileName">Creator</b></button><span class="profile-menu" role="menu"><a href="/dashboard" role="menuitem" data-i18n="menu-dashboard">Dasbor</a><button id="btnSignOut" role="menuitem" data-i18n="btn-keluar">Keluar</button></span></span><button class="btn-lang id" id="btnID" style="display:none" aria-label="Ganti ke bahasa Indonesia">ID</button><button class="btn-lang en" id="btnEN" aria-label="Switch to English">EN</button></div></div></header>
+<main class="shell dash">
+<section class="dash-head">
+<span class="kicker" data-i18n="dash-kicker">DASBOR AKUN</span>
+<h1><span data-i18n="dash-hi">Halo,</span> <b id="dashHiName">…</b></h1>
+<p class="lead" data-i18n="dash-lead">Kelola profil, sesi, dan unduhan Anda di satu tempat.</p>
+</section>
+<div class="dash-grid">
+<article class="panel profile">
+<img id="dashAvatar" alt="" hidden>
+<i class="ini" id="dashInitial">V</i>
+<div class="who"><h2 id="dashNameBig">…</h2><p id="dashLogin">…</p><span class="badge" id="dashProviderBadge" hidden>—</span></div>
+</article>
+<article class="panel">
+<h3 data-i18n="dash-account">Akun</h3>
+<dl>
+<div><dt data-i18n="dash-email">Email</dt><dd id="dashEmail">—</dd></div>
+<div><dt data-i18n="dash-login-label">Nama pengguna</dt><dd id="dashLoginLabel">—</dd></div>
+<div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">—</dd></div>
+</dl>
+</article>
+<article class="panel">
+<h3 data-i18n="dash-session">Sesi &amp; keamanan</h3>
+<dl>
+<div><dt data-i18n="dash-since">Masuk sejak</dt><dd id="dashSince">—</dd></div>
+<div><dt data-i18n="dash-exp">Berlaku sampai</dt><dd id="dashExp">—</dd></div>
+</dl>
+<p class="note" data-i18n="dash-note">Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun — keluar kapan saja untuk mengakhirinya sekarang.</p>
+</article>
+<article class="panel">
+<h3 data-i18n="dash-products">Produk Anda</h3>
+<div class="plinks">
+<a href="/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
+<a href="/quiz"><span data-i18n="dash-open-quiz">Buka QOWNER Quiz Maker</span><small data-i18n="dash-web">Web</small></a>
+</div>
+</article>
+<article class="panel">
+<h3 data-i18n="dash-actions">Tindakan</h3>
+<div class="plinks">
+<button class="danger" id="dashSignOut" data-i18n="dash-signout">Keluar dari akun</button>
+</div>
+<p class="note" data-i18n="dash-actions-note">Keluar akan menghapus sesi di peramban ini seketika.</p>
+</article>
+</div>
+</main>
+<footer><div class="shell foot"><div class="footbrand"><img class="logo" src="assets/void_scriptor_emblem.webp" alt=""><div><strong data-i18n="foot-brand">VOID SCRIPTOR</strong><span data-i18n="foot-tagline">Build beyond the known.</span></div></div><div class="footlinks"><a href="/#products" data-i18n="nav-produk">Produk</a><a href="/quiz" data-i18n="nav-quiz">Quiz QOWNER</a><a href="/privacy" data-i18n="foot-privacy">Privasi</a><a href="/terms" data-i18n="foot-terms">Syarat</a><a href="/contact" data-i18n="foot-contact">Kontak</a><a href="mailto:support@voidscriptor.com" data-i18n="foot-duka">Dukungan</a></div><div class="copyline" data-i18n="foot-copy">© 2026 Void Scriptor Corporation · Choirudin</div></div></footer>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+var backdrop=null,toast=document.getElementById('toast'),nav=document.getElementById('nav');
+function notice(t){toast.textContent=t;toast.style.display='block';setTimeout(function(){toast.style.display='none'},3000)}
+document.getElementById('hamb').onclick=function(){var o=nav.classList.toggle('open');this.setAttribute('aria-expanded',o?'true':'false')};
+document.querySelectorAll('nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open')}});
+
+// --- header profile chip (mirrors the home page) --------------------------
+function applyUser(u){
+  if(!u) return;
+  var n=u.name||u.login||'Akun';
+  document.getElementById('profileName').textContent=n;
+  var a=document.getElementById('userAvatar'),ini=document.getElementById('initial');
+  if(u.avatar){a.src=u.avatar;a.style.display='';ini.style.display='none';a.onerror=function(){a.style.display='none';ini.style.display=''}}
+  else{a.style.display='none';ini.style.display=''}
+  ini.textContent=n.charAt(0).toUpperCase();
+}
+// Sign-out lives in the outer scope on purpose: the dashboard fill below wires
+// the same handler, and keeping it inside the chip IIFE made that reference a
+// ReferenceError -- which the session .catch() then turned into a redirect,
+// bouncing signed-in visitors off their own dashboard.
+function signOut(btn){btn.disabled=true;fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}).catch(function(){}).then(function(){location.href='/'})}
+(function(){var w=document.getElementById('profileWrap'),c=document.getElementById('profile'),o=document.getElementById('btnSignOut');
+function shut(){w.classList.remove('open');c.setAttribute('aria-expanded','false')}
+c.onclick=function(ev){ev.stopPropagation();var op=w.classList.toggle('open');c.setAttribute('aria-expanded',op?'true':'false')};
+o.onclick=function(){signOut(o)};
+document.addEventListener('click',function(ev){if(w.classList.contains('open')&&!w.contains(ev.target))shut()});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut()})})();
+
+// --- fill the dashboard from the verified session ------------------------
+function fmt(ts){if(!ts)return '—';try{return new Date(ts*1000).toLocaleString()}catch(e){return '—'}}
+function providerLabel(p){return p==='google'?'Google':(p==='github'?'GitHub':(p||'—'))}
+function renderSession(d){
+  var u=d.user||{},n=u.name||u.login||'Akun';
+  applyUser(u);
+  document.getElementById('dashHiName').textContent=n;
+  document.getElementById('dashNameBig').textContent=n;
+  document.getElementById('dashLogin').textContent=u.login?('@'+u.login):(u.email||'');
+  var big=document.getElementById('dashAvatar'),ini=document.getElementById('dashInitial');
+  if(u.avatar){big.src=u.avatar;big.hidden=false;ini.hidden=true;big.onerror=function(){big.hidden=true;ini.hidden=false}}
+  ini.textContent=n.charAt(0).toUpperCase();
+  var pl=providerLabel(u.provider);
+  var b=document.getElementById('dashProviderBadge');b.hidden=false;b.textContent=pl;
+  document.getElementById('dashProvider').textContent=pl;
+  document.getElementById('dashEmail').textContent=u.email||'—';
+  document.getElementById('dashLoginLabel').textContent=u.login?('@'+u.login):'—';
+  document.getElementById('dashSince').textContent=fmt(u.iat);
+  document.getElementById('dashExp').textContent=fmt(u.exp);
+  document.getElementById('dashSignOut').onclick=function(){signOut(this)};
+}
+// Only a failed *fetch* bounces to the sign-in page. A render error must not,
+// or a signed-in visitor gets ejected from a page they are entitled to see.
+fetch('/api/auth/session',{credentials:'same-origin'})
+  .then(function(r){return r.ok?r.json():null})
+  .then(function(d){ if(!d||!d.authenticated){location.href='/?auth=required';return} renderSession(d); },
+        function(){ location.href='/?auth=required' });
+})();
+</script>
+<script>(function(){
+var dict = {
+  id: {
+    'page-title':'Dasbor — Void Scriptor Corporation',
+    'nav-produk':'Produk','nav-download':'Download','nav-quiz':'Quiz QOWNER','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
+    'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
+    'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
+    'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
+    'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai',
+    'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun — keluar kapan saja untuk mengakhirinya sekarang.',
+    'dash-products':'Produk Anda','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz':'Buka QOWNER Quiz Maker','dash-web':'Web',
+    'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
+    'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor Corporation · Choirudin',
+    'foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak','foot-duka':'Dukungan'
+  },
+  en: {
+    'page-title':'Dashboard — Void Scriptor Corporation',
+    'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Quiz','nav-dash':'Dashboard','nav-perusahaan':'Company',
+    'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
+    'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
+    'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
+    'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until',
+    'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database — sign out any time to end it now.',
+    'dash-products':'Your products','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz':'Open QOWNER Quiz Maker','dash-web':'Web',
+    'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
+    'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor Corporation · Choirudin',
+    'foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact','foot-duka':'Support'
+  }
+};
+var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
+if(lang!=='id'&&lang!=='en')lang='id';
+function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
+  var i=document.getElementById('btnID'),e=document.getElementById('btnEN');
+  if(i)i.style.display=(l==='en')?'inline-block':'none';if(e)e.style.display=(l==='id')?'inline-block':'none'}
+document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('btnID'),e=document.getElementById('btnEN');
+  if(i)i.onclick=function(){setLang('id')};if(e)e.onclick=function(){setLang('en')};setLang(lang)});
+})();</script>
+</body></html>
