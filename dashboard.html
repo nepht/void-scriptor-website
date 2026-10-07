@@ -40,6 +40,9 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .primary{min-height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;text-transform:uppercase;letter-spacing:.075em;font-size:11px;font-weight:750;border:1px solid #b77bff;background:linear-gradient(135deg,#7429ff,#4f18c9);box-shadow:0 0 25px rgba(90,45,255,.45)}
 .danger{background:none;border:1px solid rgba(255,120,120,.45);color:#ffc4c4;border-radius:6px;padding:12px 18px;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.075em}
 .danger:hover{border-color:rgba(255,120,120,.8);background:rgba(255,80,80,.1)}
+.ghost{background:none;border:1px solid rgba(163,71,255,.45);color:#d9c6ff;border-radius:6px;padding:12px 18px;font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.075em;cursor:pointer}
+.ghost:hover{border-color:rgba(163,71,255,.85);background:rgba(163,71,255,.12)}
+.danger{cursor:pointer}
 .copy{border:1px solid rgba(163,71,255,.4);background:rgba(90,45,255,.08);color:#d9c6ff;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:.06em;margin-left:8px;cursor:pointer;line-height:1.4}
 .copy:hover{border-color:rgba(163,71,255,.8);background:rgba(163,71,255,.16)}
 .hashrow{display:flex;align-items:center;gap:10px;border:1px solid rgba(163,71,255,.25);border-radius:8px;padding:11px 13px;background:rgba(90,45,255,.05);margin-top:14px}
@@ -116,6 +119,22 @@ footer{padding:30px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 </div>
 <p class="note" data-i18n="dash-actions-note">Keluar akan menghapus sesi di peramban ini seketika.</p>
 </article>
+<article class="panel">
+<h3 data-i18n="dash-data">Data &amp; privasi</h3>
+<div class="plinks">
+<button class="ghost" id="dashExport" type="button" data-i18n="dash-export">Unduh data saya (.json)</button>
+<button class="danger" id="dashDelete" type="button" data-i18n="dash-delete">Hapus data saya</button>
+</div>
+<p class="note" data-i18n="dash-data-note">Kami tidak menyimpan basis data akun. Satu-satunya data tentang Anda adalah isi cookie sesi di peramban ini. Ekspor menyalinnya ke berkas; hapus akan mengeluarkan Anda dan mencabut sesi.</p>
+<div id="dashDeleteConfirm" hidden>
+<p class="note" data-i18n="dash-delete-ask">Yakin? Sesi akan dicabut sekarang. Untuk menarik izin sepenuhnya, cabut akses aplikasi di penyedia Anda:</p>
+<div class="plinks">
+<button class="danger" id="dashDeleteYes" type="button" data-i18n="dash-delete-yes">Ya, hapus sekarang</button>
+<button class="ghost" id="dashDeleteNo" type="button" data-i18n="dash-delete-no">Batal</button>
+</div>
+<p class="note"><a id="dashRevoke" href="https://github.com/settings/applications" target="_blank" rel="noopener" data-i18n="dash-revoke">Cabut izin di penyedia</a></p>
+</div>
+</article>
 </div>
 </main>
 <footer><div class="shell foot"><div class="footbrand"><img class="logo" src="assets/void_scriptor_emblem.webp" alt=""><div><strong data-i18n="foot-brand">VOID SCRIPTOR</strong><span data-i18n="foot-tagline">Build beyond the known.</span></div></div><div class="footlinks"><a href="/#products" data-i18n="nav-produk">Produk</a><a href="/quiz" data-i18n="nav-quiz">Quiz QOWNER</a><a href="/privacy" data-i18n="foot-privacy">Privasi</a><a href="/terms" data-i18n="foot-terms">Syarat</a><a href="/contact" data-i18n="foot-contact">Kontak</a><a href="mailto:support@voidscriptor.com" data-i18n="foot-duka">Dukungan</a></div><div class="copyline" data-i18n="foot-copy">© 2026 Void Scriptor Corporation · Choirudin</div></div></footer>
@@ -169,6 +188,9 @@ function renderSession(d){
   document.getElementById('dashSince').textContent=fmt(u.iat);
   document.getElementById('dashExp').textContent=fmt(u.exp);
   document.getElementById('dashSignOut').onclick=function(){signOut(this)};
+  LAST_USER=u;
+  var rev=document.getElementById('dashRevoke');
+  if(rev)rev.href=(u.provider==='google')?'https://myaccount.google.com/permissions':'https://github.com/settings/applications';
   startCountdown(u.exp);
 }
 
@@ -247,7 +269,29 @@ function verifyFile(file){
     else{msg.className='vmsg bad';msg.textContent='✗ TIDAK cocok. Berkas mungkin rusak atau diubah. Diharapkan '+EXPECTED_SHA+', tetapi dihitung '+hex+'. Unduh ulang dari situs ini.'}
   },function(){msg.className='vmsg bad';msg.textContent='Gagal membaca berkas.'});
 }
-// --- wire the copy buttons and the file picker ---------------------------
+// --- export / delete my data ---------------------------------------------
+// There is no account database, so "my data" is exactly the signed session
+// payload the browser is holding. Export serialises that object to a file;
+// delete ends the session. Both are honest about what does and does not exist.
+var LAST_USER=null;
+function exportData(){
+  var payload={
+    note:'This is the full extent of the data voidscriptor.pages.dev holds about you: the contents of your signed session cookie. There is no account database.',
+    exported_at:new Date().toISOString(),
+    session:LAST_USER||{}
+  };
+  try{
+    var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='voidscriptor-my-data.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    notice('Data diunduh.');
+  }catch(e){notice('Gagal membuat berkas.')}
+}
+
+// --- wire the copy buttons, file picker, export and delete ---------------
 (function(){
   function val(id){var e=document.getElementById(id);return e?e.textContent:''}
   var ce=document.getElementById('copyEmail'),cl=document.getElementById('copyLogin'),cs=document.getElementById('copySha');
@@ -256,6 +300,14 @@ function verifyFile(file){
   if(cs)cs.onclick=function(){copyText(val('dashSha'),cs)};
   var f=document.getElementById('dashFile');
   if(f)f.onchange=function(){var file=this.files&&this.files[0];if(file)verifyFile(file)};
+
+  var ex=document.getElementById('dashExport');
+  if(ex)ex.onclick=function(){exportData()};
+  var del=document.getElementById('dashDelete'),confirmBox=document.getElementById('dashDeleteConfirm');
+  var yes=document.getElementById('dashDeleteYes'),no=document.getElementById('dashDeleteNo');
+  if(del&&confirmBox)del.onclick=function(){confirmBox.hidden=false;if(yes)yes.focus()};
+  if(no&&confirmBox)no.onclick=function(){confirmBox.hidden=true};
+  if(yes)yes.onclick=function(){signOut(this)};
 })();
 
 // Only a failed *fetch* bounces to the sign-in page. A render error must not,
@@ -280,6 +332,10 @@ var dict = {
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas ZIP yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
+    'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
+    'dash-data-note':'Kami tidak menyimpan basis data akun. Satu-satunya data tentang Anda adalah isi cookie sesi di peramban ini. Ekspor menyalinnya ke berkas; hapus akan mengeluarkan Anda dan mencabut sesi.',
+    'dash-delete-ask':'Yakin? Sesi akan dicabut sekarang. Untuk menarik izin sepenuhnya, cabut akses aplikasi di penyedia Anda:',
+    'dash-delete-yes':'Ya, hapus sekarang','dash-delete-no':'Batal','dash-revoke':'Cabut izin di penyedia',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor Corporation · Choirudin',
     'foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak','foot-duka':'Dukungan'
   },
@@ -295,6 +351,10 @@ var dict = {
     'dash-copy':'Copy','dash-verify-pick':'Choose the ZIP you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere — the hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
+    'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
+    'dash-data-note':'We keep no account database. The only data about you is the contents of the session cookie in this browser. Export copies it to a file; delete signs you out and revokes the session.',
+    'dash-delete-ask':'Are you sure? The session will be revoked now. To withdraw consent entirely, remove the app at your provider:',
+    'dash-delete-yes':'Yes, delete now','dash-delete-no':'Cancel','dash-revoke':'Revoke at provider',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor Corporation · Choirudin',
     'foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact','foot-duka':'Support'
   }
