@@ -284,9 +284,9 @@ var lock=document.getElementById('lock'),content=document.getElementById('gateCo
     btnUp=document.getElementById('btnDaftar'),btnOut=document.getElementById('btnKeluar'),
     gh=document.getElementById('ghGate'),gg=document.getElementById('ggGate'),status=document.getElementById('authStatus');
 function text(key){return (dict[lang]&&dict[lang][key])||key}
-function gate(){lock.style.display='grid';content.hidden=true;chip.style.display='none'}
+function gate(){lock.style.display='grid';content.hidden=true;chip.style.display='none';btnIn.style.display='';btnUp.style.display=''}
 function show(user){
-  lock.style.display='none';content.hidden=false;chip.style.display='flex';
+  lock.style.display='none';content.hidden=false;chip.style.display='flex';btnIn.style.display='none';btnUp.style.display='none';
   var name=(user&& (user.name||user.login))||'Akun';
   document.getElementById('chipName').textContent=name;
   document.getElementById('chipInitial').textContent=name.charAt(0).toUpperCase();
