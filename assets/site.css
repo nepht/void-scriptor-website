@@ -304,3 +304,14 @@ footer{border-top:1px solid var(--line);background:var(--abyss)}
   .page-home .caro-art img{object-position:62% center}
   .page-home .caro-art::before{background:linear-gradient(180deg,rgba(5,5,7,.88) 0%,rgba(5,5,7,.52) 42%,rgba(5,5,7,.18) 78%,rgba(5,5,7,.58) 100%)}
 }
+
+/* Void Scriptor x Qowner wallpaper system: one atmospheric field across the
+   site, with enough veil for copy and panels to remain readable. */
+:root{--void-wallpaper:url('/assets/void-qowner-wallpaper.png')}
+body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,.74) 74%,rgba(5,5,7,.9)),var(--void-wallpaper);background-position:center top;background-size:cover;background-attachment:fixed;opacity:.72;mask-image:none}
+.page-home main,.page-quiz main,.page-dashboard main,.page-contact main,.page-legal main{background-image:linear-gradient(180deg,rgba(9,10,11,.2),rgba(9,10,11,.72)),var(--void-wallpaper);background-position:center top;background-size:cover;background-attachment:fixed}
+.page-home .hero,.page-quiz .hero{background-image:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.42) 55%,rgba(5,5,7,.22)),var(--void-wallpaper);background-position:center top;background-size:cover;background-attachment:fixed}
+.page-home .products,.page-home .metrics,.page-home .company-wrap{background-image:linear-gradient(180deg,rgba(9,10,11,.7),rgba(9,10,11,.88)),var(--void-wallpaper);background-position:center;background-size:cover;background-attachment:fixed}
+.page-quiz .hero{border-bottom-color:rgba(0,179,221,.2)}
+.page-quiz .eyebrow,.page-quiz .kicker{color:#a8f2ff}
+.page-quiz .clear-box{box-shadow:0 0 32px rgba(0,179,221,.1)}
