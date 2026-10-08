@@ -125,6 +125,7 @@ p,li{color:var(--ash)}
 .page-home .info h3{font-size:24px}
 .page-home .info p{color:var(--ash);font-size:14px}
 .page-home .cardfoot{border-color:var(--line)}
+.page-home .cardfoot--single{justify-content:flex-end}
 .page-home .metrics{border-color:rgba(217,207,255,.17);border-radius:var(--radius-card);background:var(--obsidian)}
 .page-home .metrics div{border-color:var(--line)}
 .page-home .company-wrap{padding:90px 0 112px}
