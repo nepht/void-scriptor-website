@@ -202,6 +202,13 @@ p,li{color:var(--ash)}
 .page-changelog .status-item a,.page-changelog .status-actions a{display:inline-flex;min-height:44px;align-items:center;color:var(--primary-pale);font-size:12px}
 .page-changelog .status-actions .status-primary{padding:0 14px;border:1px solid rgba(217,207,255,.45);border-radius:var(--radius-control);background:rgba(124,92,255,.15)}
 .page-changelog .status-actions .status-primary:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.25)}
+.page-changelog .status-verify{padding:36px 0;border-top:1px solid rgba(217,207,255,.13)}
+.page-changelog .status-verify h2{margin:0 0 10px;font-size:clamp(24px,3vw,36px);line-height:1.05}
+.page-changelog .status-verify p{max-width:720px;color:var(--ash);font-size:14px;line-height:1.75}
+.page-changelog .status-verify pre{margin:22px 0 12px;padding:16px;overflow:auto;border:1px solid rgba(217,207,255,.16);border-radius:var(--radius-control);background:#08090a;color:var(--cloud)}
+.page-changelog .status-verify pre code{font-family:var(--font-mono);font-size:12px;white-space:pre}
+.page-changelog .status-verify .verify-note{font-size:12px}
+.page-changelog .status-verify .verify-note code{overflow-wrap:anywhere;color:var(--primary-pale);font-family:var(--font-mono);font-size:11px}
 .page-changelog .status-roadmap,.page-changelog .status-proof{padding:36px 0;border-top:1px solid rgba(217,207,255,.13)}
 .page-changelog .roadmap-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
 .page-changelog .roadmap-list span{display:flex;justify-content:space-between;gap:14px;padding:14px;border:1px solid rgba(217,207,255,.14);border-radius:var(--radius-control);color:var(--cloud);font-size:13px}
