@@ -105,6 +105,26 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="dash-check" id="dashCheckSafety"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-safety">Mode aman</b><small data-check-text>Aktif di Byte</small></div></div>
 </div>
 </section>
+<section class="dash-ops" aria-label="Pusat operasi dashboard">
+<article class="dash-op">
+<span class="kicker" data-i18n="dash-ops-task-kicker">BYTE / TUGAS</span>
+<h2 data-i18n="dash-ops-task-title">Pusat tugas</h2>
+<p id="dashTaskSummary" data-i18n="dash-ops-task-empty">Tidak ada tugas aktif.</p>
+<small id="dashTaskMeta" data-i18n="dash-ops-task-meta">Rencana dan pemeriksaan tersimpan lokal di browser ini.</small>
+<a class="ghost" href="/?desktop=byte" data-i18n="dash-ops-task-open">Buka Byte Desktop</a>
+</article>
+<article class="dash-op">
+<span class="kicker" data-i18n="dash-ops-notice-kicker">STATUS / PERHATIAN</span>
+<h2 data-i18n="dash-ops-notice-title">Notifikasi</h2>
+<ul class="dash-notices" id="dashNoticeList" aria-live="polite"><li data-i18n="dash-ops-notice-checking">Memeriksa status…</li></ul>
+</article>
+<article class="dash-op dash-op-diagnostics">
+<span class="kicker" data-i18n="dash-ops-diag-kicker">DEBUG / LOKAL</span>
+<h2 data-i18n="dash-ops-diag-title">Diagnostik</h2>
+<pre id="dashDiagnosticsPreview">Menyiapkan laporan lokal…</pre>
+<button class="ghost" id="dashCopyDiagnostics" type="button" data-i18n="dash-ops-diag-copy">Salin laporan</button>
+</article>
+</section>
 <section class="dash-command" aria-labelledby="dash-command-title">
 <div class="dash-command-copy">
 <span class="kicker" data-i18n="dash-local-kicker">BYTE / WORKSPACE LOKAL</span>
@@ -265,6 +285,7 @@ function renderSession(d){
   var rev=document.getElementById('dashRevoke');
   if(rev)rev.href=(u.provider==='google')?'https://myaccount.google.com/permissions':'https://github.com/settings/applications';
   startCountdown(u.exp);
+  renderDashboardOps();
 }
 
 // --- live session countdown ----------------------------------------------
@@ -319,6 +340,28 @@ function copyText(txt,btn){
 // This endpoint is deliberately read-only. The dashboard never moves,
 // deletes, renames, or opens files; it only displays metadata returned by the
 // local bridge when the user asks for a scan.
+var DASH_BRIDGE_STATE='unknown',DASH_STORAGE_STATE='unknown',DASH_VOICE_STATE='unknown';
+function cachedWorkspace(){try{return JSON.parse(localStorage.getItem('vs-dashboard-workspace-v1')||'null')}catch(e){return null}}
+function renderDashboardOps(){
+  var notices=document.getElementById('dashNoticeList'),items=[];
+  if(DASH_BRIDGE_STATE==='offline')items.push('Byte Bridge belum terhubung di komputer ini.');
+  else if(DASH_BRIDGE_STATE==='loading'||DASH_BRIDGE_STATE==='unknown')items.push('Status Byte Bridge sedang diperiksa.');
+  if(DASH_STORAGE_STATE==='offline')items.push('Penyimpanan browser dibatasi; rencana lokal mungkin tidak tersimpan.');
+  if(DASH_VOICE_STATE==='offline')items.push('Input suara tidak didukung browser ini; chat teks tetap tersedia.');
+  if(LAST_USER&&LAST_USER.exp&&LAST_USER.exp*1000-Date.now()<86400000)items.push('Sesi akun akan berakhir dalam kurang dari 24 jam.');
+  if(!items.length)items.push('Tidak ada perhatian baru. Byte siap digunakan.');
+  if(notices){notices.textContent='';items.slice(0,4).forEach(function(text){var li=document.createElement('li');li.textContent=text;notices.appendChild(li)})}
+  var cached=cachedWorkspace(),hasPlan=false;try{var planState=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'null');hasPlan=Array.isArray(planState)&&planState.length>0}catch(e){}
+  var task=document.getElementById('dashTaskSummary'),meta=document.getElementById('dashTaskMeta');
+  if(task){task.textContent=hasPlan?'Ringkasan workspace dan rencana Byte siap ditinjau.':(cached?'Ringkasan workspace siap ditinjau.':'Tidak ada tugas aktif.')}
+  if(meta){meta.textContent=cached?'Pemeriksaan terakhir: '+new Date(cached.checkedAt||Date.now()).toLocaleString()+'.':'Rencana dan pemeriksaan tersimpan lokal di browser ini.'}
+  renderDiagnostics();
+}
+function renderDiagnostics(){
+  var out=document.getElementById('dashDiagnosticsPreview');if(!out)return;
+  var cached=cachedWorkspace(),entries=cached&&Array.isArray(cached.entries)?cached.entries.length:0;
+  out.textContent=['origin: '+location.origin,'bridge: '+DASH_BRIDGE_STATE,'storage: '+DASH_STORAGE_STATE,'voice: '+DASH_VOICE_STATE,'secure_context: '+(window.isSecureContext?'yes':'no'),'workspace_cache_items: '+entries,'user_agent: '+(navigator.userAgent||'unknown')].join('\n');
+}
 function renderWorkspaceState(state,kind){
   var dot=document.getElementById('dashWorkspaceDot'),label=document.getElementById('dashWorkspaceStatus');
   if(!dot||!label)return;
@@ -331,8 +374,13 @@ function setReadiness(id,kind,text){
   var dot=card.querySelector('.dash-check-dot'),label=card.querySelector('[data-check-text]');
   if(dot)dot.className='dash-check-dot '+(kind||'');
   if(label)label.textContent=text;
+  if(id==='dashCheckBridge')DASH_BRIDGE_STATE=kind==='is-ready'?'ready':(kind==='is-offline'?'offline':'loading');
+  if(id==='dashCheckStorage')DASH_STORAGE_STATE=kind==='is-ready'?'ready':'offline';
+  if(id==='dashCheckVoice')DASH_VOICE_STATE=kind==='is-ready'?'ready':'offline';
+  renderDashboardOps();
 }
 function refreshDashboardReadiness(){
+  DASH_BRIDGE_STATE='loading';
   setReadiness('dashCheckBridge','is-loading','Menghubungkan…');
   fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('bridge');setReadiness('dashCheckBridge','is-ready','Terhubung · read-only')}).catch(function(){setReadiness('dashCheckBridge','is-offline','Belum terhubung')});
   var storage='Tersedia di browser ini';
@@ -341,6 +389,7 @@ function refreshDashboardReadiness(){
   var speech=window.SpeechRecognition||window.webkitSpeechRecognition;
   setReadiness('dashCheckVoice',speech?'is-ready':'is-offline',speech?'Didukung browser':'Tidak didukung browser');
   setReadiness('dashCheckSafety','is-ready','Aktif di Byte');
+  renderDashboardOps();
 }
 function renderWorkspaceResult(data,cached){
   var result=document.getElementById('dashWorkspaceResult');
@@ -367,10 +416,13 @@ function restoreWorkspaceResult(){
       renderWorkspaceResult(cached,true);
       renderWorkspaceState('Terakhir diperiksa secara lokal','is-cached');
     }
+    var savedPlan=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'null');
+    if(Array.isArray(savedPlan)&&savedPlan.length)renderWorkspacePlan(savedPlan);
   }catch(e){}
 }
 function clearWorkspaceCache(){
   try{localStorage.removeItem('vs-dashboard-workspace-v1')}catch(e){}
+  try{localStorage.removeItem('vs-dashboard-plan-v1')}catch(e){}
   var result=document.getElementById('dashWorkspaceResult'),plan=document.getElementById('dashWorkspacePlanResult'),list=document.getElementById('dashWorkspaceList'),planList=document.getElementById('dashWorkspacePlanList'),count=document.getElementById('dashWorkspaceCount'),root=document.getElementById('dashWorkspaceRoot'),time=document.getElementById('dashWorkspaceTime'),note=document.getElementById('dashWorkspaceNote');
   if(result)result.hidden=true;
   if(plan)plan.hidden=true;
@@ -381,6 +433,7 @@ function clearWorkspaceCache(){
   if(time)time.textContent='—';
   if(note)note.textContent='Ringkasan lokal dihapus dari browser ini.';
   renderWorkspaceState('Belum diperiksa','');
+  renderDashboardOps();
 }
 function extractWorkspaceReply(data){
   if(!data)return '';
@@ -391,7 +444,10 @@ function renderWorkspacePlan(items){
   var box=document.getElementById('dashWorkspacePlanResult'),list=document.getElementById('dashWorkspacePlanList');
   if(!box||!list)return;
   box.hidden=false;list.textContent='';
-  (Array.isArray(items)?items:[items]).filter(Boolean).slice(0,5).forEach(function(item){var li=document.createElement('li');li.textContent=String(item).replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'');list.appendChild(li)});
+  var normalized=(Array.isArray(items)?items:[items]).filter(Boolean).slice(0,5).map(function(item){return String(item).replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'')});
+  normalized.forEach(function(item){var li=document.createElement('li');li.textContent=item;list.appendChild(li)});
+  try{localStorage.setItem('vs-dashboard-plan-v1',JSON.stringify(normalized))}catch(e){}
+  renderDashboardOps();
 }
 function planDashboardWorkspace(btn){
   if(!btn)return;
@@ -492,6 +548,8 @@ function exportData(){
   if(ce)ce.onclick=function(){copyText(val('dashEmail'),ce)};
   if(cl)cl.onclick=function(){copyText(val('dashLoginLabel'),cl)};
   if(cs)cs.onclick=function(){copyText(val('dashSha'),cs)};
+  var cd=document.getElementById('dashCopyDiagnostics');
+  if(cd)cd.onclick=function(){copyText(val('dashDiagnosticsPreview'),cd);notice('Laporan diagnostik disalin.')};
   var f=document.getElementById('dashFile');
   if(f)f.onchange=function(){var file=this.files&&this.files[0];if(file)verifyFile(file)};
 
@@ -539,6 +597,7 @@ var dict = {
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Input suara','dash-ready-safety':'Mode aman',
+    'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-kicker':'DEBUG / LOKAL','dash-ops-diag-title':'Diagnostik','dash-ops-diag-copy':'Salin laporan',
     'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
@@ -561,6 +620,7 @@ var dict = {
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Voice input','dash-ready-safety':'Safe mode',
+    'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-kicker':'DEBUG / LOCAL','dash-ops-diag-title':'Diagnostics','dash-ops-diag-copy':'Copy report',
     'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
