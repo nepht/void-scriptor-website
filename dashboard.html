@@ -25,6 +25,18 @@ main.dash{padding:56px 0 90px}
 .panel{border:1px solid rgba(155,115,230,.22);border-radius:12px;padding:24px;background:linear-gradient(145deg,rgba(20,14,38,.86),rgba(8,7,16,.92));min-height:150px}
 .panel h3{margin:0 0 16px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#c7a6ff}
 .panel.profile{grid-column:1/-1;display:flex;align-items:center;gap:20px;min-height:0}
+.panel.onboard{grid-column:1/-1}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.step{display:flex;align-items:flex-start;gap:12px;border:1px solid rgba(155,115,230,.2);border-radius:10px;padding:14px 16px;background:rgba(90,45,255,.05)}
+.step .box{flex:0 0 22px;width:22px;height:22px;margin-top:1px;border-radius:6px;border:1px solid rgba(var(--purple-rgb),.5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:transparent}
+.step.done .box{border-color:rgba(120,255,190,.6);background:rgba(120,255,190,.12);color:#8effc4}
+.step .txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.step .txt b{font-size:13px;color:#efe6ff;font-weight:700}
+.step .txt small{font-size:11px;color:var(--faint);line-height:1.6}
+.step .txt a{color:#d9c6ff;text-decoration:none;border-bottom:1px solid rgba(var(--purple-rgb),.4)}
+.onboard-note{margin:16px 0 0;color:var(--faint);font-size:11px;line-height:1.7}
+.onboard-note button{background:none;border:0;padding:0;color:#d9c6ff;font:inherit;cursor:pointer;border-bottom:1px solid rgba(var(--purple-rgb),.4)}
+@media(max-width:600px){.steps{grid-template-columns:1fr}}
 .panel.profile img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
 .panel.profile .ini{width:72px;height:72px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-size:26px;font-weight:800}
 .panel.profile .who{min-width:0}
@@ -81,6 +93,17 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p class="lead" data-i18n="dash-lead">Kelola profil, sesi, dan unduhan Anda di satu tempat.</p>
 </section>
 <div class="dash-grid">
+<article class="panel onboard">
+<h3 data-i18n="dash-onboard">Mulai cepat</h3>
+<ol class="steps">
+<li class="step" id="stepDownload"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step1">Unduh installer</b><small data-i18n="dash-step1-note">Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.</small></span></li>
+<li class="step" id="stepVerify"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step2">Verifikasi SHA-256</b><small data-i18n="dash-step2-note">Pilih berkas di panel Produk &amp; tautan; hash dihitung lokal di peramban Anda.</small></span></li>
+<li class="step" id="stepRun"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step3">Jalankan Studio</b><small data-i18n="dash-step3-note">Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.</small></span></li>
+<li class="step" id="stepQuiz"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step4">Coba QOWNER Quiz Maker</b><small data-i18n="dash-step4-note">Buat dan pratinjau kuis di web — tanpa pemasangan.</small></span></li>
+</ol>
+<p class="onboard-note"><span data-i18n="dash-onboard-note">Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.</span> <button type="button" id="dashReset" data-i18n="dash-reset">Atur ulang</button></p>
+</article>
+
 <article class="panel profile">
 <img id="dashAvatar" alt="" hidden>
 <i class="ini" id="dashInitial">V</i>
@@ -107,7 +130,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
 <a href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
-<a href="/quiz"><span data-i18n="dash-open-quiz">Buka QOWNER Quiz Maker</span><small data-i18n="dash-web">Web</small></a>
+<a href="/quiz" id="quizLink"><span data-i18n="dash-open-quiz">Buka QOWNER Quiz Maker</span><small data-i18n="dash-web">Web</small></a>
 </div>
 <div class="hashrow">
 <code id="dashSha">—</code>
@@ -272,7 +295,7 @@ function verifyFile(file){
   file.arrayBuffer().then(function(buf){return wc.subtle.digest('SHA-256',buf)}).then(function(digest){
     var hex=toHex(digest);
     if(!EXPECTED_SHA){msg.className='vmsg';msg.textContent='SHA-256 berkas: '+hex+' (hash acuan tidak tersedia untuk dibandingkan)';return}
-    if(hex===EXPECTED_SHA){msg.className='vmsg ok';msg.textContent='✓ Cocok — berkas utuh dan asli. SHA-256: '+hex}
+    if(hex===EXPECTED_SHA){markStep('stepVerify');msg.className='vmsg ok';msg.textContent='✓ Cocok — berkas utuh dan asli. SHA-256: '+hex}
     else{msg.className='vmsg bad';msg.textContent='✗ TIDAK cocok. Berkas mungkin rusak atau diubah. Diharapkan '+EXPECTED_SHA+', tetapi dihitung '+hex+'. Unduh ulang dari situs ini.'}
   },function(){msg.className='vmsg bad';msg.textContent='Gagal membaca berkas.'});
 }
@@ -281,6 +304,22 @@ function verifyFile(file){
 // payload the browser is holding. Export serialises that object to a file;
 // delete ends the session. Both are honest about what does and does not exist.
 var LAST_USER=null;
+// --- onboarding checklist (client-side only, no server state) -------------
+// Honest by construction: "download" only ticks once the visitor actually
+// clicks the download link, and the progress lives in this browser's
+// localStorage -- there is no account database to sync it to.
+var STEP_IDS=['stepDownload','stepVerify','stepRun','stepQuiz'];
+function getSteps(){try{return JSON.parse(localStorage.getItem('vs-onboarding')||'{}')||{}}catch(e){return {}}}
+function saveSteps(s){try{localStorage.setItem('vs-onboarding',JSON.stringify(s))}catch(e){}}
+function renderSteps(){
+  var s=getSteps();
+  STEP_IDS.forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    if(s[id])el.classList.add('done');else el.classList.remove('done');
+  });
+}
+function markStep(id){var s=getSteps();if(!s[id]){s[id]=true;saveSteps(s);renderSteps()}}
+
 function exportData(){
   var payload={
     note:'This is the full extent of the data voidscriptor.pages.dev holds about you: the contents of your signed session cookie. There is no account database.',
@@ -315,6 +354,15 @@ function exportData(){
   if(del&&confirmBox)del.onclick=function(){confirmBox.hidden=false;if(yes)yes.focus()};
   if(no&&confirmBox)no.onclick=function(){confirmBox.hidden=true};
   if(yes)yes.onclick=function(){signOut(this)};
+
+  // onboarding: tick "downloaded" only when the real download link is clicked
+  var dl=document.querySelector('a[href*="/downloads/"][download]');
+  if(dl)dl.addEventListener('click',function(){markStep('stepDownload')});
+  var ql=document.getElementById('quizLink');
+  if(ql)ql.addEventListener('click',function(){markStep('stepQuiz')});
+  var rs=document.getElementById('dashReset');
+  if(rs)rs.onclick=function(){saveSteps({});renderSteps();notice('Kemajuan diatur ulang.')};
+  renderSteps();
 })();
 
 // Only a failed *fetch* bounces to the sign-in page. A render error must not,
@@ -339,6 +387,7 @@ var dict = {
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
+    'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; hash dihitung lokal di peramban Anda.','dash-step3':'Jalankan Studio','dash-step3-note':'Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.','dash-step4':'Coba QOWNER Quiz Maker','dash-step4-note':'Buat dan pratinjau kuis di web — tanpa pemasangan.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
     'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
     'dash-data-note':'Kami tidak menyimpan basis data akun. Satu-satunya data tentang Anda adalah isi cookie sesi di peramban ini. Ekspor menyalinnya ke berkas; hapus akan mengeluarkan Anda dan mencabut sesi.',
     'dash-delete-ask':'Yakin? Sesi akan dicabut sekarang. Untuk menarik izin sepenuhnya, cabut akses aplikasi di penyedia Anda:',
@@ -358,6 +407,7 @@ var dict = {
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere — the hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
+    'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — the download button is in the Products panel.','dash-step2':'Verify SHA-256','dash-step2-note':'Pick the file in the Products & links panel; the hash is computed locally in your browser.','dash-step3':'Run Studio','dash-step3-note':'Open the installer, finish setup, then sign back in to open your projects.','dash-step4':'Try QOWNER Quiz Maker','dash-step4-note':'Build and preview quizzes on the web — no install needed.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
     'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
     'dash-data-note':'We keep no account database. The only data about you is the contents of the session cookie in this browser. Export copies it to a file; delete signs you out and revokes the session.',
     'dash-delete-ask':'Are you sure? The session will be revoked now. To withdraw consent entirely, remove the app at your provider:',
