@@ -102,6 +102,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </div>
 <div class="dash-command-actions">
 <button class="primary" id="dashWorkspaceScan" type="button" data-i18n="dash-local-scan">Periksa workspace</button>
+<button class="ghost" id="dashWorkspacePlan" type="button" data-i18n="dash-local-plan">Buat rencana aman</button>
 <a class="ghost" href="/?desktop=byte" data-i18n="dash-local-byte">Buka Byte</a>
 <a class="ghost" href="/quiz" data-i18n="dash-local-quiz">Buka QOWNER</a>
 </div>
@@ -113,6 +114,10 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </div>
 <p class="dash-workspace-note" id="dashWorkspaceNote"></p>
 <ul class="dash-workspace-list" id="dashWorkspaceList" aria-label="Contoh item workspace"></ul>
+<div class="dash-workspace-plan" id="dashWorkspacePlanResult" hidden>
+<h3 data-i18n="dash-local-plan-title">Rencana aman Byte</h3>
+<ol id="dashWorkspacePlanList"></ol>
+</div>
 </div>
 </section>
 <div class="dash-grid">
@@ -332,6 +337,33 @@ function restoreWorkspaceResult(){
     }
   }catch(e){}
 }
+function extractWorkspaceReply(data){
+  if(!data)return '';
+  if(data.choices&&data.choices[0]&&data.choices[0].message)return String(data.choices[0].message.content||'').trim();
+  return String(data.reply||data.content||'').trim();
+}
+function renderWorkspacePlan(items){
+  var box=document.getElementById('dashWorkspacePlanResult'),list=document.getElementById('dashWorkspacePlanList');
+  if(!box||!list)return;
+  box.hidden=false;list.textContent='';
+  (Array.isArray(items)?items:[items]).filter(Boolean).slice(0,5).forEach(function(item){var li=document.createElement('li');li.textContent=String(item).replace(/^\s*(?:[-*•]|\d+[.)])\s*/,'');list.appendChild(li)});
+}
+function planDashboardWorkspace(btn){
+  if(!btn)return;
+  btn.disabled=true;btn.setAttribute('aria-busy','true');
+  renderWorkspaceState('Byte menyusun rencana…','is-loading');
+  fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('workspace-'+r.status);return r.json()})
+    .then(function(data){
+      cacheWorkspaceResult(data);renderWorkspaceResult(data);
+      var snapshot=(data.entries||[]).slice(0,80).map(function(item){return (item.type||'file')+' '+(item.path||'')+(item.extension?' '+item.extension:'')}).join('\n');
+      var body=JSON.stringify({model:'free',messages:[{role:'system',content:'Kamu adalah Byte, asisten workspace lokal. Jawab dalam bahasa Indonesia. Buat 3 sampai 5 langkah aman berdasarkan metadata jalur saja. Jangan menyarankan penghapusan, pemindahan, atau perubahan file tanpa persetujuan pengguna.'},{role:'user',content:'Susun rencana prioritas untuk workspace QOWNER berikut. Ini hanya metadata, bukan isi file:\n'+snapshot}],temperature:.3,max_tokens:320});
+      return fetch('http://127.0.0.1:8766/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json'},body:body}).then(function(r){if(!r.ok)throw new Error('planner-'+r.status);return r.json()}).then(function(reply){var text=extractWorkspaceReply(reply);if(!text)throw new Error('empty-plan');return {items:text.split(/\r?\n/).map(function(line){return line.trim()}).filter(Boolean)}}).catch(function(){return {items:['Kelompokkan aset berdasarkan fungsi dan jenis file.','Dokumentasikan struktur workspace agar mudah dipahami.','Tandai duplikat atau file lama untuk ditinjau manual.','Minta persetujuan sebelum melakukan perubahan apa pun.'],fallback:true}});
+    })
+    .then(function(result){renderWorkspacePlan(result.items);renderWorkspaceState(result.fallback?'Rencana lokal siap · tinjau sebelum bertindak':'Rencana Byte siap · tinjau sebelum bertindak',result.fallback?'is-cached':'is-ready')})
+    .catch(function(){renderWorkspaceState('Workspace belum dapat dibaca','is-offline');var note=document.getElementById('dashWorkspaceNote');if(note)note.textContent='Pastikan Byte Bridge sedang aktif, lalu coba lagi. Tidak ada file yang diubah.'})
+    .then(function(){btn.disabled=false;btn.removeAttribute('aria-busy')},function(){btn.disabled=false;btn.removeAttribute('aria-busy')});
+}
 function scanDashboardWorkspace(btn){
   if(!btn)return;
   btn.disabled=true;btn.setAttribute('aria-busy','true');
@@ -435,6 +467,8 @@ function exportData(){
   if(rs)rs.onclick=function(){saveSteps({});renderSteps();notice('Kemajuan diatur ulang.')};
   var ws=document.getElementById('dashWorkspaceScan');
   if(ws)ws.onclick=function(){scanDashboardWorkspace(ws)};
+  var wp=document.getElementById('dashWorkspacePlan');
+  if(wp)wp.onclick=function(){planDashboardWorkspace(wp)};
   restoreWorkspaceResult();
   renderSteps();
 })();
@@ -454,7 +488,7 @@ var dict = {
     'nav-produk':'Produk','nav-download':'Download','nav-quiz':'Quiz QOWNER','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
-    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
+    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
     'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun. Keluar kapan saja untuk mengakhirinya sekarang.',
@@ -475,7 +509,7 @@ var dict = {
     'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Quiz','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
-    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
+    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
     'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database. Sign out any time to end it now.',

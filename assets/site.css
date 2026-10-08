@@ -457,6 +457,12 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .dash-workspace-list li{display:flex;justify-content:space-between;gap:10px;min-width:0;padding:8px 0;border-bottom:1px solid rgba(201,166,255,.1);color:var(--cloud);font-size:11px}
 .dash-workspace-list li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dash-workspace-list li small{flex:none;color:var(--fog);font-family:var(--font-mono);font-size:9px}
+.dash-workspace-plan{margin-top:18px;padding-top:16px;border-top:1px solid rgba(201,166,255,.12)}
+.dash-workspace-plan[hidden]{display:none}
+.dash-workspace-plan h3{margin:0 0 10px;color:#bcefff;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.dash-workspace-plan ol{display:grid;gap:8px;margin:0;padding-left:22px;color:var(--cloud);font-size:12px;line-height:1.6}
+.dash-workspace-plan li{padding-left:4px}
+.dash-command-actions button:disabled{cursor:wait;opacity:.58;transform:none}
 .page-dashboard .dash-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
 .page-dashboard .dash-grid .panel{border-color:rgba(201,166,255,.18);background:linear-gradient(145deg,rgba(18,19,30,.88),rgba(8,9,16,.89));box-shadow:0 14px 40px rgba(0,0,0,.13)}
 .page-dashboard .dash-grid .panel.onboard,.page-dashboard .dash-grid .panel.profile{grid-column:1/-1}
