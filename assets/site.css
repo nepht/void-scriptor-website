@@ -540,3 +540,19 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   .page-dashboard .dash-grid .panel.profile{align-items:flex-start;flex-direction:column}
   .page-dashboard .dash-grid dd{width:100%;margin-left:0}
 }
+
+/* Full-bleed continuity pass: the main page owns one visual field. Nested
+   sections use transparent/matte bands so the wallpaper does not restart at
+   every boundary or compete with the content rail. */
+.page-home main{background-image:linear-gradient(180deg,rgba(5,6,12,.2),rgba(5,6,12,.76) 78%,rgba(5,6,12,.9)),var(--void-wallpaper);background-position:center top;background-size:cover;background-attachment:fixed}
+.page-home .hero,.page-home .products,.page-home .metrics,.page-home .company-wrap{background-image:none;background-attachment:initial}
+.page-home .hero{background-color:transparent}
+.page-home .products{background-color:rgba(5,6,12,.22);border-top:1px solid rgba(201,166,255,.1)}
+.page-home .metrics{background-color:rgba(5,6,12,.34);border-top:1px solid rgba(201,166,255,.1)}
+.page-home .company-wrap{background-color:rgba(5,6,12,.22);border-top:1px solid rgba(201,166,255,.1)}
+.page-home .caro-viewport{background:transparent}
+.page-home .eyebrow{padding:0;border:0;border-radius:0;background:transparent}
+.page-home .eyebrow::before{display:none}
+.page-home .note{padding:0;border:0;background:transparent}
+.page-home .note::before{display:none}
+@media(max-width:760px){.page-home main{background-attachment:scroll}}
