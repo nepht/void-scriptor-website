@@ -427,7 +427,9 @@ function setReadiness(id,kind,text){
 function refreshDashboardReadiness(){
   DASH_BRIDGE_STATE='loading';
   setReadiness('dashCheckBridge','is-loading','Menghubungkan…');
-  fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('bridge');setReadiness('dashCheckBridge','is-ready','Terhubung · read-only')}).catch(function(){setReadiness('dashCheckBridge','is-offline','Belum terhubung')});
+  var bridgeController=window.AbortController?new AbortController():null,bridgeTimer=bridgeController?window.setTimeout(function(){bridgeController.abort()},4000):null,bridgeOptions={headers:{accept:'application/json'},cache:'no-store'};
+  if(bridgeController)bridgeOptions.signal=bridgeController.signal;
+  fetch('http://127.0.0.1:8766/workspace/index',bridgeOptions).then(function(r){if(!r.ok)throw new Error('bridge');setReadiness('dashCheckBridge','is-ready','Terhubung · read-only')}).catch(function(){setReadiness('dashCheckBridge','is-offline','Belum terhubung')}).then(function(){if(bridgeTimer)window.clearTimeout(bridgeTimer)});
   var storage='Tersedia di browser ini';
   try{localStorage.getItem('vs-dashboard-workspace-v1')}catch(e){storage='Dibatasi browser'}
   setReadiness('dashCheckStorage',storage==='Tersedia di browser ini'?'is-ready':'is-offline',storage);
