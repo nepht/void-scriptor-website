@@ -17,6 +17,7 @@ const INTERNAL = [
   /^\/_prod_artifact_.*\.zip$/,
   /^\/\.wrangler\//,
   /^\/\.git\//,
+  /^\/tools\//,
 ];
 const APP_PREVIEW_PREFIX = '/preview';
 
@@ -38,7 +39,7 @@ const CSP_SITE = [
   "img-src 'self' data: blob: https://avatars.githubusercontent.com https://lh3.googleusercontent.com",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
-  "connect-src 'self'",
+  "connect-src 'self' http://127.0.0.1:8766 http://localhost:8766",
   "font-src 'self' data:",
   "base-uri 'self'",
   "form-action 'self' https://github.com",
@@ -253,6 +254,50 @@ function json(status, obj) {
   return new Response(JSON.stringify(obj), {
     status,
     headers: { 'content-type': 'application/json; charset=utf-8', ...BASE_HEADERS },
+  });
+}
+
+// OpenAI-compatible server-side adapter. Production can use this route by
+// supplying BYTE_API_BASE_URL, BYTE_API_KEY, and optionally BYTE_MODEL as
+// Worker secrets/vars. The browser never receives the upstream key.
+async function handleByte(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  const base = String(env.BYTE_API_BASE_URL || '').replace(/\/+$/, '');
+  const key = env.BYTE_API_KEY;
+  if (!base || !key) {
+    return json(503, { ok: false, error: 'byte_provider_not_configured' });
+  }
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  if (!payload || !Array.isArray(payload.messages) || payload.messages.length === 0) {
+    return json(400, { ok: false, error: 'messages_required' });
+  }
+  const body = {
+    model: String(payload.model || env.BYTE_MODEL || 'free'),
+    messages: payload.messages,
+    temperature: Number.isFinite(payload.temperature) ? payload.temperature : 0.7,
+    max_tokens: Math.min(1000, Math.max(32, Number(payload.max_tokens) || 400)),
+  };
+  let upstream;
+  try {
+    upstream = await fetch(`${base}/chat/completions`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    return json(502, { ok: false, error: 'byte_provider_unreachable' });
+  }
+  const text = await upstream.text();
+  return new Response(text, {
+    status: upstream.status,
+    headers: { ...BASE_HEADERS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 }
 
@@ -541,6 +586,9 @@ export default {
     }
     if (url.pathname === APP_PREVIEW_PREFIX || url.pathname.startsWith(APP_PREVIEW_PREFIX + '/')) {
       return handleAppPreview(request, url, env);
+    }
+    if (url.pathname === '/api/byte') {
+      return handleByte(request, env);
     }
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
