@@ -155,6 +155,16 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </div>
 </div>
 </section>
+<section class="dash-settings-panel" aria-labelledby="dash-settings-title">
+<div class="dash-settings-head"><div><span class="kicker" data-i18n="dash-settings-kicker">BYTE / PREFERENSI</span><h2 id="dash-settings-title" data-i18n="dash-settings-title">Karakter dan perilaku Byte</h2></div><a class="ghost" href="/?desktop=byte" data-i18n="dash-settings-open">Buka pengaturan Byte</a></div>
+<div class="dash-settings-grid">
+<label><span data-i18n="dash-settings-persona">Karakter</span><select id="dashPersona"><option value="balanced" data-i18n="dash-persona-balanced">Tenang &amp; formal</option><option value="friend" data-i18n="dash-persona-friend">Teman dekat</option><option value="guardian" data-i18n="dash-persona-guardian">Protektif</option></select></label>
+<label><span data-i18n="dash-settings-model">Model</span><select id="dashModel"><option value="free">Hermes · free</option><option value="My_Tier">Hermes · My_Tier</option></select></label>
+<label class="dash-settings-check"><input id="dashSafe" type="checkbox" checked><span data-i18n="dash-settings-safe">Mode aman</span></label>
+</div>
+<div class="dash-settings-actions"><button class="primary" id="dashSettingsSave" type="button" data-i18n="dash-settings-save">Simpan preferensi</button><button class="ghost" id="dashSettingsExport" type="button" data-i18n="dash-settings-export">Ekspor konfigurasi</button><label class="ghost dash-import"><input type="file" id="dashSettingsImport" accept="application/json,.json"><span data-i18n="dash-settings-import">Impor konfigurasi</span></label></div>
+<p class="dash-settings-note" id="dashSettingsNote" data-i18n="dash-settings-note">Preferensi disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.</p>
+</section>
 <div class="dash-grid">
 <article class="panel onboard">
 <h3 data-i18n="dash-onboard">Mulai cepat</h3>
@@ -361,6 +371,28 @@ function renderDiagnostics(){
   var out=document.getElementById('dashDiagnosticsPreview');if(!out)return;
   var cached=cachedWorkspace(),entries=cached&&Array.isArray(cached.entries)?cached.entries.length:0;
   out.textContent=['origin: '+location.origin,'bridge: '+DASH_BRIDGE_STATE,'storage: '+DASH_STORAGE_STATE,'voice: '+DASH_VOICE_STATE,'secure_context: '+(window.isSecureContext?'yes':'no'),'workspace_cache_items: '+entries,'user_agent: '+(navigator.userAgent||'unknown')].join('\n');
+}
+var BYTE_SETTINGS_KEY='byte-settings-v1';
+function normalizeByteSettings(value){
+  var source=value||{},persona=['balanced','friend','guardian'].indexOf(source.persona)>=0?source.persona:'balanced',model=['free','My_Tier'].indexOf(source.model)>=0?source.model:'free';
+  return {persona:persona,model:model,safe:source.safe!==false};
+}
+function readByteSettings(){try{return normalizeByteSettings(JSON.parse(localStorage.getItem(BYTE_SETTINGS_KEY)||'{}'))}catch(e){return normalizeByteSettings({})}}
+function applyDashSettings(value){
+  var settings=normalizeByteSettings(value),p=document.getElementById('dashPersona'),m=document.getElementById('dashModel'),s=document.getElementById('dashSafe');
+  if(p)p.value=settings.persona;if(m)m.value=settings.model;if(s)s.checked=settings.safe;
+}
+function collectDashSettings(){return normalizeByteSettings({persona:(document.getElementById('dashPersona')||{}).value,model:(document.getElementById('dashModel')||{}).value,safe:(document.getElementById('dashSafe')||{}).checked})}
+function saveDashSettings(showNotice){
+  var settings=collectDashSettings(),note=document.getElementById('dashSettingsNote');
+  try{localStorage.setItem(BYTE_SETTINGS_KEY,JSON.stringify(settings));if(note)note.textContent='Preferensi tersimpan lokal. Byte akan membacanya saat dibuka berikutnya.';if(showNotice)notice('Preferensi Byte disimpan.')}catch(e){if(note)note.textContent='Browser ini tidak mengizinkan penyimpanan preferensi lokal.'}
+}
+function exportDashSettings(){
+  try{var blob=new Blob([JSON.stringify({format:'voidscriptor-byte-settings',version:1,exported_at:new Date().toISOString(),settings:collectDashSettings()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voidscriptor-byte-settings.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);notice('Konfigurasi Byte diekspor.')}catch(e){notice('Konfigurasi tidak dapat diekspor.')}
+}
+function importDashSettings(file){
+  if(!file)return;
+  file.text().then(function(text){var payload=JSON.parse(text),settings=normalizeByteSettings(payload.settings||payload);localStorage.setItem(BYTE_SETTINGS_KEY,JSON.stringify(settings));applyDashSettings(settings);var note=document.getElementById('dashSettingsNote');if(note)note.textContent='Konfigurasi diimpor dan disimpan lokal. Byte akan membacanya saat dibuka berikutnya.';notice('Konfigurasi Byte diimpor.')}).catch(function(){notice('Konfigurasi tidak valid atau gagal dibaca.')});
 }
 function renderWorkspaceState(state,kind){
   var dot=document.getElementById('dashWorkspaceDot'),label=document.getElementById('dashWorkspaceStatus');
@@ -576,6 +608,13 @@ function exportData(){
   if(wc)wc.onclick=function(){clearWorkspaceCache()};
   var rr=document.getElementById('dashReadinessRefresh');
   if(rr)rr.onclick=function(){refreshDashboardReadiness()};
+  applyDashSettings(readByteSettings());
+  var saveSettingsButton=document.getElementById('dashSettingsSave');
+  if(saveSettingsButton)saveSettingsButton.onclick=function(){saveDashSettings(true)};
+  var exportSettingsButton=document.getElementById('dashSettingsExport');
+  if(exportSettingsButton)exportSettingsButton.onclick=function(){exportDashSettings()};
+  var importSettingsInput=document.getElementById('dashSettingsImport');
+  if(importSettingsInput)importSettingsInput.onchange=function(){importDashSettings(this.files&&this.files[0]);this.value=''};
   restoreWorkspaceResult();
   refreshDashboardReadiness();
   renderSteps();
@@ -598,6 +637,7 @@ var dict = {
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Input suara','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-kicker':'DEBUG / LOKAL','dash-ops-diag-title':'Diagnostik','dash-ops-diag-copy':'Salin laporan',
+    'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-model':'Model','dash-settings-safe':'Mode aman','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Preferensi disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
     'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
@@ -621,6 +661,7 @@ var dict = {
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Voice input','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-kicker':'DEBUG / LOCAL','dash-ops-diag-title':'Diagnostics','dash-ops-diag-copy':'Copy report',
+    'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-model':'Model','dash-settings-safe':'Safe mode','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Preferences are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
     'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
