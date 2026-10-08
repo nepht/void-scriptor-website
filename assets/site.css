@@ -355,6 +355,11 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-launcher-copy b{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:#a8f2ff}
 .byte-launcher-copy small{font-size:12px;color:var(--ash)}
 .byte-pulse{width:8px;height:8px;flex:none;border-radius:50%;background:#63e6ff;box-shadow:0 0 0 5px rgba(99,230,255,.11),0 0 14px rgba(99,230,255,.8);animation:bytePulse 2.4s ease-in-out infinite}
+.byte-assistant.is-thinking .byte-launcher-orb,.byte-assistant.is-listening .byte-launcher-orb,.byte-assistant.is-speaking .byte-launcher-orb{border-color:#a8f2ff;box-shadow:0 0 0 5px rgba(0,179,221,.08),0 0 26px rgba(0,179,221,.35)}
+.byte-assistant.is-thinking .byte-panel-id>img{animation:byteThink 1.2s ease-in-out infinite}
+.byte-assistant.is-listening .byte-panel-id>img{animation:byteListen .8s ease-in-out infinite}
+.byte-assistant.is-speaking .byte-panel-id>img{animation:byteSpeak .48s ease-in-out infinite alternate}
+.byte-assistant.is-offline .byte-pulse{background:#ffad7d;box-shadow:0 0 0 5px rgba(255,173,125,.1),0 0 14px rgba(255,173,125,.7)}
 .byte-panel{pointer-events:auto;width:100%;height:min(540px,calc(100dvh - 112px));min-height:330px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(201,166,255,.34);border-radius:var(--radius-feature);background:linear-gradient(145deg,rgba(14,15,23,.98),rgba(24,18,45,.97));box-shadow:0 24px 70px rgba(0,0,0,.56),0 0 40px rgba(124,92,255,.12);backdrop-filter:blur(18px)}
 .byte-panel[hidden]{display:none}
 .byte-panel-head{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(124,92,255,.18),transparent)}
@@ -395,6 +400,9 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 @keyframes byteDockFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
 @keyframes bytePulse{0%,100%{opacity:.7;transform:scale(.88)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes byteTyping{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes byteThink{0%,100%{transform:rotate(-3deg) translateY(1px)}50%{transform:rotate(3deg) translateY(-3px)}}
+@keyframes byteListen{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
+@keyframes byteSpeak{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media(max-width:760px){
   .byte-assistant{right:12px;bottom:12px;width:calc(100vw - 24px)}
   .byte-launcher{min-height:62px;padding-right:14px}
