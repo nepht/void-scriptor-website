@@ -195,7 +195,13 @@ p,li{color:var(--ash)}
 .page-changelog .status-top code{color:var(--faint);font-size:10px}
 .page-changelog .status-item h2,.page-changelog .status-roadmap h2,.page-changelog .status-proof h2{margin:0 0 10px;font-size:clamp(24px,3vw,36px);line-height:1.05}
 .page-changelog .status-item p,.page-changelog .status-roadmap p,.page-changelog .status-proof p{color:var(--ash);font-size:14px;line-height:1.75}
+.page-changelog .status-specs{display:grid;gap:0;margin:22px 0 4px;border-top:1px solid rgba(217,207,255,.12)}
+.page-changelog .status-specs div{display:flex;justify-content:space-between;gap:18px;padding:10px 0;border-bottom:1px solid rgba(217,207,255,.12)}
+.page-changelog .status-specs dt{color:var(--faint);font-family:var(--font-mono);font-size:10px;text-transform:uppercase}
+.page-changelog .status-specs dd{margin:0;color:var(--cloud);font-size:12px;text-align:right}
 .page-changelog .status-item a,.page-changelog .status-actions a{display:inline-flex;min-height:44px;align-items:center;color:var(--primary-pale);font-size:12px}
+.page-changelog .status-actions .status-primary{padding:0 14px;border:1px solid rgba(217,207,255,.45);border-radius:var(--radius-control);background:rgba(124,92,255,.15)}
+.page-changelog .status-actions .status-primary:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.25)}
 .page-changelog .status-roadmap,.page-changelog .status-proof{padding:36px 0;border-top:1px solid rgba(217,207,255,.13)}
 .page-changelog .roadmap-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
 .page-changelog .roadmap-list span{display:flex;justify-content:space-between;gap:14px;padding:14px;border:1px solid rgba(217,207,255,.14);border-radius:var(--radius-control);color:var(--cloud);font-size:13px}
