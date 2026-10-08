@@ -111,6 +111,18 @@ p,li{color:var(--ash)}
 .page-home .caro-dot.on{background:transparent;transform:none;box-shadow:none}
 .page-home .caro-dot.on::before{background:var(--primary-pale);transform:scale(1.25);box-shadow:0 0 14px rgba(124,92,255,.66)}
 .page-home .products{padding:112px 0 42px}
+.page-home .release-strip{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.9fr) auto;align-items:end;gap:28px;padding:34px 0 8px;border-bottom:1px solid rgba(217,207,255,.12)}
+.page-home .release-copy h2{margin:9px 0 8px;font-size:clamp(25px,3vw,42px);line-height:1.05}
+.page-home .release-copy p{max-width:58ch;margin:0;color:var(--ash);font-size:13px;line-height:1.65}
+.page-home .release-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.page-home .release-facts span{display:grid;gap:5px;min-width:0;padding:12px;border:1px solid rgba(217,207,255,.14);border-radius:var(--radius-control);background:rgba(9,10,11,.34)}
+.page-home .release-facts b{color:var(--faint);font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.page-home .release-facts strong,.page-home .release-facts code{overflow-wrap:anywhere;color:var(--cloud);font-size:11px;font-weight:600}
+.page-home .release-facts code{font-family:var(--font-mono);font-size:10px}
+.page-home .release-link{min-height:44px;display:inline-flex;align-items:center;color:var(--primary-pale);font-size:12px;white-space:nowrap}
+.page-home .release-link:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:1020px){.page-home .release-strip{grid-template-columns:1fr;align-items:start}.page-home .release-link{justify-self:start}}
+@media(max-width:600px){.page-home .release-strip{gap:18px;padding-top:26px}.page-home .release-facts{grid-template-columns:1fr}.page-home .release-link{width:100%;justify-content:flex-start}}
 .page-home .heading{align-items:flex-end;margin-bottom:42px}
 .page-home .heading h2,.page-home .company h2{font-size:clamp(36px,4vw,58px);line-height:1}
 .page-home .cards{grid-template-columns:1.35fr .85fr;grid-template-areas:'studio byte' 'studio quiz';gap:18px}
