@@ -79,6 +79,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 .public-preview{padding-top:48px}.preview-intro{max-width:760px;color:var(--muted);font-size:14px;line-height:1.7;margin:0}.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.preview-card,.leaderboard{border:1px solid rgba(155,115,230,.25);border-radius:12px;background:linear-gradient(145deg,rgba(20,14,38,.86),rgba(8,7,16,.92))}.preview-card{padding:22px;min-height:230px;display:flex;flex-direction:column;align-items:flex-start}.preview-label{color:var(--purple-soft);font:800 10px var(--font-mono);letter-spacing:.14em}.preview-card h3{font-size:21px;line-height:1.2;margin:16px 0 8px}.preview-card p{color:var(--muted);font-size:13px;line-height:1.65;margin:0}.preview-answer{margin-top:auto;padding-top:18px;color:var(--cyan);font:700 12px var(--font-mono)}.preview-link{display:inline-flex;margin-top:auto;padding-top:18px;color:var(--purple-bright);font-size:12px;font-weight:700}.preview-link:hover{color:#fff}.leaderboard{margin-top:20px;padding:24px}.leaderboard-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.leaderboard-head h2{margin-top:8px}.leaderboard-head p{color:var(--muted);font-size:13px;line-height:1.6;margin:0;max-width:700px}.leaderboard-status{color:var(--faint);font:11px var(--font-mono);white-space:nowrap}.leaderboard-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}.leader-column{border-top:1px solid rgba(155,115,230,.18);padding-top:16px}.leader-column h3{font-size:18px;margin:0 0 12px}.leader-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}.leader-entry,.leader-empty{border:1px solid rgba(155,115,230,.16);border-radius:8px;padding:12px 14px;background:rgba(255,255,255,.025)}.leader-entry{display:flex;justify-content:space-between;gap:14px;align-items:center}.leader-name{font-weight:700;font-size:13px}.leader-meta{color:var(--muted);font-size:11px;line-height:1.5}.leader-score{color:var(--cyan);font:700 11px var(--font-mono);white-space:nowrap}.leader-empty{color:var(--faint);font-size:12px;line-height:1.6}
 @media(max-width:900px){.preview-grid,.leaderboard-columns{grid-template-columns:1fr}.leaderboard-head{display:block}.leaderboard-status{display:block;margin-top:12px;white-space:normal}}
 @media(max-width:600px){.public-preview{padding-top:32px}.preview-card{min-height:0}.leaderboard{padding:18px}}
+ .origin-note{color:var(--faint);font-size:11px;line-height:1.5;margin:-6px 0 0;font-family:var(--font-mono)}.leaderboard-policy{color:var(--faint)!important;font-size:11px!important;margin-top:8px!important}.leaderboard-updated{display:block;color:var(--faint);font:10px var(--font-mono);margin-top:8px;white-space:nowrap}
 </style>
 </head>
 <body class="page-quiz">
@@ -93,6 +94,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p class="quote-en">“Every question has an answer. The real challenge is whether you are worthy enough to find it.”</p>
 <div class="actions"><a class="primary" href="https://www.threads.com/@d.m.d_quiz" target="_blank" rel="noopener" data-i18n="cta-quiz-account">🎲 Akun kuis QOWNER ↗</a><a class="secondary" href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener" data-i18n="cta-creator-account">Kreator di Threads ↗</a></div>
 <p class="lead" style="font-size:13px;margin-top:18px" data-i18n="mobile-note">QOWNER sedang disiapkan sebagai aplikasi iOS dan Android oleh Void Scriptor. Halaman ini adalah arsip kanon dan dokumentasi, bukan aplikasi web.</p>
+<p class="origin-note" data-i18n="origin-note">Produk Void Scriptor · dikurasi Choirudin · kanal kuis: @d.m.d_quiz.</p>
 <div class="actions" aria-label="QOWNER mobile app"><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-ios">iOS · Belum tersedia</span><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-android">Android · Belum tersedia</span></div>
 <svg class="dice" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#a347ff" stroke-width="2"><rect x="18" y="18" width="64" height="64" rx="12" transform="rotate(8 50 50)" fill="rgba(90,45,255,.08)"/><circle cx="38" cy="40" r="5" fill="#42e8ff" stroke="none"/><circle cx="62" cy="40" r="5" fill="#a347ff" stroke="none"/><circle cx="50" cy="52" r="5" fill="#d8caff" stroke="none"/><circle cx="38" cy="64" r="5" fill="#a347ff" stroke="none"/><circle cx="62" cy="64" r="5" fill="#42e8ff" stroke="none"/></g></svg>
 </div></section>
@@ -107,7 +109,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <article class="preview-card"><span class="preview-label" data-i18n="preview-timeline-label">KRONOLOGI</span><h3 data-i18n="preview-timeline-title">Dari kuis komentar ke arsip kanon.</h3><p data-i18n="preview-timeline-copy">Perjalanan QOWNER dicatat dari trial pertama pada April 2026 hingga konsep Hard Quiz dan status CLEAR.</p><a class="preview-link" href="#lock" data-i18n="preview-timeline-link">Masuk untuk membuka kronologi lengkap →</a></article>
 </div>
 <div class="leaderboard" id="leaderboard" aria-labelledby="leaderboard-title">
-<div class="leaderboard-head"><div><span class="kicker" data-i18n="leader-kicker">PAPAN PERINGKAT</span><h2 id="leaderboard-title" data-i18n="leader-title">Peserta aktif &amp; pemenang.</h2><p data-i18n="leader-intro">Hanya nama tampilan atau pseudonim publik yang dipakai. Email dan identitas login tidak pernah ditampilkan.</p></div><span class="leaderboard-status" id="leaderboardStatus" data-i18n="leader-status">Memuat data publik…</span></div>
+<div class="leaderboard-head"><div><span class="kicker" data-i18n="leader-kicker">PAPAN PERINGKAT</span><h2 id="leaderboard-title" data-i18n="leader-title">Peserta aktif &amp; pemenang.</h2><p data-i18n="leader-intro">Hanya nama tampilan atau pseudonim publik yang dipakai. Email dan identitas login tidak pernah ditampilkan.</p><p class="leaderboard-policy" data-i18n="leader-policy">Papan ini diperbarui manual setelah hasil diverifikasi. Peserta masuk hanya dengan nama publik atau pseudonim yang mereka pilih.</p></div><div><span class="leaderboard-status" id="leaderboardStatus" data-i18n="leader-status">Memuat data publik…</span><span class="leaderboard-updated" id="leaderboardUpdated"></span></div></div>
 <div class="leaderboard-columns"><section class="leader-column" aria-labelledby="active-title"><h3 id="active-title" data-i18n="leader-active">Peserta aktif</h3><ol class="leader-list" id="activeLeaderboard"></ol></section><section class="leader-column" aria-labelledby="winners-title"><h3 id="winners-title" data-i18n="leader-winners">Pemenang terverifikasi</h3><ol class="leader-list" id="winnersLeaderboard"></ol></section></div>
 </div>
 </section>
@@ -293,6 +295,12 @@ en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','n
 'lock-switch':"Don't have an account? Sign up",'lock-switch-to-masuk':'Already have an account? Sign in',
 'lock-note':'Archive access uses a secure GitHub or Google sign-in session.','lock-github':'Continue with GitHub','lock-google':'Continue with Google','lock-auth-status':'Checking authentication…','lock-auth-status-ready':'Sign in to open the archive.','lock-auth-status-off':'Sign-in is not configured.','lock-auth-status-error':'Authentication service is unreachable.',
 'foot-copy':'© 2026 Void Scriptor · QOWNER archive.','mobile-note':'QOWNER is being prepared as an iOS and Android app by Void Scriptor. This page is the canon archive and documentation, not the web app.','cta-ios':'iOS · Not available yet','cta-android':'Android · Not available yet'}};
+dict.id['origin-note']='Produk Void Scriptor · dikurasi Choirudin · kanal kuis: @d.m.d_quiz.';
+dict.en['origin-note']='Void Scriptor product · curated by Choirudin · quiz channel: @d.m.d_quiz.';
+dict.id['leader-policy']='Papan ini diperbarui manual setelah hasil diverifikasi. Peserta masuk hanya dengan nama publik atau pseudonim yang mereka pilih.';
+dict.en['leader-policy']='This board is updated manually after results are verified. Players appear only under a public name or pseudonym they choose.';
+dict.id['hoc-p']='Status CLEAR adalah aset publik yang dapat diverifikasi siapa saja. Peserta yang memilih tampil publik akan dirangkum di papan peringkat di atas; arsip detail tetap membutuhkan login.';
+dict.en['hoc-p']='CLEAR status is a public asset anyone can verify. Players who opt into public display are summarized on the leaderboard above; detailed archive access still requires sign-in.';
 var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
 if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
@@ -345,18 +353,18 @@ window.__quizAuthSync=sync;
 })();
 /* ---- Public QOWNER preview + leaderboard ------------------------------- */
 (function(){
-var active=document.getElementById('activeLeaderboard'),winners=document.getElementById('winnersLeaderboard'),status=document.getElementById('leaderboardStatus'),data=null;
+var active=document.getElementById('activeLeaderboard'),winners=document.getElementById('winnersLeaderboard'),status=document.getElementById('leaderboardStatus'),updated=document.getElementById('leaderboardUpdated'),data=null;
 var copy={id:{empty:'Belum ada data publik yang diterbitkan.',error:'Leaderboard belum dapat dimuat. Coba lagi nanti.',ready:'Data publik diperbarui.'},en:{empty:'No public entries have been published yet.',error:'The leaderboard could not be loaded. Try again later.',ready:'Public data updated.'}};
 function lang(){return document.documentElement.lang==='en'?'en':'id'}
 function clear(el){while(el&&el.firstChild)el.removeChild(el.firstChild)}
 function renderList(el,rows){
-  clear(el);rows=Array.isArray(rows)?rows.slice(0,20):[];
+  clear(el);rows=Array.isArray(rows)?rows.filter(function(row){return row&&typeof row==='object'&&(row.displayName||row.name)}).slice(0,20):[];
   if(!rows.length){var empty=document.createElement('li');empty.className='leader-empty';empty.textContent=copy[lang()].empty;el.appendChild(empty);return}
   rows.forEach(function(row,index){
     if(!row||typeof row!=='object')return;
     var li=document.createElement('li');li.className='leader-entry';
     var left=document.createElement('div'),name=document.createElement('div'),meta=document.createElement('div'),score=document.createElement('div');
-    name.className='leader-name';name.textContent=String(row.displayName||row.name||('Player '+(index+1))).slice(0,80);
+    name.className='leader-name';name.textContent=String(row.displayName||row.name).slice(0,80);
     meta.className='leader-meta';var bits=[];
     if(row.tier!==undefined)bits.push('Tier '+String(row.tier).slice(0,24));
     if(row.wins!==undefined)bits.push(String(row.wins)+' '+(lang()==='en'?'wins':'menang'));
@@ -366,7 +374,7 @@ function renderList(el,rows){
     left.appendChild(name);left.appendChild(meta);li.appendChild(left);li.appendChild(score);el.appendChild(li);
   });
 }
-function render(){if(!active||!winners)return;renderList(active,data&&data.active);renderList(winners,data&&data.winners);if(status)status.textContent=(data&&((data.active||[]).length||(data.winners||[]).length))?copy[lang()].ready:copy[lang()].empty}
+function render(){if(!active||!winners)return;renderList(active,data&&data.active);renderList(winners,data&&data.winners);if(status)status.textContent=(data&&((data.active||[]).length||(data.winners||[]).length))?copy[lang()].ready:copy[lang()].empty;if(updated){if(data&&data.updatedAt){var d=new Date(String(data.updatedAt)+'T00:00:00');updated.textContent=(lang()==='en'?'Last updated: ':'Data terakhir: ')+(isNaN(d.getTime())?String(data.updatedAt):d.toLocaleDateString(lang()==='en'?'en-US':'id-ID',{dateStyle:'long'}))}else updated.textContent=''}}
 window.__qownerLeaderboardRender=function(){render()};
 fetch('/assets/qowner-leaderboard.json',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error('leaderboard');return r.json()}).then(function(d){data=d||{};render()}).catch(function(){data=null;clear(active);clear(winners);[active,winners].forEach(function(el){var empty=document.createElement('li');empty.className='leader-empty';empty.textContent=copy[lang()].error;el.appendChild(empty)});if(status)status.textContent=copy[lang()].error});
 })();
