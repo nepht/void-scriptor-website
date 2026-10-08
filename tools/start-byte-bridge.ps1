@@ -6,14 +6,41 @@ $siteRoot = Split-Path -Parent $PSScriptRoot
 $bridgeScript = Join-Path $siteRoot 'tools\byte-bridge.mjs'
 $node = (Get-Command node -ErrorAction Stop).Source
 
-$listener = Get-NetTCPConnection -State Listen -LocalPort 8766 -ErrorAction SilentlyContinue
-if (-not $listener) {
+function Test-ByteBridgeHealth {
+  try {
+    $response = Invoke-WebRequest -Uri 'http://127.0.0.1:8766/workspace/index' `
+      -Headers @{ Origin = 'https://voidscriptor.com' } `
+      -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+    return $response.StatusCode -eq 200 -and
+      $response.Headers['Access-Control-Allow-Origin'] -eq 'https://voidscriptor.com'
+  } catch {
+    return $false
+  }
+}
+
+function Get-ByteBridgeProcesses {
+  @(Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" -ErrorAction SilentlyContinue |
+    Where-Object { $_.CommandLine -and $_.CommandLine -match [regex]::Escape($bridgeScript) })
+}
+
+if (-not (Test-ByteBridgeHealth)) {
+  # A listener on port 8766 is not enough: an unrelated local HTTP server can
+  # occupy IPv6 while a stale bridge still owns IPv4. Only stop an exact
+  # byte-bridge.mjs process; never touch other Node or Python processes.
+  foreach ($process in Get-ByteBridgeProcesses) {
+    Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue
+  }
   $logDir = Join-Path ([IO.Path]::GetTempPath()) 'voidscriptor-byte-bridge'
   New-Item -ItemType Directory -Path $logDir -Force | Out-Null
   Start-Process -FilePath $node -ArgumentList @($bridgeScript) -WorkingDirectory $siteRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $logDir 'stdout.log') -RedirectStandardError (Join-Path $logDir 'stderr.log') | Out-Null
-  Write-Host 'Byte bridge started on http://127.0.0.1:8766'
+  Start-Sleep -Milliseconds 600
+  if (Test-ByteBridgeHealth) {
+    Write-Host 'Byte bridge started and passed the production-origin health check on http://127.0.0.1:8766'
+  } else {
+    Write-Warning "Byte bridge was started but did not pass its health check. See $(Join-Path $logDir 'stderr.log')"
+  }
 } else {
-  Write-Host 'Byte bridge is already running on http://127.0.0.1:8766'
+  Write-Host 'Byte bridge is already healthy on http://127.0.0.1:8766'
 }
 
 if ($InstallStartup) {
