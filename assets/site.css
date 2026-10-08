@@ -844,3 +844,30 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   }
   .page-home .caro-slide{padding-bottom:clamp(112px,24vw,144px)}
 }
+
+/* Seamless top bars and slide edges: the artwork should read as one field.
+   Controls and content cards keep their own boundaries; section separators do
+   not add a second horizontal frame across the full-bleed composition. */
+.page-home header,.page-quiz header{
+  position:absolute!important;
+  inset:0 0 auto;
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+.page-home header nav a,.page-quiz header nav a,
+.page-home header .plain,.page-quiz header .plain,
+.page-home header .outline,.page-quiz header .outline{
+  text-shadow:0 1px 12px rgba(0,0,0,.82);
+}
+.page-home .hero,.page-quiz .hero{
+  border-top:0!important;
+  border-bottom:0!important;
+}
+.page-home .products,.page-home .metrics,.page-home .company-wrap,
+.page-quiz section{
+  border-top:0!important;
+}
+.page-home .caro-art::after{box-shadow:none!important}
