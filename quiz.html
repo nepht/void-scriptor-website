@@ -325,7 +325,7 @@ sync();
 window.__quizAuthSync=sync;
 })();
 var quizNav=document.querySelector('header nav'),quizMenu=document.getElementById('quizMenu');
-if(quizNav&&quizMenu){quizNav.id='quizNav';quizMenu.onclick=function(){var open=quizNav.classList.toggle('open');quizMenu.setAttribute('aria-expanded',open?'true':'false')};quizNav.querySelectorAll('a').forEach(function(link){link.onclick=function(){quizNav.classList.remove('open');quizMenu.setAttribute('aria-expanded','false')}})}
+if(quizNav&&quizMenu){quizNav.id='quizNav';function closeQuizNav(){quizNav.classList.remove('open');quizMenu.setAttribute('aria-expanded','false')}quizMenu.onclick=function(){var open=quizNav.classList.toggle('open');quizMenu.setAttribute('aria-expanded',open?'true':'false')};quizNav.querySelectorAll('a').forEach(function(link){link.onclick=closeQuizNav});document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeQuizNav()})}
 setLang(lang);
 })();</script>
 </body>

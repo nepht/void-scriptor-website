@@ -258,7 +258,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 var backdrop=null,toast=document.getElementById('toast'),nav=document.getElementById('nav');
 function notice(t){toast.textContent=t;toast.style.display='block';setTimeout(function(){toast.style.display='none'},3000)}
 document.getElementById('hamb').onclick=function(){var o=nav.classList.toggle('open');this.setAttribute('aria-expanded',o?'true':'false')};
-document.querySelectorAll('nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open')}});
+document.querySelectorAll('nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open');document.getElementById('hamb').setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){nav.classList.remove('open');document.getElementById('hamb').setAttribute('aria-expanded','false')}});
 
 // --- header profile chip (mirrors the home page) --------------------------
 function applyUser(u){
