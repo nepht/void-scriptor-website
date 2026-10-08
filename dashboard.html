@@ -93,6 +93,18 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h1><span data-i18n="dash-hi">Halo,</span> <b id="dashHiName">…</b></h1>
 <p class="lead" data-i18n="dash-lead">Kelola profil, sesi, dan unduhan Anda di satu tempat.</p>
 </section>
+<section class="dash-readiness" aria-labelledby="dash-readiness-title">
+<div class="dash-readiness-head">
+<div><span class="kicker" data-i18n="dash-ready-kicker">BYTE / KESIAPAN</span><h2 id="dash-readiness-title" data-i18n="dash-ready-title">Yang siap digunakan sekarang</h2></div>
+<button class="ghost" id="dashReadinessRefresh" type="button" data-i18n="dash-ready-refresh">Periksa lagi</button>
+</div>
+<div class="dash-readiness-grid">
+<div class="dash-check" id="dashCheckBridge"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-bridge">Byte Bridge lokal</b><small data-check-text>Memeriksa…</small></div></div>
+<div class="dash-check" id="dashCheckStorage"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-storage">Penyimpanan browser</b><small data-check-text>Memeriksa…</small></div></div>
+<div class="dash-check" id="dashCheckVoice"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-voice">Input suara</b><small data-check-text>Memeriksa…</small></div></div>
+<div class="dash-check" id="dashCheckSafety"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-safety">Mode aman</b><small data-check-text>Aktif di Byte</small></div></div>
+</div>
+</section>
 <section class="dash-command" aria-labelledby="dash-command-title">
 <div class="dash-command-copy">
 <span class="kicker" data-i18n="dash-local-kicker">BYTE / WORKSPACE LOKAL</span>
@@ -313,6 +325,23 @@ function renderWorkspaceState(state,kind){
   dot.className='dash-status-dot '+(kind||'');
   label.textContent=state;
 }
+function setReadiness(id,kind,text){
+  var card=document.getElementById(id);if(!card)return;
+  card.className='dash-check '+(kind||'');
+  var dot=card.querySelector('.dash-check-dot'),label=card.querySelector('[data-check-text]');
+  if(dot)dot.className='dash-check-dot '+(kind||'');
+  if(label)label.textContent=text;
+}
+function refreshDashboardReadiness(){
+  setReadiness('dashCheckBridge','is-loading','Menghubungkan…');
+  fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('bridge');setReadiness('dashCheckBridge','is-ready','Terhubung · read-only')}).catch(function(){setReadiness('dashCheckBridge','is-offline','Belum terhubung')});
+  var storage='Tersedia di browser ini';
+  try{localStorage.getItem('vs-dashboard-workspace-v1')}catch(e){storage='Dibatasi browser'}
+  setReadiness('dashCheckStorage',storage==='Tersedia di browser ini'?'is-ready':'is-offline',storage);
+  var speech=window.SpeechRecognition||window.webkitSpeechRecognition;
+  setReadiness('dashCheckVoice',speech?'is-ready':'is-offline',speech?'Didukung browser':'Tidak didukung browser');
+  setReadiness('dashCheckSafety','is-ready','Aktif di Byte');
+}
 function renderWorkspaceResult(data,cached){
   var result=document.getElementById('dashWorkspaceResult');
   if(!result)return;
@@ -487,7 +516,10 @@ function exportData(){
   if(wp)wp.onclick=function(){planDashboardWorkspace(wp)};
   var wc=document.getElementById('dashWorkspaceClear');
   if(wc)wc.onclick=function(){clearWorkspaceCache()};
+  var rr=document.getElementById('dashReadinessRefresh');
+  if(rr)rr.onclick=function(){refreshDashboardReadiness()};
   restoreWorkspaceResult();
+  refreshDashboardReadiness();
   renderSteps();
 })();
 
@@ -506,6 +538,7 @@ var dict = {
     'nav-produk':'Produk','nav-download':'Download','nav-quiz':'Quiz QOWNER','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
+    'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Input suara','dash-ready-safety':'Mode aman',
     'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
@@ -527,6 +560,7 @@ var dict = {
     'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Quiz','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
+    'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Voice input','dash-ready-safety':'Safe mode',
     'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
