@@ -432,7 +432,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-panel[hidden]{display:none}
 .byte-panel-head{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(124,92,255,.18),transparent)}
 .byte-panel-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.byte-retry{min-height:36px;padding:0 10px;border:1px solid rgba(255,173,125,.58);border-radius:var(--radius-control);background:rgba(255,173,125,.1);color:#ffd0b6;font-size:10px;font-weight:700;cursor:pointer}
+.byte-retry{min-height:44px;padding:0 12px;border:1px solid rgba(255,173,125,.58);border-radius:var(--radius-control);background:rgba(255,173,125,.1);color:#ffd0b6;font-size:10px;font-weight:700;cursor:pointer}
 .byte-retry:hover{border-color:#ffd0b6;background:rgba(255,173,125,.18);box-shadow:0 0 18px rgba(255,173,125,.14)}
 .byte-retry:focus-visible{outline:3px solid #ffd0b6;outline-offset:2px}
 .byte-retry[hidden]{display:none}
