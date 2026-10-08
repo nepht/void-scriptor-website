@@ -557,8 +557,8 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home .note::before{display:none}
 @media(max-width:760px){.page-home main{background-attachment:scroll}}
 
-/* The top bar is a full-width matte band. It deliberately stays separate from
-   the page wallpaper so navigation remains calm and easy to scan. */
-.page-home header,.page-dashboard header{background-color:rgba(9,10,11,.96);background-image:none;background-attachment:initial}
+/* The top bar belongs to the opening page field: no second wallpaper is
+   introduced, and its dark matte fade dissolves into the home/dashboard hero. */
+.page-home header,.page-dashboard header{background-color:transparent;background-image:linear-gradient(180deg,rgba(5,6,12,.92) 0%,rgba(5,6,12,.7) 64%,rgba(5,6,12,0) 100%);background-attachment:initial;border-bottom-color:transparent;backdrop-filter:none}
 .page-home header .shell,.page-dashboard header .shell{width:min(1200px,calc(100% - 64px))}
 @media(max-width:760px){.page-home header .shell,.page-dashboard header .shell{width:min(100% - 32px,640px)}}
