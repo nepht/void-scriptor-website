@@ -287,3 +287,20 @@ footer{border-top:1px solid var(--line);background:var(--abyss)}
   .page-home .caro-slide{min-height:0}
   .page-home .caro-art,.page-home .caro-art img{min-height:0}
 }
+
+/* True full-bleed slides: the artwork is the field, while copy floats above a
+   readability veil. This removes the old right-column/card treatment. */
+.page-home .caro-slide{display:block;width:100%;min-height:clamp(520px,68vh,760px);padding:clamp(42px,7vw,96px) max(32px,calc((100vw - 1200px)/2));position:relative;isolation:isolate;overflow:hidden}
+.page-home .caro-copy{position:relative;z-index:3;max-width:590px;padding-block:20px}
+.page-home .caro-art{position:absolute;inset:0;z-index:0;max-width:none;min-height:0;margin:0;border:0;border-radius:0;background:#070811;box-shadow:none}
+.page-home .caro-art img{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:cover;object-position:center;display:block;filter:saturate(.95) contrast(1.04)}
+.page-home .caro-art::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.8) 28%,rgba(5,5,7,.34) 56%,rgba(5,5,7,.08) 82%,rgba(5,5,7,.18) 100%);pointer-events:none}
+.page-home .caro-art::after{z-index:2;border-radius:0;box-shadow:inset 0 0 0 1px rgba(201,166,255,.12)}
+
+@media(max-width:760px){
+  .page-home .caro-slide{width:100%;min-height:570px;padding:34px 16px 42px}
+  .page-home .caro-copy{max-width:100%;padding-block:12px}
+  .page-home .caro-art{order:initial;max-width:none}
+  .page-home .caro-art img{object-position:62% center}
+  .page-home .caro-art::before{background:linear-gradient(180deg,rgba(5,5,7,.88) 0%,rgba(5,5,7,.52) 42%,rgba(5,5,7,.18) 78%,rgba(5,5,7,.58) 100%)}
+}
