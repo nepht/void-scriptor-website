@@ -131,13 +131,13 @@ async function handleAppPreview(request, url, env) {
 // token-shaped is stored or sent to the client: the session is an HMAC-signed,
 // expiring cookie carrying only public profile fields. So there is no database
 // and no server-side session store. The trade-off: a session cannot be revoked
-// individually before its 7-day expiry; rotating SESSION_SECRET ends every
+// individually before its 24-hour expiry; rotating SESSION_SECRET ends every
 // session at once.
 // ---------------------------------------------------------------------------
 
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
 const SESSION_COOKIE = 'vs_session';
-const SESSION_TTL = 7 * 24 * 60 * 60; // 7 days, in seconds
+const SESSION_TTL = 24 * 60 * 60; // 24 hours, in seconds
 const STATE_TTL = 600; // 10 minutes to finish the round trip
 const GITHUB_AUTHORIZE = 'https://github.com/login/oauth/authorize';
 const GITHUB_TOKEN = 'https://github.com/login/oauth/access_token';
