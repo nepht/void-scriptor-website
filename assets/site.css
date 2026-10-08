@@ -557,12 +557,8 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home .note::before{display:none}
 @media(max-width:760px){.page-home main{background-attachment:scroll}}
 
-/* The top bar is a full-width visual band too. Its controls keep the same
-   readable rail as the page content, while the wallpaper continues behind
-   the entire viewport instead of stopping at the header edge. */
-.page-home header,.page-dashboard header{background-color:transparent;background-image:linear-gradient(180deg,rgba(5,6,12,.88),rgba(5,6,12,.62)),var(--void-wallpaper);background-position:center top;background-size:cover;background-attachment:fixed}
+/* The top bar is a full-width matte band. It deliberately stays separate from
+   the page wallpaper so navigation remains calm and easy to scan. */
+.page-home header,.page-dashboard header{background-color:rgba(9,10,11,.96);background-image:none;background-attachment:initial}
 .page-home header .shell,.page-dashboard header .shell{width:min(1200px,calc(100% - 64px))}
-@media(max-width:760px){
-  .page-home header,.page-dashboard header{background-attachment:scroll}
-  .page-home header .shell,.page-dashboard header .shell{width:min(100% - 32px,640px)}
-}
+@media(max-width:760px){.page-home header .shell,.page-dashboard header .shell{width:min(100% - 32px,640px)}}
