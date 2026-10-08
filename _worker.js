@@ -82,6 +82,11 @@ function harden(res, pathname, isHtml) {
   }
   const cc = cachePolicy(pathname, isHtml, res.status);
   if (cc) headers.set('cache-control', cc);
+  // Entry HTML and UI code must reflect the current deployment immediately;
+  // immutable art is the only content allowed to use the long cache above.
+  if (res.status === 200 && (isHtml || /\.(?:css|js|json|txt|xml|webmanifest)$/i.test(pathname))) {
+    headers.set('cache-control', 'no-store');
+  }
   return new Response(res.body, {
     status: res.status,
     statusText: res.statusText,
@@ -689,7 +694,13 @@ export default {
       return harden(new Response(dash.body, { status: 200, headers }), '/dashboard', true);
     }
 
-    const res = await env.ASSETS.fetch(request);
+    // Pages can retain a stale response for `/` while `/index.html` is fresh.
+    // Resolve the root explicitly so the public homepage always follows the
+    // same asset as direct index requests after a deployment.
+    const assetRequest = url.pathname === '/'
+      ? new Request(new URL('/index.html', url), request)
+      : request;
+    const res = await env.ASSETS.fetch(assetRequest);
     const contentType = res.headers.get('content-type') || '';
     const isHtml = contentType.includes('text/html');
 
