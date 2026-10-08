@@ -441,6 +441,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .dash-status-dot{width:9px;height:9px;flex:none;border-radius:50%;background:var(--fog);box-shadow:0 0 0 5px rgba(217,207,255,.08)}
 .dash-status-dot.is-loading{background:#ffd27a;box-shadow:0 0 0 5px rgba(255,210,122,.1);animation:bytePulse 1.2s ease-in-out infinite}
 .dash-status-dot.is-ready{background:#78f5bd;box-shadow:0 0 0 5px rgba(120,245,189,.1),0 0 16px rgba(120,245,189,.65)}
+.dash-status-dot.is-cached{background:#8deaff;box-shadow:0 0 0 5px rgba(141,234,255,.1),0 0 14px rgba(141,234,255,.42)}
 .dash-status-dot.is-offline{background:#ffad7d;box-shadow:0 0 0 5px rgba(255,173,125,.1),0 0 14px rgba(255,173,125,.55)}
 .dash-command-actions{display:flex;align-items:center;justify-content:flex-end;align-content:flex-start;flex-wrap:wrap;gap:10px}
 .dash-command-actions .primary,.dash-command-actions .ghost{min-height:46px}

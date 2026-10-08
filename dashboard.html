@@ -305,7 +305,7 @@ function renderWorkspaceState(state,kind){
   dot.className='dash-status-dot '+(kind||'');
   label.textContent=state;
 }
-function renderWorkspaceResult(data){
+function renderWorkspaceResult(data,cached){
   var result=document.getElementById('dashWorkspaceResult');
   if(!result)return;
   result.hidden=false;
@@ -313,9 +313,24 @@ function renderWorkspaceResult(data){
   var count=document.getElementById('dashWorkspaceCount'),root=document.getElementById('dashWorkspaceRoot'),time=document.getElementById('dashWorkspaceTime'),note=document.getElementById('dashWorkspaceNote'),list=document.getElementById('dashWorkspaceList');
   if(count)count.textContent=String(entries.length);
   if(root)root.textContent=data.root||'Workspace lokal';
-  if(time)time.textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  if(note)note.textContent=entries.length?'Byte menemukan metadata workspace. Tidak ada isi berkas yang dibaca.':'Workspace dapat dijangkau, tetapi belum ada item yang terdeteksi pada batas pemindaian ini.';
+  if(time)time.textContent=new Date(data.checkedAt||Date.now()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  if(note)note.textContent=cached?'Ini adalah ringkasan terakhir yang disimpan di browser ini. Periksa ulang untuk status terbaru.':(entries.length?'Byte menemukan metadata workspace. Tidak ada isi berkas yang dibaca.':'Workspace dapat dijangkau, tetapi belum ada item yang terdeteksi pada batas pemindaian ini.');
   if(list){list.textContent='';entries.slice(0,5).forEach(function(item){var li=document.createElement('li'),name=document.createElement('span'),meta=document.createElement('small');name.textContent=item.path||item.name||'item';meta.textContent=[item.type||'file',item.extension||'',item.size!=null?Math.round(item.size/1024)+' KB':''].filter(Boolean).join(' · ');li.appendChild(name);li.appendChild(meta);list.appendChild(li)})}
+}
+function cacheWorkspaceResult(data){
+  try{
+    var entries=Array.isArray(data.entries)?data.entries.slice(0,200):[];
+    localStorage.setItem('vs-dashboard-workspace-v1',JSON.stringify({root:data.root||'',entries:entries,checkedAt:Date.now()}));
+  }catch(e){}
+}
+function restoreWorkspaceResult(){
+  try{
+    var cached=JSON.parse(localStorage.getItem('vs-dashboard-workspace-v1')||'null');
+    if(cached&&Array.isArray(cached.entries)){
+      renderWorkspaceResult(cached,true);
+      renderWorkspaceState('Terakhir diperiksa secara lokal','is-cached');
+    }
+  }catch(e){}
 }
 function scanDashboardWorkspace(btn){
   if(!btn)return;
@@ -323,7 +338,7 @@ function scanDashboardWorkspace(btn){
   renderWorkspaceState('Menghubungkan ke Byte…','is-loading');
   fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'})
     .then(function(r){if(!r.ok)throw new Error('bridge-'+r.status);return r.json()})
-    .then(function(data){renderWorkspaceState('Byte aktif · workspace terbaca','is-ready');renderWorkspaceResult(data)})
+    .then(function(data){cacheWorkspaceResult(data);renderWorkspaceState('Byte aktif · workspace terbaca','is-ready');renderWorkspaceResult(data)})
     .catch(function(){renderWorkspaceState('Byte belum terhubung di komputer ini','is-offline');var note=document.getElementById('dashWorkspaceNote');if(note)note.textContent='Buka Byte Desktop atau jalankan bridge lokal, lalu coba pemeriksaan lagi. Tidak ada perubahan berkas yang dilakukan.'})
     .then(function(){btn.disabled=false;btn.removeAttribute('aria-busy')},function(){btn.disabled=false;btn.removeAttribute('aria-busy')});
 }
@@ -420,6 +435,7 @@ function exportData(){
   if(rs)rs.onclick=function(){saveSteps({});renderSteps();notice('Kemajuan diatur ulang.')};
   var ws=document.getElementById('dashWorkspaceScan');
   if(ws)ws.onclick=function(){scanDashboardWorkspace(ws)};
+  restoreWorkspaceResult();
   renderSteps();
 })();
 
