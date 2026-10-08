@@ -376,6 +376,8 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-form input:focus{border-color:var(--signal);box-shadow:0 0 0 3px rgba(0,179,221,.12);outline:0}
 .byte-form button{width:46px;height:46px;display:grid;place-items:center;flex:none;border:1px solid rgba(217,207,255,.48);border-radius:var(--radius-control);background:linear-gradient(135deg,var(--primary-deep),#4932b8);color:var(--pure);font-size:21px;cursor:pointer}
 .byte-form button:hover{transform:translateY(-1px);box-shadow:0 0 24px rgba(124,92,255,.32)}
+.byte-form .byte-voice{width:46px;font-size:15px;letter-spacing:-2px;background:rgba(255,255,255,.04);color:var(--ash);box-shadow:none}
+.byte-form .byte-voice.on{border-color:rgba(0,179,221,.72);background:rgba(0,179,221,.14);color:#a8f2ff;box-shadow:0 0 18px rgba(0,179,221,.16)}
 @keyframes byteDockFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
 @keyframes bytePulse{0%,100%{opacity:.7;transform:scale(.88)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes byteTyping{0%,100%{opacity:.45}50%{opacity:1}}
