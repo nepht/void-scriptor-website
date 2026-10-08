@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="QOWNER : The Quiz Maker of the Void. Kanon, sistem tier, format kuis, dan arsip resmi Quiz Maker Void Scriptor.">
+<meta name="description" content="QOWNER adalah konsep aplikasi kuis mobile dari Void Scriptor dengan soal, sistem tier, dan hadiah. Lihat pratinjau publik, leaderboard, kanon, dan arsip resminya.">
 <title>QOWNER : The Quiz Maker of the Void | Void Scriptor</title>
 <style>
 @font-face{font-family:'DM Serif Display';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-serif-display-latin-400.woff2) format('woff2')}
@@ -60,7 +60,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:url" content="https://voidscriptor.com/quiz">
 <meta property="og:title" content="QOWNER : The Quiz Maker of the Void">
-<meta property="og:description" content="Kanon, sistem tier, dan arsip resmi Quiz Maker Void Scriptor.">
+<meta property="og:description" content="Pratinjau publik, leaderboard, kanon, sistem tier, dan arsip resmi QOWNER dari Void Scriptor.">
 <meta property="og:image" content="https://voidscriptor.com/assets/og-quiz.png">
 <meta property="og:image:secure_url" content="https://voidscriptor.com/assets/og-quiz.png">
 <meta property="og:image:type" content="image/png">
@@ -70,29 +70,47 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="QOWNER : The Quiz Maker of the Void">
-<meta name="twitter:description" content="Kanon, sistem tier, dan arsip resmi Quiz Maker Void Scriptor.">
+<meta name="twitter:description" content="Pratinjau publik, leaderboard, kanon, sistem tier, dan arsip resmi QOWNER dari Void Scriptor.">
 <meta name="twitter:image" content="https://voidscriptor.com/assets/og-quiz.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"QOWNER : The Quiz Maker of the Void","url":"https://voidscriptor.com/quiz","description":"Arsip kanon dan dokumentasi resmi QOWNER Quiz Maker. Aplikasi QOWNER untuk iOS dan Android belum tersedia; halaman ini adalah arsip dan dokumentasi produk.","inLanguage":["id","en"],"isPartOf":{"@type":"WebSite","name":"Void Scriptor","url":"https://voidscriptor.com/"},"publisher":{"@type":"Organization","name":"Void Scriptor","url":"https://voidscriptor.com/"},"about":{"@type":"Thing","name":"QOWNER Quiz Maker"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"QOWNER : The Quiz Maker of the Void","url":"https://voidscriptor.com/quiz","description":"Pratinjau publik, leaderboard, arsip kanon, dan dokumentasi resmi QOWNER Quiz Maker dari Void Scriptor. Aplikasi QOWNER untuk iOS dan Android sedang disiapkan.","inLanguage":["id","en"],"isPartOf":{"@type":"WebSite","name":"Void Scriptor","url":"https://voidscriptor.com/"},"publisher":{"@type":"Organization","name":"Void Scriptor","url":"https://voidscriptor.com/"},"about":{"@type":"Thing","name":"QOWNER Quiz Maker"}}
 </script>
+<style>
+.public-preview{padding-top:48px}.preview-intro{max-width:760px;color:var(--muted);font-size:14px;line-height:1.7;margin:0}.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.preview-card,.leaderboard{border:1px solid rgba(155,115,230,.25);border-radius:12px;background:linear-gradient(145deg,rgba(20,14,38,.86),rgba(8,7,16,.92))}.preview-card{padding:22px;min-height:230px;display:flex;flex-direction:column;align-items:flex-start}.preview-label{color:var(--purple-soft);font:800 10px var(--font-mono);letter-spacing:.14em}.preview-card h3{font-size:21px;line-height:1.2;margin:16px 0 8px}.preview-card p{color:var(--muted);font-size:13px;line-height:1.65;margin:0}.preview-answer{margin-top:auto;padding-top:18px;color:var(--cyan);font:700 12px var(--font-mono)}.preview-link{display:inline-flex;margin-top:auto;padding-top:18px;color:var(--purple-bright);font-size:12px;font-weight:700}.preview-link:hover{color:#fff}.leaderboard{margin-top:20px;padding:24px}.leaderboard-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.leaderboard-head h2{margin-top:8px}.leaderboard-head p{color:var(--muted);font-size:13px;line-height:1.6;margin:0;max-width:700px}.leaderboard-status{color:var(--faint);font:11px var(--font-mono);white-space:nowrap}.leaderboard-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}.leader-column{border-top:1px solid rgba(155,115,230,.18);padding-top:16px}.leader-column h3{font-size:18px;margin:0 0 12px}.leader-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}.leader-entry,.leader-empty{border:1px solid rgba(155,115,230,.16);border-radius:8px;padding:12px 14px;background:rgba(255,255,255,.025)}.leader-entry{display:flex;justify-content:space-between;gap:14px;align-items:center}.leader-name{font-weight:700;font-size:13px}.leader-meta{color:var(--muted);font-size:11px;line-height:1.5}.leader-score{color:var(--cyan);font:700 11px var(--font-mono);white-space:nowrap}.leader-empty{color:var(--faint);font-size:12px;line-height:1.6}
+@media(max-width:900px){.preview-grid,.leaderboard-columns{grid-template-columns:1fr}.leaderboard-head{display:block}.leaderboard-status{display:block;margin-top:12px;white-space:normal}}
+@media(max-width:600px){.public-preview{padding-top:32px}.preview-card{min-height:0}.leaderboard{padding:18px}}
+</style>
 </head>
 <body class="page-quiz">
-<a class="skip-link" href="#lock">Lewati ke akses utama</a>
+<a class="skip-link" href="#preview">Lewati ke pratinjau QOWNER</a>
 <header><div class="shell navrow"><a class="brand" href="/"><img src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR<small data-i18n="brand-sub">QOWNER ARCHIVE</small></span></a><nav><a href="#kanon" data-i18n="nav-kanon">Kanon</a><a href="#tier" data-i18n="nav-tier">Sistem Tier</a><a href="#format" data-i18n="nav-format">Format</a><a href="#governance" data-i18n="nav-gov">Aturan</a><a href="#kronologi" data-i18n="nav-krono">Kronologi</a></nav><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><button class="plain-gate" id="btnMasuk" data-i18n="btn-masuk">Masuk</button><button class="outline-gate" id="btnDaftar" data-i18n="btn-daftar">Buat akun</button><span class="chip" id="chip"><i id="chipInitial">V</i><b id="chipName">Creator</b><a class="btn-out" href="/dashboard" data-i18n="menu-dashboard">Dasbor</a><button class="btn-out" id="btnKeluar" data-i18n="btn-keluar">Keluar</button></span><button class="btn-lang" id="btnID" style="display:none" aria-label="Ganti ke bahasa Indonesia">ID</button><button class="btn-lang" id="btnEN" aria-label="Switch to English">EN</button></div></div></header>
 
 <button class="quiz-menu" id="quizMenu" type="button" aria-label="Buka menu navigasi" aria-controls="quizNav" aria-expanded="false">Menu</button>
 <section class="hero"><div class="grid"></div><div class="shell" style="position:relative">
 <div class="eyebrow" data-i18n="hero-eyebrow">QOWNER · THE QUIZ MAKER OF THE VOID</div>
 <h1><span data-i18n="hero-h1a">Setiap soal punya jawaban.</span> <span data-i18n="hero-h1b">Layakkah kau menemukannya?</span></h1>
-<p class="lead" data-i18n="hero-lead">Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April sampai Agustus 2026.</p>
+<p class="lead" data-i18n="hero-lead">QOWNER adalah konsep aplikasi kuis mobile dari Void Scriptor: soal, sistem tier, dan hadiah untuk komunitas yang suka tantangan. Halaman ini menjelaskan cara main dan sejarahnya.</p>
 <p class="quote-en">“Every question has an answer. The real challenge is whether you are worthy enough to find it.”</p>
-<div class="actions"><a class="primary" href="https://www.threads.com/@d.m.d_quiz" target="_blank" rel="noopener">🎲 @d.m.d_quiz</a><a class="secondary" href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener" data-i18n="cta-profile">@choirudin_choi ↗</a></div>
-<p class="lead" style="font-size:13px;margin-top:18px" data-i18n="mobile-note">QOWNER adalah aplikasi mobile untuk iOS dan Android. Halaman ini berisi arsip kanon dan dokumentasi, bukan aplikasi web.</p>
+<div class="actions"><a class="primary" href="https://www.threads.com/@d.m.d_quiz" target="_blank" rel="noopener" data-i18n="cta-quiz-account">🎲 Akun kuis QOWNER ↗</a><a class="secondary" href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener" data-i18n="cta-creator-account">Kreator di Threads ↗</a></div>
+<p class="lead" style="font-size:13px;margin-top:18px" data-i18n="mobile-note">QOWNER sedang disiapkan sebagai aplikasi iOS dan Android oleh Void Scriptor. Halaman ini adalah arsip kanon dan dokumentasi, bukan aplikasi web.</p>
 <div class="actions" aria-label="QOWNER mobile app"><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-ios">iOS · Belum tersedia</span><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-android">Android · Belum tersedia</span></div>
 <svg class="dice" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#a347ff" stroke-width="2"><rect x="18" y="18" width="64" height="64" rx="12" transform="rotate(8 50 50)" fill="rgba(90,45,255,.08)"/><circle cx="38" cy="40" r="5" fill="#42e8ff" stroke="none"/><circle cx="62" cy="40" r="5" fill="#a347ff" stroke="none"/><circle cx="50" cy="52" r="5" fill="#d8caff" stroke="none"/><circle cx="38" cy="64" r="5" fill="#a347ff" stroke="none"/><circle cx="62" cy="64" r="5" fill="#42e8ff" stroke="none"/></g></svg>
 </div></section>
 
 <div class="lockwrap" id="lock"><div class="shell"><div class="lockcard"><img src="assets/void_scriptor_emblem.webp" alt=""><h2 data-i18n="lock-title">Area terlarang bagi yang belum siap.</h2><p data-i18n="lock-desc">Dokumentasi QOWNER hanya terbuka bagi mereka yang memasuki Void dengan identitas sejati. Masuk atau buat akun untuk melihat kanon, sistem tier, dan seluruh arsip.</p><button class="gh-gate" id="ghGate" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n="lock-github">Lanjutkan dengan GitHub</span></button><button class="gh-gate google" id="ggGate" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg><span data-i18n="lock-google">Lanjutkan dengan Google</span></button><small class="auth-status" id="authStatus" data-i18n="lock-auth-status">Memeriksa koneksi autentikasi…</small><small class="locknote" data-i18n="lock-note">Akses kanon menggunakan sesi GitHub yang aman.</small></div></div></div>
+
+<section class="public-preview shell" id="preview" aria-labelledby="preview-title">
+<div class="sec-head"><span class="kicker" data-i18n="preview-kicker">PRATINJAU PUBLIK</span><h2 id="preview-title" data-i18n="preview-title">Kenali cara mainnya sebelum masuk.</h2><p class="preview-intro" data-i18n="preview-intro">QOWNER menggabungkan satu pertanyaan, petunjuk yang sengaja mengganggu, dan tier yang menentukan bobot tantangan. Cuplikan ini terbuka untuk semua orang; arsip kanon lengkap tetap membutuhkan login.</p></div>
+<div class="preview-grid">
+<article class="preview-card"><span class="preview-label" data-i18n="preview-question-label">CONTOH SOAL · ×10</span><h3 data-i18n="preview-question">Apa yang selalu datang, tetapi tidak pernah tiba?</h3><p data-i18n="preview-question-clue">Clue: jawab singkat di komentar. Satu tebakan per akun.</p><div class="preview-answer" data-i18n="preview-question-answer">Jawaban: besok.</div></article>
+<article class="preview-card"><span class="preview-label" data-i18n="preview-tier-label">RINGKASAN TIER</span><h3 data-i18n="preview-tier-title">Dari Fast Quiz ke Hard Quiz.</h3><p data-i18n="preview-tier-copy">×10 untuk trial cepat, ×20 untuk tema mingguan, ×50 untuk lore atau karya, dan ×100 untuk ujian tanpa clue. Tier lebih tinggi berarti tantangan dan hadiah yang lebih besar.</p><a class="preview-link" href="#lock" data-i18n="preview-tier-link">Masuk untuk melihat tabel tier lengkap →</a></article>
+<article class="preview-card"><span class="preview-label" data-i18n="preview-timeline-label">KRONOLOGI</span><h3 data-i18n="preview-timeline-title">Dari kuis komentar ke arsip kanon.</h3><p data-i18n="preview-timeline-copy">Perjalanan QOWNER dicatat dari trial pertama pada April 2026 hingga konsep Hard Quiz dan status CLEAR.</p><a class="preview-link" href="#lock" data-i18n="preview-timeline-link">Masuk untuk membuka kronologi lengkap →</a></article>
+</div>
+<div class="leaderboard" id="leaderboard" aria-labelledby="leaderboard-title">
+<div class="leaderboard-head"><div><span class="kicker" data-i18n="leader-kicker">PAPAN PERINGKAT</span><h2 id="leaderboard-title" data-i18n="leader-title">Peserta aktif &amp; pemenang.</h2><p data-i18n="leader-intro">Hanya nama tampilan atau pseudonim publik yang dipakai. Email dan identitas login tidak pernah ditampilkan.</p></div><span class="leaderboard-status" id="leaderboardStatus" data-i18n="leader-status">Memuat data publik…</span></div>
+<div class="leaderboard-columns"><section class="leader-column" aria-labelledby="active-title"><h3 id="active-title" data-i18n="leader-active">Peserta aktif</h3><ol class="leader-list" id="activeLeaderboard"></ol></section><section class="leader-column" aria-labelledby="winners-title"><h3 id="winners-title" data-i18n="leader-winners">Pemenang terverifikasi</h3><ol class="leader-list" id="winnersLeaderboard"></ol></section></div>
+</div>
+</section>
 
 <main class="shell" id="gateContent" hidden>
 <section id="kanon"><div class="sec-head"><span class="kicker" data-i18n="k-kanon">KANON RESMI</span><h2 data-i18n="kanon-h2">QOWNER, sang Kelana Antar Dimensi.</h2></div>
@@ -173,8 +191,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 var dict={
 id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','nav-format':'Format','nav-gov':'Aturan','nav-krono':'Kronologi',
 'hero-eyebrow':'QOWNER · THE QUIZ MAKER OF THE VOID','hero-h1a':'Setiap soal punya jawaban.','hero-h1b':'Layakkah kau menemukannya?',
-'hero-lead':'Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April sampai Agustus 2026.',
-'cta-profile':'@choirudin_choi ↗','k-kanon':'KANON RESMI','kanon-h2':'QOWNER, sang Kelana Antar Dimensi.',
+'hero-lead':'QOWNER adalah konsep aplikasi kuis mobile dari Void Scriptor: soal, sistem tier, dan hadiah untuk komunitas yang suka tantangan. Halaman ini menjelaskan cara main dan sejarahnya.',
+'cta-quiz-account':'🎲 Akun kuis QOWNER ↗','cta-creator-account':'Kreator di Threads ↗','preview-kicker':'PRATINJAU PUBLIK','preview-title':'Kenali cara mainnya sebelum masuk.','preview-intro':'QOWNER menggabungkan satu pertanyaan, petunjuk yang sengaja mengganggu, dan tier yang menentukan bobot tantangan. Cuplikan ini terbuka untuk semua orang; arsip kanon lengkap tetap membutuhkan login.','preview-question-label':'CONTOH SOAL · ×10','preview-question':'Apa yang selalu datang, tetapi tidak pernah tiba?','preview-question-clue':'Clue: jawab singkat di komentar. Satu tebakan per akun.','preview-question-answer':'Jawaban: besok.','preview-tier-label':'RINGKASAN TIER','preview-tier-title':'Dari Fast Quiz ke Hard Quiz.','preview-tier-copy':'×10 untuk trial cepat, ×20 untuk tema mingguan, ×50 untuk lore atau karya, dan ×100 untuk ujian tanpa clue. Tier lebih tinggi berarti tantangan dan hadiah yang lebih besar.','preview-tier-link':'Lihat tabel tier setelah masuk →','preview-timeline-label':'KRONOLOGI','preview-timeline-title':'Dari kuis komentar ke arsip kanon.','preview-timeline-copy':'Perjalanan QOWNER dicatat dari trial pertama pada April 2026 hingga konsep Hard Quiz dan status CLEAR.','preview-timeline-link':'Buka kronologi setelah masuk →','leader-kicker':'PAPAN PERINGKAT','leader-title':'Peserta aktif & pemenang.','leader-intro':'Hanya nama tampilan atau pseudonim publik yang dipakai. Email dan identitas login tidak pernah ditampilkan.','leader-status':'Memuat data publik…','leader-active':'Peserta aktif','leader-winners':'Pemenang terverifikasi','leader-empty':'Belum ada data publik yang diterbitkan.','leader-load-error':'Leaderboard belum dapat dimuat. Coba lagi nanti.','leader-score':'Skor','leader-tier':'Tier','leader-wins':'Menang','k-kanon':'KANON RESMI','kanon-h2':'QOWNER, sang Kelana Antar Dimensi.',
 'kanon-p1b':'Siapa QOWNER?','kanon-p1':'Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa : ia menawarkan. Dan setiap tawarannya memiliki harga.',
 'kanon-q1':'“Kupersulit jalanmu, tapi kamu akan mendapatkan hadiahnya.”',
 'kanon-q2':'“Untung gak ku jadikan quiz.” : saringan harian sang Quiz Maker',
@@ -221,12 +239,12 @@ id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','n
 'lock-name':'Nama tampilan','lock-email':'Email','lock-pass':'Kata sandi',
 'lock-btn':'Masuk ke Void','lock-btn-daftar':'Buat akun Void',
 'lock-switch':'Belum punya akun? Buat akun','lock-switch-to-masuk':'Sudah punya akun? Masuk',
-'lock-note':'Akses kanon menggunakan sesi masuk yang aman.','lock-github':'Lanjutkan dengan GitHub','lock-google':'Lanjutkan dengan Google','lock-auth-status':'Memeriksa koneksi autentikasi…','lock-auth-status-ready':'Masuk untuk membuka arsip.','lock-auth-status-off':'Login belum dikonfigurasi.','lock-auth-status-error':'Layanan autentikasi tidak dapat dijangkau.',
-'foot-copy':'© 2026 Void Scriptor · Choirudin : QOWNER canon & quiz identity.','mobile-note':'QOWNER sedang disiapkan sebagai aplikasi mobile untuk iOS dan Android. Halaman ini berisi arsip kanon dan dokumentasi, bukan aplikasi web.','cta-ios':'iOS · Belum tersedia','cta-android':'Android · Belum tersedia'},
+'lock-note':'Akses kanon menggunakan sesi GitHub atau Google yang aman.','lock-github':'Lanjutkan dengan GitHub','lock-google':'Lanjutkan dengan Google','lock-auth-status':'Memeriksa koneksi autentikasi…','lock-auth-status-ready':'Masuk untuk membuka arsip.','lock-auth-status-off':'Login belum dikonfigurasi.','lock-auth-status-error':'Layanan autentikasi tidak dapat dijangkau.',
+'foot-copy':'© 2026 Void Scriptor · QOWNER archive.','mobile-note':'QOWNER sedang disiapkan sebagai aplikasi iOS dan Android oleh Void Scriptor. Halaman ini adalah arsip kanon dan dokumentasi, bukan aplikasi web.','cta-ios':'iOS · Belum tersedia','cta-android':'Android · Belum tersedia'},
 en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','nav-format':'Formats','nav-gov':'Rules','nav-krono':'Timeline',
 'hero-eyebrow':'QOWNER · THE QUIZ MAKER OF THE VOID','hero-h1a':'Every question has an answer.','hero-h1b':'Are you worthy to find it?',
-'hero-lead':'Official documentation of Choirudin’s quiz universe: the QOWNER canon, consequence-backed tier system, and the April to August 2026 journey.',
-'cta-profile':'@choirudin_choi ↗','k-kanon':'OFFICIAL CANON','kanon-h2':'QOWNER, the Wanderer Between Dimensions.',
+'hero-lead':'QOWNER is Void Scriptor’s mobile quiz concept: questions, tiered challenges, and rewards for a community that enjoys a real test. This page explains how it works and where it came from.',
+'cta-quiz-account':'🎲 QOWNER quiz account ↗','cta-creator-account':'Creator on Threads ↗','preview-kicker':'PUBLIC PREVIEW','preview-title':'See how it works before you enter.','preview-intro':'QOWNER combines one question, a deliberately distracting clue, and tiers that set the weight of the challenge. This preview is open to everyone; the full canon archive still requires sign-in.','preview-question-label':'SAMPLE QUESTION · ×10','preview-question':'What always comes, but never arrives?','preview-question-clue':'Clue: answer briefly in the comments. One guess per account.','preview-question-answer':'Answer: tomorrow.','preview-tier-label':'TIER SUMMARY','preview-tier-title':'From Fast Quiz to Hard Quiz.','preview-tier-copy':'×10 is a fast trial, ×20 a weekly theme, ×50 lore or creative work, and ×100 a clue-free test. Higher tiers mean bigger challenges and rewards.','preview-tier-link':'See the tier table after sign-in →','preview-timeline-label':'TIMELINE','preview-timeline-title':'From comment quizzes to canon archive.','preview-timeline-copy':'QOWNER’s journey is recorded from its first trial in April 2026 through the Hard Quiz concept and CLEAR status.','preview-timeline-link':'Open the timeline after sign-in →','leader-kicker':'LEADERBOARD','leader-title':'Active players & winners.','leader-intro':'Only public display names or pseudonyms are used. Login emails and identities are never shown.','leader-status':'Loading public data…','leader-active':'Active players','leader-winners':'Verified winners','leader-empty':'No public entries have been published yet.','leader-load-error':'The leaderboard could not be loaded. Try again later.','leader-score':'Score','leader-tier':'Tier','leader-wins':'Wins','k-kanon':'OFFICIAL CANON','kanon-h2':'QOWNER, the Wanderer Between Dimensions.',
 'kanon-p1b':'Who is QOWNER?','kanon-p1':'An entity wandering dimension after dimension, carrying riddles no civilization could ever solve. It never forces : it offers. And every offer has a price.',
 'kanon-q1':'“I make your road harder, but you will get the prize.”',
 'kanon-q2':'“Good thing I didn’t make this a quiz.” : the Quiz Maker’s daily filter',
@@ -273,13 +291,14 @@ en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','n
 'lock-name':'Display name','lock-email':'Email','lock-pass':'Password',
 'lock-btn':'Enter the Void','lock-btn-daftar':'Create your Void account',
 'lock-switch':"Don't have an account? Sign up",'lock-switch-to-masuk':'Already have an account? Sign in',
-'lock-note':'Archive access uses a secure sign-in session.','lock-github':'Continue with GitHub','lock-google':'Continue with Google','lock-auth-status':'Checking authentication…','lock-auth-status-ready':'Sign in to open the archive.','lock-auth-status-off':'Sign-in is not configured.','lock-auth-status-error':'Authentication service is unreachable.',
-'foot-copy':'© 2026 Void Scriptor · Choirudin : QOWNER canon & quiz identity.','mobile-note':'QOWNER is being prepared as a mobile app for iOS and Android. This page is the canon archive and documentation, not the web app.','cta-ios':'iOS · Not available yet','cta-android':'Android · Not available yet'}};
+'lock-note':'Archive access uses a secure GitHub or Google sign-in session.','lock-github':'Continue with GitHub','lock-google':'Continue with Google','lock-auth-status':'Checking authentication…','lock-auth-status-ready':'Sign in to open the archive.','lock-auth-status-off':'Sign-in is not configured.','lock-auth-status-error':'Authentication service is unreachable.',
+'foot-copy':'© 2026 Void Scriptor · QOWNER archive.','mobile-note':'QOWNER is being prepared as an iOS and Android app by Void Scriptor. This page is the canon archive and documentation, not the web app.','cta-ios':'iOS · Not available yet','cta-android':'Android · Not available yet'}};
 var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
 if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
 document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
 if(typeof window.__grender==='function')window.__grender();
+if(typeof window.__qownerLeaderboardRender==='function')window.__qownerLeaderboardRender();
 var idBtn=document.getElementById('btnID'),enBtn=document.getElementById('btnEN');
 if(idBtn)idBtn.style.display=(l==='en')?'inline-block':'none';
 if(enBtn)enBtn.style.display=(l==='id')?'inline-block':'none';}
@@ -324,6 +343,35 @@ btnOut.onclick=function(){fetch('/api/auth/logout',{method:'POST',credentials:'s
 sync();
 window.__quizAuthSync=sync;
 })();
+/* ---- Public QOWNER preview + leaderboard ------------------------------- */
+(function(){
+var active=document.getElementById('activeLeaderboard'),winners=document.getElementById('winnersLeaderboard'),status=document.getElementById('leaderboardStatus'),data=null;
+var copy={id:{empty:'Belum ada data publik yang diterbitkan.',error:'Leaderboard belum dapat dimuat. Coba lagi nanti.',ready:'Data publik diperbarui.'},en:{empty:'No public entries have been published yet.',error:'The leaderboard could not be loaded. Try again later.',ready:'Public data updated.'}};
+function lang(){return document.documentElement.lang==='en'?'en':'id'}
+function clear(el){while(el&&el.firstChild)el.removeChild(el.firstChild)}
+function renderList(el,rows){
+  clear(el);rows=Array.isArray(rows)?rows.slice(0,20):[];
+  if(!rows.length){var empty=document.createElement('li');empty.className='leader-empty';empty.textContent=copy[lang()].empty;el.appendChild(empty);return}
+  rows.forEach(function(row,index){
+    if(!row||typeof row!=='object')return;
+    var li=document.createElement('li');li.className='leader-entry';
+    var left=document.createElement('div'),name=document.createElement('div'),meta=document.createElement('div'),score=document.createElement('div');
+    name.className='leader-name';name.textContent=String(row.displayName||row.name||('Player '+(index+1))).slice(0,80);
+    meta.className='leader-meta';var bits=[];
+    if(row.tier!==undefined)bits.push('Tier '+String(row.tier).slice(0,24));
+    if(row.wins!==undefined)bits.push(String(row.wins)+' '+(lang()==='en'?'wins':'menang'));
+    if(row.streak!==undefined)bits.push(String(row.streak)+' '+(lang()==='en'?'streak':'beruntun'));
+    meta.textContent=bits.join(' · ');
+    score.className='leader-score';score.textContent=row.score===undefined?'':String(row.score).slice(0,24);
+    left.appendChild(name);left.appendChild(meta);li.appendChild(left);li.appendChild(score);el.appendChild(li);
+  });
+}
+function render(){if(!active||!winners)return;renderList(active,data&&data.active);renderList(winners,data&&data.winners);if(status)status.textContent=(data&&((data.active||[]).length||(data.winners||[]).length))?copy[lang()].ready:copy[lang()].empty}
+window.__qownerLeaderboardRender=function(){render()};
+fetch('/assets/qowner-leaderboard.json',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error('leaderboard');return r.json()}).then(function(d){data=d||{};render()}).catch(function(){data=null;clear(active);clear(winners);[active,winners].forEach(function(el){var empty=document.createElement('li');empty.className='leader-empty';empty.textContent=copy[lang()].error;el.appendChild(empty)});if(status)status.textContent=copy[lang()].error});
+})();
+/* Keep the public preview before the sign-in wall in the rendered document. */
+(function(){var preview=document.getElementById('preview'),lock=document.getElementById('lock');if(preview&&lock&&lock.parentNode)lock.parentNode.insertBefore(preview,lock)})();
 var quizNav=document.querySelector('header nav'),quizMenu=document.getElementById('quizMenu');
 if(quizNav&&quizMenu){quizNav.id='quizNav';function closeQuizNav(){quizNav.classList.remove('open');quizMenu.setAttribute('aria-expanded','false')}quizMenu.onclick=function(){var open=quizNav.classList.toggle('open');quizMenu.setAttribute('aria-expanded',open?'true':'false')};quizNav.querySelectorAll('a').forEach(function(link){link.onclick=closeQuizNav});document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeQuizNav()})}
 setLang(lang);

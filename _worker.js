@@ -20,6 +20,8 @@ const INTERNAL = [
   /^\/tools\//,
 ];
 const APP_PREVIEW_PREFIX = '/preview';
+const LEGACY_HOSTS = new Set(['voidscriptor.pages.dev']);
+const CANONICAL_HOST = 'voidscriptor.com';
 
 const BASE_HEADERS = {
   'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
@@ -383,7 +385,7 @@ async function handleByte(request, env) {
 // array produced one header ending in `Max-Age=0` -- which deleted the session
 // the instant it was created. Sign-in then looked like it did nothing. workerd
 // joins an array into a single header here, so append each value separately.
-function redirect(location, extraHeaders = {}) {
+function redirect(location, extraHeaders = {}, status = 302) {
   const headers = new Headers({ location, ...BASE_HEADERS });
   for (const [name, value] of Object.entries(extraHeaders)) {
     if (name.toLowerCase() === 'set-cookie') {
@@ -392,7 +394,7 @@ function redirect(location, extraHeaders = {}) {
       headers.set(name, value);
     }
   }
-  return new Response(null, { status: 302, headers });
+  return new Response(null, { status, headers });
 }
 
 function authConfigured(env) {
@@ -657,6 +659,10 @@ async function handleAuth(request, url, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (LEGACY_HOSTS.has(url.hostname) && (request.method === 'GET' || request.method === 'HEAD')) {
+      const target = `https://${CANONICAL_HOST}${url.pathname}${url.search}`;
+      return redirect(target, { 'cache-control': 'public, max-age=86400' }, 301);
+    }
     if (INTERNAL.some((rx) => rx.test(url.pathname))) {
       return new Response('Not found', { status: 404, headers: BASE_HEADERS });
     }
