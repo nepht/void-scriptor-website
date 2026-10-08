@@ -1,5 +1,5 @@
 param(
-  [string]$Url = 'https://voidscriptor.pages.dev/?desktop=byte'
+  [string]$Url = 'https://voidscriptor.com/?desktop=byte'
 )
 
 $edgeCandidates = @(

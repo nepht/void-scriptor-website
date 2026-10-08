@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://voidscriptor.pages.dev/</loc>
+    <loc>https://voidscriptor.com/</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://voidscriptor.pages.dev/quiz</loc>
+    <loc>https://voidscriptor.com/quiz</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://voidscriptor.pages.dev/changelog</loc>
+    <loc>https://voidscriptor.com/changelog</loc>
     <lastmod>2026-10-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://voidscriptor.pages.dev/privacy</loc>
+    <loc>https://voidscriptor.com/privacy</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://voidscriptor.pages.dev/terms</loc>
+    <loc>https://voidscriptor.com/terms</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://voidscriptor.pages.dev/contact</loc>
+    <loc>https://voidscriptor.com/contact</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

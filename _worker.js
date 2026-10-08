@@ -262,6 +262,60 @@ function json(status, obj) {
   });
 }
 
+// The public Byte endpoint is intentionally small and stateless. These limits
+// protect the upstream provider from accidental loops and oversized browser
+// requests; Cloudflare's production rate-limiting rules should remain the
+// stronger outer control when traffic grows.
+const BYTE_RATE_WINDOW_MS = 60 * 1000;
+const BYTE_RATE_LIMIT = 20;
+const BYTE_MAX_BODY_BYTES = 32 * 1024;
+const BYTE_MAX_MESSAGES = 24;
+const BYTE_MAX_MESSAGE_CHARS = 4000;
+const BYTE_MAX_TOTAL_CHARS = 24000;
+const BYTE_RATE_BUCKETS = new Map();
+
+function byteClientKey(request) {
+  return request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    'anonymous';
+}
+
+function byteRateCheck(request) {
+  const now = Date.now();
+  const key = byteClientKey(request);
+  const recent = (BYTE_RATE_BUCKETS.get(key) || []).filter((time) => now - time < BYTE_RATE_WINDOW_MS);
+  if (recent.length >= BYTE_RATE_LIMIT) {
+    BYTE_RATE_BUCKETS.set(key, recent);
+    return { allowed: false, retryAfter: Math.max(1, Math.ceil((recent[0] + BYTE_RATE_WINDOW_MS - now) / 1000)) };
+  }
+  recent.push(now);
+  BYTE_RATE_BUCKETS.set(key, recent);
+  // Keep a restarted/long-lived isolate from retaining inactive client keys.
+  if (BYTE_RATE_BUCKETS.size > 2048) {
+    for (const [bucketKey, times] of BYTE_RATE_BUCKETS) {
+      if (!times.length || now - times[times.length - 1] >= BYTE_RATE_WINDOW_MS) BYTE_RATE_BUCKETS.delete(bucketKey);
+    }
+  }
+  return { allowed: true, retryAfter: 0 };
+}
+
+function validateByteMessages(value) {
+  if (!Array.isArray(value) || value.length === 0 || value.length > BYTE_MAX_MESSAGES) return null;
+  let totalChars = 0;
+  const messages = [];
+  for (const message of value) {
+    if (!message || typeof message !== 'object') return null;
+    if (!['system', 'user', 'assistant'].includes(message.role)) return null;
+    if (typeof message.content !== 'string') return null;
+    const content = message.content.trim();
+    if (!content || content.length > BYTE_MAX_MESSAGE_CHARS) return null;
+    totalChars += content.length;
+    if (totalChars > BYTE_MAX_TOTAL_CHARS) return null;
+    messages.push({ role: message.role, content });
+  }
+  return messages;
+}
+
 // OpenAI-compatible server-side adapter. Production can use this route by
 // supplying BYTE_API_BASE_URL, BYTE_API_KEY, and optionally BYTE_MODEL as
 // Worker secrets/vars. The browser never receives the upstream key.
@@ -274,19 +328,36 @@ async function handleByte(request, env) {
   if (!base || !key) {
     return json(503, { ok: false, error: 'byte_provider_not_configured' });
   }
+  const rate = byteRateCheck(request);
+  if (!rate.allowed) {
+    const response = json(429, { ok: false, error: 'byte_rate_limited', retry_after_seconds: rate.retryAfter });
+    response.headers.set('retry-after', String(rate.retryAfter));
+    return response;
+  }
+  const declaredLength = Number(request.headers.get('content-length'));
+  if (Number.isFinite(declaredLength) && declaredLength > BYTE_MAX_BODY_BYTES) {
+    return json(413, { ok: false, error: 'request_too_large' });
+  }
   let payload;
   try {
-    payload = await request.json();
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > BYTE_MAX_BODY_BYTES) {
+      return json(413, { ok: false, error: 'request_too_large' });
+    }
+    payload = JSON.parse(raw);
   } catch {
     return json(400, { ok: false, error: 'invalid_json' });
   }
-  if (!payload || !Array.isArray(payload.messages) || payload.messages.length === 0) {
+  const messages = validateByteMessages(payload && payload.messages);
+  if (!messages) {
     return json(400, { ok: false, error: 'messages_required' });
   }
   const body = {
-    model: String(payload.model || env.BYTE_MODEL || 'free'),
-    messages: payload.messages,
-    temperature: Number.isFinite(payload.temperature) ? payload.temperature : 0.7,
+    // The browser never selects the provider model. This keeps the hidden
+    // implementation detail hidden and prevents arbitrary model requests.
+    model: String(env.BYTE_MODEL || 'free'),
+    messages,
+    temperature: Number.isFinite(payload.temperature) ? Math.min(2, Math.max(0, payload.temperature)) : 0.7,
     max_tokens: Math.min(1000, Math.max(32, Number(payload.max_tokens) || 400)),
   };
   let upstream;

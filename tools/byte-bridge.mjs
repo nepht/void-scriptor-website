@@ -24,6 +24,7 @@ const port = Number(process.env.BYTE_BRIDGE_PORT || 8766);
 const workspaceRoot = path.resolve(process.env.BYTE_WORKSPACE_ROOT || path.join(process.env.USERPROFILE || '', 'OneDrive', 'Documents', 'QOWNER'));
 const ignoredDirectories = new Set(['.git', '.dart_tool', 'node_modules', 'build', 'dist', 'coverage', '.wrangler']);
 const allowedOrigins = new Set([
+  'https://voidscriptor.com',
   'https://voidscriptor.pages.dev',
   'http://127.0.0.1:8765',
   'http://localhost:8765',

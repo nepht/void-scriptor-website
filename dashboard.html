@@ -75,6 +75,11 @@ footer{padding:30px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 /* nocturne-fonts */
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
+/* Mobile navigation: keep the menu discoverable and thumb-friendly. */
+.hamb{align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:0;color:#efe7ff}
+.hamb i{width:20px;margin:5px 0}
+.hamb::after{content:'Menu';font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:1100px){.hamb{display:flex}}
 </style>
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
@@ -86,8 +91,9 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <meta name="theme-color" content="#050507">
 </head>
 <body id="top" class="page-dashboard">
+<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 <header><div class="shell navrow"><a class="brand" href="/"><img class="logo" src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR</span></a><button class="hamb" id="hamb" aria-label="Buka menu navigasi" aria-controls="nav" aria-expanded="false"><i></i><i></i></button><nav id="nav"><a href="/#products" data-i18n="nav-produk">Produk</a><a href="/#downloads" data-i18n="nav-download">Download</a><a href="/#spotlight" data-i18n="nav-quiz">QOWNER Mobile</a><a href="/dashboard" aria-current="page" data-i18n="nav-dash">Dasbor</a><a href="/#company" data-i18n="nav-perusahaan">Perusahaan</a></nav><div class="account"><span class="profile-wrap" id="profileWrap" style="display:block"><button class="profile" id="profile" aria-haspopup="true" aria-expanded="false" aria-label="Menu profil"><img id="userAvatar" style="display:none" alt=""><i id="initial">V</i><b id="profileName">Creator</b></button><span class="profile-menu" role="menu"><a href="/dashboard" role="menuitem" data-i18n="menu-dashboard">Dasbor</a><button id="btnSignOut" role="menuitem" data-i18n="btn-keluar">Keluar</button></span></span><button class="btn-lang id" id="btnID" style="display:none" aria-label="Ganti ke bahasa Indonesia">ID</button><button class="btn-lang en" id="btnEN" aria-label="Switch to English">EN</button></div></div></header>
-<main class="shell dash">
+<main class="shell dash" id="main-content">
 <section class="dash-head">
 <span class="kicker" data-i18n="dash-kicker">DASBOR AKUN</span>
 <h1><span data-i18n="dash-hi">Halo,</span> <b id="dashHiName">…</b></h1>
@@ -101,7 +107,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="dash-readiness-grid">
 <div class="dash-check" id="dashCheckBridge"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-bridge">Byte Bridge lokal</b><small data-check-text>Memeriksa…</small></div></div>
 <div class="dash-check" id="dashCheckStorage"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-storage">Penyimpanan browser</b><small data-check-text>Memeriksa…</small></div></div>
-<div class="dash-check" id="dashCheckVoice"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-voice">Input suara</b><small data-check-text>Memeriksa…</small></div></div>
+<div class="dash-check" id="dashCheckVoice"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-voice">Suara Byte</b><small data-check-text>Memeriksa…</small></div></div>
 <div class="dash-check" id="dashCheckSafety"><span class="dash-check-dot" aria-hidden="true"></span><div><b data-i18n="dash-ready-safety">Mode aman</b><small data-check-text>Aktif di Byte</small></div></div>
 </div>
 </section>
@@ -136,8 +142,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <button class="primary" id="dashWorkspaceScan" type="button" data-i18n="dash-local-scan">Periksa workspace</button>
 <button class="ghost" id="dashWorkspacePlan" type="button" data-i18n="dash-local-plan">Buat rencana aman</button>
 <a class="ghost" href="/?desktop=byte" data-i18n="dash-local-byte">Buka Byte</a>
-<a class="ghost" href="https://apps.apple.com/us/search?term=QOWNER%20Quiz%20Maker" target="_blank" rel="noopener" data-i18n="dash-local-quiz-ios">QOWNER iOS</a>
-<a class="ghost" href="https://play.google.com/store/search?q=QOWNER%20Quiz%20Maker&amp;c=apps" target="_blank" rel="noopener" data-i18n="dash-local-quiz-android">QOWNER Android</a>
+<span class="ghost is-unavailable" aria-disabled="true" data-i18n="dash-local-quiz-ios">QOWNER iOS · Belum tersedia</span>
+<span class="ghost is-unavailable" aria-disabled="true" data-i18n="dash-local-quiz-android">QOWNER Android · Belum tersedia</span>
 </div>
 <div class="dash-workspace-result" id="dashWorkspaceResult" hidden>
 <div class="dash-workspace-facts" aria-label="Ringkasan workspace">
@@ -160,8 +166,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="dash-settings-head"><div><span class="kicker" data-i18n="dash-settings-kicker">BYTE / PREFERENSI</span><h2 id="dash-settings-title" data-i18n="dash-settings-title">Karakter dan perilaku Byte</h2></div><a class="ghost" href="/?desktop=byte" data-i18n="dash-settings-open">Buka pengaturan Byte</a></div>
 <div class="dash-settings-grid">
 <label><span data-i18n="dash-settings-persona">Karakter</span><select id="dashPersona"><option value="balanced" data-i18n="dash-persona-balanced">Tenang &amp; formal</option><option value="friend" data-i18n="dash-persona-friend">Teman dekat</option><option value="guardian" data-i18n="dash-persona-guardian">Protektif</option></select></label>
-<label><span data-i18n="dash-settings-model">Model</span><select id="dashModel"><option value="free">Hermes · free</option><option value="My_Tier">Hermes · My_Tier</option></select></label>
 <label class="dash-settings-check"><input id="dashSafe" type="checkbox" checked><span data-i18n="dash-settings-safe">Mode aman</span></label>
+<label class="dash-settings-check"><input id="dashVoice" type="checkbox"><span data-i18n="dash-settings-voice">Balasan dengan suara</span></label>
 </div>
 <div class="dash-settings-actions"><button class="primary" id="dashSettingsSave" type="button" data-i18n="dash-settings-save">Simpan preferensi</button><button class="ghost" id="dashSettingsExport" type="button" data-i18n="dash-settings-export">Ekspor konfigurasi</button><label class="ghost dash-import"><input type="file" id="dashSettingsImport" accept="application/json,.json"><span data-i18n="dash-settings-import">Impor konfigurasi</span></label></div>
 <p class="dash-settings-note" id="dashSettingsNote" data-i18n="dash-settings-note">Preferensi disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.</p>
@@ -173,7 +179,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <li class="step" id="stepDownload"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step1">Unduh installer</b><small data-i18n="dash-step1-note">Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.</small></span></li>
 <li class="step" id="stepVerify"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step2">Verifikasi SHA-256</b><small data-i18n="dash-step2-note">Pilih berkas di panel Produk &amp; tautan; hash dihitung lokal di peramban Anda.</small></span></li>
 <li class="step" id="stepRun"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step3">Jalankan Studio</b><small data-i18n="dash-step3-note">Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.</small></span></li>
-<li class="step" id="stepQuiz"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step4">Pasang QOWNER Quiz Maker</b><small data-i18n="dash-step4-note">Unduh aplikasi mobile QOWNER untuk iOS atau Android dari toko resmi.</small></span></li>
+<li class="step" id="stepQuiz"><span class="box" aria-hidden="true">✓</span><span class="txt"><b data-i18n="dash-step4">Pantau QOWNER Quiz Maker</b><small data-i18n="dash-step4-note">Aplikasi mobile QOWNER untuk iOS dan Android belum tersedia untuk diunduh.</small></span></li>
 </ol>
 <p class="onboard-note"><span data-i18n="dash-onboard-note">Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.</span> <button type="button" id="dashReset" data-i18n="dash-reset">Atur ulang</button></p>
 </article>
@@ -204,8 +210,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
 <a href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
-<a href="https://apps.apple.com/us/search?term=QOWNER%20Quiz%20Maker" id="quizLink" target="_blank" rel="noopener"><span data-i18n="dash-open-quiz-ios">QOWNER di App Store</span><small data-i18n="dash-ios">iOS</small></a>
-<a href="https://play.google.com/store/search?q=QOWNER%20Quiz%20Maker&amp;c=apps" target="_blank" rel="noopener"><span data-i18n="dash-open-quiz-android">QOWNER di Google Play</span><small data-i18n="dash-android">Android</small></a>
+<span class="is-unavailable"><span data-i18n="dash-open-quiz-ios">QOWNER iOS</span><small data-i18n="dash-ios">Belum tersedia</small></span>
+<span class="is-unavailable"><span data-i18n="dash-open-quiz-android">QOWNER Android</span><small data-i18n="dash-android">Belum tersedia</small></span>
 </div>
 <div class="hashrow">
 <code id="dashSha">Belum tersedia</code>
@@ -352,14 +358,15 @@ function copyText(txt,btn){
 // This endpoint is deliberately read-only. The dashboard never moves,
 // deletes, renames, or opens files; it only displays metadata returned by the
 // local bridge when the user asks for a scan.
-var DASH_BRIDGE_STATE='unknown',DASH_STORAGE_STATE='unknown',DASH_VOICE_STATE='unknown';
+var DASH_BRIDGE_STATE='unknown',DASH_STORAGE_STATE='unknown',DASH_VOICE_STATE='unknown',DASH_MIC_STATE='unknown';
 function cachedWorkspace(){try{return JSON.parse(localStorage.getItem('vs-dashboard-workspace-v1')||'null')}catch(e){return null}}
 function renderDashboardOps(){
   var notices=document.getElementById('dashNoticeList'),items=[];
   if(DASH_BRIDGE_STATE==='offline')items.push('Byte Bridge belum terhubung di komputer ini.');
   else if(DASH_BRIDGE_STATE==='loading'||DASH_BRIDGE_STATE==='unknown')items.push('Status Byte Bridge sedang diperiksa.');
   if(DASH_STORAGE_STATE==='offline')items.push('Penyimpanan browser dibatasi; rencana lokal mungkin tidak tersimpan.');
-  if(DASH_VOICE_STATE==='offline')items.push('Input suara tidak didukung browser ini; chat teks tetap tersedia.');
+  if(DASH_VOICE_STATE==='offline')items.push('Output suara Byte belum tersedia di browser ini; chat teks tetap tersedia.');
+  if(DASH_MIC_STATE==='offline')items.push('Input mikrofon tidak didukung browser ini; kamu tetap bisa mengetik.');
   if(LAST_USER&&LAST_USER.exp&&LAST_USER.exp*1000-Date.now()<86400000)items.push('Sesi akun akan berakhir dalam kurang dari 24 jam.');
   if(!items.length)items.push('Tidak ada perhatian baru. Byte siap digunakan.');
   if(notices){notices.textContent='';items.slice(0,4).forEach(function(text){var li=document.createElement('li');li.textContent=text;notices.appendChild(li)})}
@@ -372,25 +379,25 @@ function renderDashboardOps(){
 function renderDiagnostics(){
   var out=document.getElementById('dashDiagnosticsPreview');if(!out)return;
   var cached=cachedWorkspace(),entries=cached&&Array.isArray(cached.entries)?cached.entries.length:0;
-  out.textContent=['origin: '+location.origin,'bridge: '+DASH_BRIDGE_STATE,'storage: '+DASH_STORAGE_STATE,'voice: '+DASH_VOICE_STATE,'secure_context: '+(window.isSecureContext?'yes':'no'),'workspace_cache_items: '+entries,'user_agent: '+(navigator.userAgent||'unknown')].join('\n');
+  out.textContent=['origin: '+location.origin,'bridge: '+DASH_BRIDGE_STATE,'storage: '+DASH_STORAGE_STATE,'voice_output: '+DASH_VOICE_STATE,'mic_input: '+DASH_MIC_STATE,'secure_context: '+(window.isSecureContext?'yes':'no'),'workspace_cache_items: '+entries,'user_agent: '+(navigator.userAgent||'unknown')].join('\n');
 }
 var BYTE_SETTINGS_KEY='byte-settings-v1';
 function normalizeByteSettings(value){
   var source=value||{},persona=['balanced','friend','guardian'].indexOf(source.persona)>=0?source.persona:'balanced',model=['free','My_Tier'].indexOf(source.model)>=0?source.model:'free';
-  return {persona:persona,model:model,safe:source.safe!==false};
+  return {persona:persona,model:model,safe:source.safe!==false,voice:source.voice===true};
 }
 function readByteSettings(){try{return normalizeByteSettings(JSON.parse(localStorage.getItem(BYTE_SETTINGS_KEY)||'{}'))}catch(e){return normalizeByteSettings({})}}
 function applyDashSettings(value){
-  var settings=normalizeByteSettings(value),p=document.getElementById('dashPersona'),m=document.getElementById('dashModel'),s=document.getElementById('dashSafe');
-  if(p)p.value=settings.persona;if(m)m.value=settings.model;if(s)s.checked=settings.safe;
+  var settings=normalizeByteSettings(value),p=document.getElementById('dashPersona'),m=document.getElementById('dashModel'),s=document.getElementById('dashSafe'),v=document.getElementById('dashVoice');
+  if(p)p.value=settings.persona;if(m)m.value=settings.model;if(s)s.checked=settings.safe;if(v)v.checked=settings.voice;
 }
-function collectDashSettings(){return normalizeByteSettings({persona:(document.getElementById('dashPersona')||{}).value,model:(document.getElementById('dashModel')||{}).value,safe:(document.getElementById('dashSafe')||{}).checked})}
+function collectDashSettings(){return normalizeByteSettings({persona:(document.getElementById('dashPersona')||{}).value,model:(document.getElementById('dashModel')||{}).value,safe:(document.getElementById('dashSafe')||{}).checked,voice:(document.getElementById('dashVoice')||{}).checked})}
 function saveDashSettings(showNotice){
   var settings=collectDashSettings(),note=document.getElementById('dashSettingsNote');
   try{localStorage.setItem(BYTE_SETTINGS_KEY,JSON.stringify(settings));if(note)note.textContent='Preferensi tersimpan lokal. Byte akan membacanya saat dibuka berikutnya.';if(showNotice)notice('Preferensi Byte disimpan.')}catch(e){if(note)note.textContent='Browser ini tidak mengizinkan penyimpanan preferensi lokal.'}
 }
 function exportDashSettings(){
-  try{var blob=new Blob([JSON.stringify({format:'voidscriptor-byte-settings',version:1,exported_at:new Date().toISOString(),settings:collectDashSettings()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voidscriptor-byte-settings.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);notice('Konfigurasi Byte diekspor.')}catch(e){notice('Konfigurasi tidak dapat diekspor.')}
+  try{var settings=collectDashSettings(),publicSettings={persona:settings.persona,safe:settings.safe,voice:settings.voice},blob=new Blob([JSON.stringify({format:'voidscriptor-byte-settings',version:1,exported_at:new Date().toISOString(),settings:publicSettings},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voidscriptor-byte-settings.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);notice('Konfigurasi Byte diekspor.')}catch(e){notice('Konfigurasi tidak dapat diekspor.')}
 }
 function importDashSettings(file){
   if(!file)return;
@@ -420,8 +427,10 @@ function refreshDashboardReadiness(){
   var storage='Tersedia di browser ini';
   try{localStorage.getItem('vs-dashboard-workspace-v1')}catch(e){storage='Dibatasi browser'}
   setReadiness('dashCheckStorage',storage==='Tersedia di browser ini'?'is-ready':'is-offline',storage);
+  var speechSynthesis=window.speechSynthesis&&window.SpeechSynthesisUtterance;
+  setReadiness('dashCheckVoice',speechSynthesis?'is-ready':'is-offline',speechSynthesis?'Didukung browser':'Tidak didukung browser');
   var speech=window.SpeechRecognition||window.webkitSpeechRecognition;
-  setReadiness('dashCheckVoice',speech?'is-ready':'is-offline',speech?'Didukung browser':'Tidak didukung browser');
+  DASH_MIC_STATE=speech?'ready':'offline';
   setReadiness('dashCheckSafety','is-ready','Aktif di Byte');
   renderDashboardOps();
 }
@@ -560,7 +569,7 @@ function markStep(id){var s=getSteps();if(!s[id]){s[id]=true;saveSteps(s);render
 
 function exportData(){
   var payload={
-    note:'This is the full extent of the data voidscriptor.pages.dev holds about you: the contents of your signed session cookie. There is no account database.',
+    note:'This is the full extent of the data voidscriptor.com holds about you: the contents of your signed session cookie. There is no account database.',
     exported_at:new Date().toISOString(),
     session:LAST_USER||{}
   };
@@ -634,21 +643,21 @@ fetch('/api/auth/session',{credentials:'same-origin'})
 var dict = {
   id: {
     'page-title':'Dasbor : Void Scriptor',
-    'nav-produk':'Produk','nav-download':'Download','nav-quiz':'QOWNER Mobile','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
+    'nav-produk':'Produk','nav-download':'Unduhan','nav-quiz':'QOWNER Mobile','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
-    'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Input suara','dash-ready-safety':'Mode aman',
+    'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Suara Byte','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-kicker':'DEBUG / LOKAL','dash-ops-diag-title':'Diagnostik','dash-ops-diag-copy':'Salin laporan',
-    'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-model':'Model','dash-settings-safe':'Mode aman','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Preferensi disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
-    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz-ios':'QOWNER iOS','dash-local-quiz-android':'QOWNER Android','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
+    'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-safe':'Mode aman','dash-settings-voice':'Balasan dengan suara','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Karakter, suara, dan mode aman disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
+    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz-ios':'QOWNER iOS · Belum tersedia','dash-local-quiz-android':'QOWNER Android · Belum tersedia','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
     'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun. Keluar kapan saja untuk mengakhirinya sekarang.',
-    'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER di App Store','dash-open-quiz-android':'QOWNER di Google Play','dash-ios':'iOS','dash-android':'Android',
+    'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia',
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
-    'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; hash dihitung lokal di peramban Anda.','dash-step3':'Jalankan Studio','dash-step3-note':'Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.','dash-step4':'Pasang QOWNER Quiz Maker','dash-step4-note':'Unduh aplikasi mobile QOWNER untuk iOS atau Android dari toko resmi.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
+    'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; hash dihitung lokal di peramban Anda.','dash-step3':'Jalankan Studio','dash-step3-note':'Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.','dash-step4':'Pantau QOWNER Quiz Maker','dash-step4-note':'Aplikasi mobile QOWNER untuk iOS dan Android belum tersedia untuk diunduh.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
     'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
     'dash-data-note':'Kami tidak menyimpan basis data akun. Satu-satunya data tentang Anda adalah isi cookie sesi di peramban ini. Ekspor menyalinnya ke berkas; hapus akan mengeluarkan Anda dan mencabut sesi.',
     'dash-delete-ask':'Yakin? Sesi akan dicabut sekarang. Untuk menarik izin sepenuhnya, cabut akses aplikasi di penyedia Anda:',
@@ -661,18 +670,18 @@ var dict = {
     'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Mobile','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
-    'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Voice input','dash-ready-safety':'Safe mode',
+    'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Byte voice output','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-kicker':'DEBUG / LOCAL','dash-ops-diag-title':'Diagnostics','dash-ops-diag-copy':'Copy report',
-    'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-model':'Model','dash-settings-safe':'Safe mode','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Preferences are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
-    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz-ios':'QOWNER iOS','dash-local-quiz-android':'QOWNER Android','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
+    'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-safe':'Safe mode','dash-settings-voice':'Reply with voice','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Character, voice, and safe mode are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
+    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz-ios':'QOWNER iOS · Not available yet','dash-local-quiz-android':'QOWNER Android · Not available yet','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
     'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database. Sign out any time to end it now.',
-    'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER on the App Store','dash-open-quiz-android':'QOWNER on Google Play','dash-ios':'iOS','dash-android':'Android',
+    'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet',
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere. The hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
-    'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — the download button is in the Products panel.','dash-step2':'Verify SHA-256','dash-step2-note':'Pick the file in the Products & links panel; the hash is computed locally in your browser.','dash-step3':'Run Studio','dash-step3-note':'Open the installer, finish setup, then sign back in to open your projects.','dash-step4':'Install QOWNER Quiz Maker','dash-step4-note':'Download the QOWNER mobile app for iOS or Android from the official store.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
+    'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — the download button is in the Products panel.','dash-step2':'Verify SHA-256','dash-step2-note':'Pick the file in the Products & links panel; the hash is computed locally in your browser.','dash-step3':'Run Studio','dash-step3-note':'Open the installer, finish setup, then sign back in to open your projects.','dash-step4':'Track QOWNER Quiz Maker','dash-step4-note':'The QOWNER mobile app for iOS and Android is not available for download yet.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
     'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
     'dash-data-note':'We keep no account database. The only data about you is the contents of the session cookie in this browser. Export copies it to a file; delete signs you out and revokes the session.',
     'dash-delete-ask':'Are you sure? The session will be revoked now. To withdraw consent entirely, remove the app at your provider:',

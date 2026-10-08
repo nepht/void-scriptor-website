@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="QOWNER — The Quiz Maker of the Void. Kanon, sistem tier, format kuis, dan arsip resmi Quiz Maker Void Scriptor.">
-<title>QOWNER — The Quiz Maker of the Void | Void Scriptor</title>
+<meta name="description" content="QOWNER : The Quiz Maker of the Void. Kanon, sistem tier, format kuis, dan arsip resmi Quiz Maker Void Scriptor.">
+<title>QOWNER : The Quiz Maker of the Void | Void Scriptor</title>
 <style>
 @font-face{font-family:'DM Serif Display';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-serif-display-latin-400.woff2) format('woff2')}
 @font-face{font-family:'DM Serif Display';font-style:italic;font-weight:400;font-display:swap;src:url(/fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
@@ -35,10 +35,14 @@ footer{padding:34px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 .chip{display:none;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:5px 12px 5px 5px}.chip i{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-style:normal;font-size:12px}.chip b{font-size:12px}.btn-out{border:1px solid rgba(var(--purple-rgb),.4);border-radius:5px;padding:7px 12px;background:none;color:#cfb2ff;font-size:11px;cursor:pointer;text-decoration:none}.btn-out:hover{border-color:rgba(var(--purple-rgb),.85);background:rgba(var(--purple-rgb),.14)}
 .lockwrap{min-height:calc(100vh - 72px);display:grid;place-items:center;padding:40px 0}.lockcard{width:min(430px,100%);border:1px solid rgba(var(--purple-rgb),.46);border-radius:14px;background:#0a0812;padding:34px;text-align:center;box-shadow:0 0 60px rgba(90,45,255,.25)}.lockcard img{width:70px;height:84px;margin:auto;display:block;filter:drop-shadow(0 0 18px rgba(var(--purple-rgb),.6))}.lockcard h2{margin:18px 0 8px;font-size:22px}.lockcard>p{color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.7}.lockcard form{display:grid;gap:14px;text-align:left}.lockcard label{display:grid;gap:7px;color:#d8c9eb;font-size:11px}.lockcard input{border:1px solid rgba(var(--purple-rgb),.22);border-radius:6px;background:rgba(255,255,255,.035);color:white;padding:13px;font:inherit}.lockcard .primary{width:100%;border:1px solid var(--purple-soft);background:linear-gradient(135deg,#7429ff,#4f18c9);box-shadow:0 0 25px rgba(90,45,255,.45);min-height:50px;border-radius:6px;text-transform:uppercase;letter-spacing:.075em;font-size:12px;font-weight:750;color:white}.locknote{display:block;color:var(--faint);font-size:9px;margin-top:14px}.plain-gate{background:none;border:0;color:#d8c9eb;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.plain-gate:hover{color:white}.outline-gate{border:1px solid rgba(var(--purple-rgb),.75);border-radius:6px;padding:10px 16px;background:none;color:#d9b8ff;font-size:11px;font-weight:700;text-transform:uppercase}.outline-gate:hover{background:rgba(90,45,255,.12)}.switch-gate{width:100%;border:0;background:none;color:var(--purple-bright);margin-top:16px;font-size:12px}.gh-gate{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;margin-top:18px;border:1px solid rgba(var(--purple-rgb),.7);border-radius:6px;background:linear-gradient(135deg,#24292f,#161b22);color:#fff;padding:13px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.gh-gate:hover{border-color:var(--purple-bright);background:linear-gradient(135deg,#30363d,#21262d)}.gh-gate svg{width:17px;height:17px;fill:currentColor}.gh-gate.google{background:#fff;color:#1f1f1f;border-color:#dadce0}.gh-gate.google:hover{background:#f5f5f5;border-color:#c9c9c9}.gh-gate.google svg{fill:#4285F4}.auth-status{display:block;color:var(--faint);font-size:10px;margin-top:10px;line-height:1.5}
 @media(max-width:900px){.law-grid,.cards3{grid-template-columns:1fr}.dice{display:none}nav{display:none}}@media(max-width:600px){.navrow{gap:14px}.footlinks{flex-wrap:wrap;gap:14px 20px}}@media(max-width:480px){.brand span{display:none}.brand small{display:none}}@media(max-width:400px){.plain-gate,.outline-gate{display:none}}
+/* Mobile navigation: keep the archive's section links reachable without hover. */
+.quiz-menu{display:none}
+@media(max-width:900px){.quiz-menu{display:inline-flex;align-items:center;justify-content:center;gap:8px;position:fixed;top:14px;right:18px;z-index:60;min-width:44px;min-height:44px;padding:0 12px;border:1px solid rgba(var(--purple-rgb),.5);border-radius:6px;background:rgba(8,6,15,.92);color:#efe7ff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.quiz-menu:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}header nav.open{display:flex;position:fixed;top:72px;left:18px;right:18px;z-index:55;padding:18px;margin:0;border:1px solid var(--line);border-radius:8px;background:#08060f;box-shadow:0 18px 40px rgba(0,0,0,.4);flex-direction:column;gap:14px}}
 /* nocturne-fonts */
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
 </style>
+<link rel="stylesheet" href="/assets/site.css">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
@@ -47,40 +51,44 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <link rel="manifest" href="site.webmanifest">
 <meta name="theme-color" content="#050507">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://voidscriptor.pages.dev/quiz">
-<link rel="alternate" hreflang="id" href="https://voidscriptor.pages.dev/quiz">
-<link rel="alternate" hreflang="en" href="https://voidscriptor.pages.dev/quiz?lang=en">
-<link rel="alternate" hreflang="x-default" href="https://voidscriptor.pages.dev/quiz">
-<meta property="og:site_name" content="Void Scriptor Corporation">
+<link rel="canonical" href="https://voidscriptor.com/quiz">
+<link rel="alternate" hreflang="id" href="https://voidscriptor.com/quiz">
+<link rel="alternate" hreflang="en" href="https://voidscriptor.com/quiz?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/quiz">
+<meta property="og:site_name" content="Void Scriptor">
 <meta property="og:locale" content="id_ID">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:url" content="https://voidscriptor.pages.dev/quiz">
-<meta property="og:title" content="QOWNER — The Quiz Maker of the Void">
+<meta property="og:url" content="https://voidscriptor.com/quiz">
+<meta property="og:title" content="QOWNER : The Quiz Maker of the Void">
 <meta property="og:description" content="Kanon, sistem tier, dan arsip resmi Quiz Maker Void Scriptor.">
-<meta property="og:image" content="https://voidscriptor.pages.dev/assets/og-quiz.png">
-<meta property="og:image:secure_url" content="https://voidscriptor.pages.dev/assets/og-quiz.png">
+<meta property="og:image" content="https://voidscriptor.com/assets/og-quiz.png">
+<meta property="og:image:secure_url" content="https://voidscriptor.com/assets/og-quiz.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="QOWNER — The Quiz Maker of the Void.">
+<meta property="og:image:alt" content="QOWNER : The Quiz Maker of the Void.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="QOWNER — The Quiz Maker of the Void">
+<meta name="twitter:title" content="QOWNER : The Quiz Maker of the Void">
 <meta name="twitter:description" content="Kanon, sistem tier, dan arsip resmi Quiz Maker Void Scriptor.">
-<meta name="twitter:image" content="https://voidscriptor.pages.dev/assets/og-quiz.png">
+<meta name="twitter:image" content="https://voidscriptor.com/assets/og-quiz.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"QOWNER — The Quiz Maker of the Void","url":"https://voidscriptor.pages.dev/quiz","description":"Kanon, sistem tier, format kuis, dan arsip resmi Quiz Maker Void Scriptor.","inLanguage":["id","en"],"isPartOf":{"@type":"WebSite","name":"Void Scriptor Corporation","url":"https://voidscriptor.pages.dev/"},"publisher":{"@type":"Organization","name":"Void Scriptor Corporation","url":"https://voidscriptor.pages.dev/"},"about":{"@type":"Thing","name":"QOWNER Quiz Maker"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"QOWNER : The Quiz Maker of the Void","url":"https://voidscriptor.com/quiz","description":"Arsip kanon dan dokumentasi resmi QOWNER Quiz Maker. Aplikasi QOWNER untuk iOS dan Android belum tersedia; halaman ini adalah arsip dan dokumentasi produk.","inLanguage":["id","en"],"isPartOf":{"@type":"WebSite","name":"Void Scriptor","url":"https://voidscriptor.com/"},"publisher":{"@type":"Organization","name":"Void Scriptor","url":"https://voidscriptor.com/"},"about":{"@type":"Thing","name":"QOWNER Quiz Maker"}}
 </script>
 </head>
-<body>
+<body class="page-quiz">
+<a class="skip-link" href="#lock">Lewati ke akses utama</a>
 <header><div class="shell navrow"><a class="brand" href="/"><img src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR<small data-i18n="brand-sub">QOWNER ARCHIVE</small></span></a><nav><a href="#kanon" data-i18n="nav-kanon">Kanon</a><a href="#tier" data-i18n="nav-tier">Sistem Tier</a><a href="#format" data-i18n="nav-format">Format</a><a href="#governance" data-i18n="nav-gov">Aturan</a><a href="#kronologi" data-i18n="nav-krono">Kronologi</a></nav><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><button class="plain-gate" id="btnMasuk" data-i18n="btn-masuk">Masuk</button><button class="outline-gate" id="btnDaftar" data-i18n="btn-daftar">Buat akun</button><span class="chip" id="chip"><i id="chipInitial">V</i><b id="chipName">Creator</b><a class="btn-out" href="/dashboard" data-i18n="menu-dashboard">Dasbor</a><button class="btn-out" id="btnKeluar" data-i18n="btn-keluar">Keluar</button></span><button class="btn-lang" id="btnID" style="display:none" aria-label="Ganti ke bahasa Indonesia">ID</button><button class="btn-lang" id="btnEN" aria-label="Switch to English">EN</button></div></div></header>
 
+<button class="quiz-menu" id="quizMenu" type="button" aria-label="Buka menu navigasi" aria-controls="quizNav" aria-expanded="false">Menu</button>
 <section class="hero"><div class="grid"></div><div class="shell" style="position:relative">
 <div class="eyebrow" data-i18n="hero-eyebrow">QOWNER · THE QUIZ MAKER OF THE VOID</div>
 <h1><span data-i18n="hero-h1a">Setiap soal punya jawaban.</span> <span data-i18n="hero-h1b">Layakkah kau menemukannya?</span></h1>
-<p class="lead" data-i18n="hero-lead">Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April—Agustus 2026.</p>
+<p class="lead" data-i18n="hero-lead">Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April sampai Agustus 2026.</p>
 <p class="quote-en">“Every question has an answer. The real challenge is whether you are worthy enough to find it.”</p>
 <div class="actions"><a class="primary" href="https://www.threads.com/@d.m.d_quiz" target="_blank" rel="noopener">🎲 @d.m.d_quiz</a><a class="secondary" href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener" data-i18n="cta-profile">@choirudin_choi ↗</a></div>
+<p class="lead" style="font-size:13px;margin-top:18px" data-i18n="mobile-note">QOWNER adalah aplikasi mobile untuk iOS dan Android. Halaman ini berisi arsip kanon dan dokumentasi, bukan aplikasi web.</p>
+<div class="actions" aria-label="QOWNER mobile app"><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-ios">iOS · Belum tersedia</span><span class="secondary is-unavailable" aria-disabled="true" data-i18n="cta-android">Android · Belum tersedia</span></div>
 <svg class="dice" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="#a347ff" stroke-width="2"><rect x="18" y="18" width="64" height="64" rx="12" transform="rotate(8 50 50)" fill="rgba(90,45,255,.08)"/><circle cx="38" cy="40" r="5" fill="#42e8ff" stroke="none"/><circle cx="62" cy="40" r="5" fill="#a347ff" stroke="none"/><circle cx="50" cy="52" r="5" fill="#d8caff" stroke="none"/><circle cx="38" cy="64" r="5" fill="#a347ff" stroke="none"/><circle cx="62" cy="64" r="5" fill="#42e8ff" stroke="none"/></g></svg>
 </div></section>
 
@@ -89,19 +97,19 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <main class="shell" id="gateContent" hidden>
 <section id="kanon"><div class="sec-head"><span class="kicker" data-i18n="k-kanon">KANON RESMI</span><h2 data-i18n="kanon-h2">QOWNER, sang Kelana Antar Dimensi.</h2></div>
 <div class="canon">
-<b data-i18n="kanon-p1b">Siapa QOWNER?</b> <span data-i18n="kanon-p1">Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa — ia menawarkan. Dan setiap tawarannya memiliki harga.</span>
+<b data-i18n="kanon-p1b">Siapa QOWNER?</b> <span data-i18n="kanon-p1">Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa : ia menawarkan. Dan setiap tawarannya memiliki harga.</span>
 <span class="q" data-i18n="kanon-q1">“Kupersulit jalanmu, tapi kamu akan mendapatkan hadiahnya.”</span>
-<span class="q" data-i18n="kanon-q2">“Untung gak ku jadikan quiz.” — saringan harian sang Quiz Maker</span>
+<span class="q" data-i18n="kanon-q2">“Untung gak ku jadikan quiz.” : saringan harian sang Quiz Maker</span>
 </div>
 <div class="law-grid">
-<div class="law"><span class="tag" data-i18n="law-fail-tag">JIKA GAGAL</span><h3 data-i18n="law-fail-h">Menghilang tanpa jejak</h3><p data-i18n="law-fail-p">Yang kalah tidak dihukum — mereka cukup lenyap dari cerita. Tidak ada drama, tidak ada kedua.</p></div>
+<div class="law"><span class="tag" data-i18n="law-fail-tag">JIKA GAGAL</span><h3 data-i18n="law-fail-h">Menghilang tanpa jejak</h3><p data-i18n="law-fail-p">Yang kalah tidak dihukum : mereka cukup lenyap dari cerita. Tidak ada drama, tidak ada kedua.</p></div>
 <div class="law"><span class="tag" data-i18n="law-win-tag">JIKA MENANG</span><h3 data-i18n="law-win-h">Satu permintaan dipenuhi</h3><p data-i18n="law-win-p">Hadiah selalu berbeda bentuknya dan selalu berkonsekuensi setara. Reward gratis adalah anomali di semesta ini.</p></div>
 </div></section>
 
 <section id="tier"><div class="sec-head"><span class="kicker" data-i18n="k-tier">SISTEM TIER</span><h2 data-i18n="tier-h2">Lima ability, lima tingkat ujian.</h2><p style="color:var(--muted);font-size:13px;margin:4px 0 0" data-i18n="tier-sub">Tier bio @d.m.d_quiz adalah ability QOWNER dari kanon Void Energy. Peserta disapa 🦖 pada trial reguler, 🦕 pada tier tinggi.</p></div>
 <table><thead><tr><th data-i18n="th-mult">Multiplier</th><th data-i18n="th-trial">Nama Trial</th><th data-i18n="th-form">Wujud</th><th data-i18n="th-reward">Bobot Hadiah</th><th data-i18n="th-freq">Frekuensi</th></tr></thead><tbody>
 <tr><td class="mult">×10</td><td><b>Infinite Riddles</b></td><td data-i18n="t10-f">Fast Quiz bernomor</td><td data-i18n="t10-r">Simbolik / tanpa hadiah</td><td data-i18n="t10-fq">Hampir tiap hari</td></tr>
-<tr><td class="mult">×20</td><td><b>Dimensional Trial</b></td><td data-i18n="t20-f">Kuis tema mingguan / Mini edukatif</td><td data-i18n="t20-r">Kecil—sedang</td><td data-i18n="t20-fq">Mingguan</td></tr>
+<tr><td class="mult">×20</td><td><b>Dimensional Trial</b></td><td data-i18n="t20-f">Kuis tema mingguan / Mini edukatif</td><td data-i18n="t20-r">Kecil hingga sedang</td><td data-i18n="t20-fq">Mingguan</td></tr>
 <tr><td class="mult">×50</td><td><b>Truth Revelation</b></td><td data-i18n="t50-f">Special Quiz lore / Quest karya</td><td data-i18n="t50-r">Besar</td><td data-i18n="t50-fq">Bulanan</td></tr>
 <tr><td class="mult">×100</td><td><b>Cosmic Judgment</b></td><td data-i18n="t100-f">Hard Quiz tanpa clue</td><td data-i18n="t100-r">Eksklusif / jackpot</td><td data-i18n="t100-fq">Insidental</td></tr>
 <tr><td class="mult">💶</td><td><b>Wish Granting Reward</b></td><td data-i18n="tw-f">Event pamungkas</td><td data-i18n="tw-r">“Satu permintaan”</td><td data-i18n="tw-fq">Sangat jarang</td></tr>
@@ -110,25 +118,25 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 
 <section id="format"><div class="sec-head"><span class="kicker" data-i18n="k-format">FORMAT TRIAL</span><h2 data-i18n="format-h2">Enam wajah kuis QOWNER.</h2></div>
 <div class="cards3">
-<div class="card"><span class="num">×10 · BERKELANJUTAN</span><h3 data-i18n="f1-h">Fast Quiz Bernomor</h3><p data-i18n="f1-p">Satu soal, clue asbun, jawab di komentar. Seri telah mencapai #399 — kelanjutannya lahir dari #400.</p></div>
+<div class="card"><span class="num">×10 · BERKELANJUTAN</span><h3 data-i18n="f1-h">Fast Quiz Bernomor</h3><p data-i18n="f1-p">Satu soal, clue asbun, jawab di komentar. Seri telah mencapai #399 : kelanjutannya lahir dari #400.</p></div>
 <div class="card"><span class="num">×50 · LORE</span><h3 data-i18n="f2-h">Special Quiz Lore</h3><p data-i18n="f2-p">Soal yang hanya bisa dijawab pembaca semesta Void. Pengetahuan kanon adalah kuncinya.</p></div>
 <div class="card"><span class="num">×100 · LIFETIME</span><h3 data-i18n="f3-h">Hard Quiz tanpa Clue</h3><p data-i18n="f3-p">Tersemat permanen. Tanpa petunjuk. Status CLEAR diumumkan terpisah saat ada yang berhasil.</p></div>
-<div class="card"><span class="num">×20 · EDUKASI</span><h3 data-i18n="f4-h">Mini Quiz Edukatif</h3><p data-i18n="f4-p">Bahasa, budaya, pengetahuan umum — belajar dengan gaya Void.</p></div>
+<div class="card"><span class="num">×20 · EDUKASI</span><h3 data-i18n="f4-h">Mini Quiz Edukatif</h3><p data-i18n="f4-p">Bahasa, budaya, pengetahuan umum : belajar dengan gaya Void.</p></div>
 <div class="card"><span class="num">×50 · KARYA</span><h3 data-i18n="f5-h">Quest Non-Soal</h3><p data-i18n="f5-p">Seperti Quest LOGO D.M.D: peserta menyerahkan karya, bukan jawaban. Dinaril lewat DM.</p></div>
 <div class="card"><span class="num">KOLABORASI</span><h3 data-i18n="f6-h">Trial Kolaborasi</h3><p data-i18n="f6-p">Kuis bersama kreator lain, saling menyebut dan menghadiahi peserta lintas komunitas.</p></div>
 </div></section>
 
 <section id="anatomi"><div class="sec-head"><span class="kicker" data-i18n="k-anatomi">ANATOMI POSTINGAN</span><h2 data-i18n="anatomi-h2">Kerangka standar tiap Trial.</h2></div>
-<pre><span class="pre-label">TRIAL ×{TIER} — {NAMA ABILITY} #{nomor}</span>
-{narasi 1–2 kalimat ala QOWNER}
+<pre><span class="pre-label">TRIAL ×{TIER} : {NAMA ABILITY} #{nomor}</span>
+{narasi 1-2 kalimat ala QOWNER}
 
 ❓ {soal}
 💡 Clue: {asbun · non-teoretis · humor sehari-hari}
 📜 {jawab di komentar · dilarang nego/edit · 1× tebak per akun}
-⏳ Reveal {jam} — “Silahkan DM bagi yang benar. Next quiz after reward.”
+⏳ Reveal {jam} : “Silahkan DM bagi yang benar. Next quiz after reward.”
 
 {gambar 1/2: poster bertema Void}
-{gambar 2/2: prompt lengkap — selalu dibagikan}
+{gambar 2/2: prompt lengkap : selalu dibagikan}
 
 #QuizThreads #PuzzleThreads</pre></section>
 
@@ -139,52 +147,52 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <li><b data-i18n="g3-b">Hadiah nyata terdokumentasi.</b> <span data-i18n="g3-p">Transfer dan penyerahan hadiah dicatat dan dipublikasikan kepada pemenang.</span></li>
 <li><b data-i18n="g4-b">Batas antar akun.</b> <span data-i18n="g4-p">Challenge milik akun tertentu dinyatakan eksplisit; tidak ada ambiguitas kepemilikan.</span></li>
 <li><b data-i18n="g5-b">Perlindungan simbol.</b> <span data-i18n="g5-p">Konsep boleh ditiru siapa pun; simbol & ikon resmi QOWNER tidak boleh diklaim atau diedit pihak lain (deklarasi 6 Juni).</span></li>
-<li><b data-i18n="g6-b">Reward berbeda-beda itu fitur.</b> <span data-i18n="g6-p">Bentuk hadiah berubah tiap sesi — seperti filosofi game survival: tak ada dua trial yang sama.</span></li>
+<li><b data-i18n="g6-b">Reward berbeda-beda itu fitur.</b> <span data-i18n="g6-p">Bentuk hadiah berubah tiap sesi : seperti filosofi game survival: tak ada dua trial yang sama.</span></li>
 </ul></section>
 
-<section id="hall-of-clear"><div class="clear-box"><span class="badge">CLEAR</span><div><strong data-i18n="hoc-t">Hall of Clear</strong><p data-i18n="hoc-p">Status CLEAR adalah aset publik yang dapat diverifikasi siapa saja. Papan permanen para pemegang status — termasuk pemegang Hard Quiz lifetime — akan hidup di halaman ini.</p></div></div></section>
+<section id="hall-of-clear"><div class="clear-box"><span class="badge">CLEAR</span><div><strong data-i18n="hoc-t">Hall of Clear</strong><p data-i18n="hoc-p">Status CLEAR adalah aset publik yang dapat diverifikasi siapa saja. Papan permanen para pemegang status : termasuk pemegang Hard Quiz lifetime : akan hidup di halaman ini.</p></div></div></section>
 
 <section id="kronologi"><div class="sec-head"><span class="kicker" data-i18n="k-krono">KRONOLOGI TERVERIFIKASI</span><h2 data-i18n="krono-h2">Perjalanan sang Quiz Maker.</h2></div>
 <ul class="timeline">
-<li><span class="t-date">26–27 APRIL 2026</span><p data-i18n="tl1">Kuis Magic Com pertama yang terverifikasi — 250 suka · 121 komentar; pemenang diumumkan dan dihadiahi.</p></li>
-<li><span class="t-date">15–16 MEI</span><p data-i18n="tl2">Kuis Impositor + kebijakan reward resmi: DM bagi yang benar, next quiz after reward.</p></li>
-<li><span class="t-date">29 MEI</span><p data-i18n="tl3">Utas lore QOWNER diterbitkan — hukum konsekuensi, Void Energy, dan kelima ability didefinisikan.</p></li>
-<li><span class="t-date">30–31 MEI</span><p data-i18n="tl4">Hadiah “Exclusive” untuk semua peserta setia diumumkan.</p></li>
+<li><span class="t-date">26-27 APRIL 2026</span><p data-i18n="tl1">Kuis Magic Com pertama yang terverifikasi : 250 suka · 121 komentar; pemenang diumumkan dan dihadiahi.</p></li>
+<li><span class="t-date">15-16 MEI</span><p data-i18n="tl2">Kuis Impositor + kebijakan reward resmi: DM bagi yang benar, next quiz after reward.</p></li>
+<li><span class="t-date">29 MEI</span><p data-i18n="tl3">Utas lore QOWNER diterbitkan : hukum konsekuensi, Void Energy, dan kelima ability didefinisikan.</p></li>
+<li><span class="t-date">30-31 MEI</span><p data-i18n="tl4">Hadiah “Exclusive” untuk semua peserta setia diumumkan.</p></li>
 <li><span class="t-date">1 JUNI</span><p data-i18n="tl5">Akun @qowner.quizmaker lahir: “Aku adalah Qowner… Ceritaku akan dimulai dari sini.”</p></li>
 <li><span class="t-date">6 JUNI</span><p data-i18n="tl6">Deklarasi IP: konsep bebas ditiru, simbol & ikon tidak boleh diklaim orang lain.</p></li>
 <li><span class="t-date">24 JUNI</span><p data-i18n="tl7">Aturan anti-nego & diskualifikasi ditetapkan; Quest LOGO D.M.D tuntas dengan pemenang.</p></li>
-<li><span class="t-date">JUNI—AGUSTUS</span><p data-i18n="tl8">Fast Quiz bernomor merayap sampai #399; kuis malam Sabtu menjadi tradisi.</p></li>
-<li><span class="t-date">20 AGUSTUS</span><p data-i18n="tl9">Konsep Hard Quiz tanpa clue dipermanenkan — dipin lifetime, status CLEAR.</p></li>
+<li><span class="t-date">JUNI-AGUSTUS</span><p data-i18n="tl8">Fast Quiz bernomor merayap sampai #399; kuis malam Sabtu menjadi tradisi.</p></li>
+<li><span class="t-date">20 AGUSTUS</span><p data-i18n="tl9">Konsep Hard Quiz tanpa clue dipermanenkan : dipin lifetime, status CLEAR.</p></li>
 <li><span class="t-date">25 AGUSTUS</span><p data-i18n="tl10">Arsip identitas lengkap disusun; dokumentasi ini menjadi fondasi resmi ke depan.</p></li>
 </ul></section>
 </main>
 
-<footer><div class="shell foot"><div class="footbrand"><img src="assets/void_scriptor_emblem.webp" alt=""><div><strong>VOID SCRIPTOR</strong><span data-i18n="foot-tagline">Build beyond the known.</span></div></div><div class="footlinks"><a href="/" data-i18n="foot-home">Beranda</a><a href="/privacy" data-i18n="foot-privacy">Privasi</a><a href="/terms" data-i18n="foot-terms">Syarat</a><a href="/contact" data-i18n="foot-contact">Kontak</a><a href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener">Threads</a><a href="mailto:voidscriptor@gmail.com" data-i18n="foot-duka">Dukungan</a></div><div class="copyline" data-i18n="foot-copy">© 2026 Void Scriptor Corporation · Choirudin — QOWNER canon & quiz identity.</div></div></footer>
+<footer><div class="shell foot"><div class="footbrand"><img src="assets/void_scriptor_emblem.webp" alt=""><div><strong>VOID SCRIPTOR</strong><span data-i18n="foot-tagline">Build beyond the known.</span></div></div><div class="footlinks"><a href="/" data-i18n="foot-home">Beranda</a><a href="/privacy" data-i18n="foot-privacy">Privasi</a><a href="/terms" data-i18n="foot-terms">Syarat</a><a href="/contact" data-i18n="foot-contact">Kontak</a><a href="https://www.threads.com/@choirudin_choi" target="_blank" rel="noopener">Threads</a><a href="mailto:voidscriptor@gmail.com" data-i18n="foot-duka">Dukungan</a></div><div class="copyline" data-i18n="foot-copy">© 2026 Void Scriptor · Choirudin : QOWNER canon & quiz identity.</div></div></footer>
 
 <script>(function(){
 var dict={
 id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','nav-format':'Format','nav-gov':'Aturan','nav-krono':'Kronologi',
 'hero-eyebrow':'QOWNER · THE QUIZ MAKER OF THE VOID','hero-h1a':'Setiap soal punya jawaban.','hero-h1b':'Layakkah kau menemukannya?',
-'hero-lead':'Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April—Agustus 2026.',
+'hero-lead':'Dokumentasi resmi dunia kuis Choirudin: kanon QOWNER, sistem tier berhadiah konsekuensi, dan arsip perjalanan April sampai Agustus 2026.',
 'cta-profile':'@choirudin_choi ↗','k-kanon':'KANON RESMI','kanon-h2':'QOWNER, sang Kelana Antar Dimensi.',
-'kanon-p1b':'Siapa QOWNER?','kanon-p1':'Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa — ia menawarkan. Dan setiap tawarannya memiliki harga.',
+'kanon-p1b':'Siapa QOWNER?','kanon-p1':'Entitas kelana yang melintasi dimensi demi dimensi, membawa teka-teki yang tak terpecahkan oleh peradaban mana pun. Ia tidak memaksa : ia menawarkan. Dan setiap tawarannya memiliki harga.',
 'kanon-q1':'“Kupersulit jalanmu, tapi kamu akan mendapatkan hadiahnya.”',
-'kanon-q2':'“Untung gak ku jadikan quiz.” — saringan harian sang Quiz Maker',
-'law-fail-tag':'JIKA GAGAL','law-fail-h':'Menghilang tanpa jejak','law-fail-p':'Yang kalah tidak dihukum — mereka cukup lenyap dari cerita. Tidak ada drama, tidak ada kedua.',
+'kanon-q2':'“Untung gak ku jadikan quiz.” : saringan harian sang Quiz Maker',
+'law-fail-tag':'JIKA GAGAL','law-fail-h':'Menghilang tanpa jejak','law-fail-p':'Yang kalah tidak dihukum : mereka cukup lenyap dari cerita. Tidak ada drama, tidak ada kedua.',
 'law-win-tag':'JIKA MENANG','law-win-h':'Satu permintaan dipenuhi','law-win-p':'Hadiah selalu berbeda bentuknya dan selalu berkonsekuensi setara. Reward gratis adalah anomali di semesta ini.',
 'k-tier':'SISTEM TIER','tier-h2':'Lima ability, lima tingkat ujian.','tier-sub':'Tier bio @d.m.d_quiz adalah ability QOWNER dari kanon Void Energy. Peserta disapa 🦖 pada trial reguler, 🦕 pada tier tinggi.',
 'th-mult':'Multiplier','th-trial':'Nama Trial','th-form':'Wujud','th-reward':'Bobot Hadiah','th-freq':'Frekuensi',
 't10-f':'Fast Quiz bernomor','t10-r':'Simbolik / tanpa hadiah','t10-fq':'Hampir tiap hari',
-'t20-f':'Kuis tema mingguan / Mini edukatif','t20-r':'Kecil—sedang','t20-fq':'Mingguan',
+'t20-f':'Kuis tema mingguan / Mini edukatif','t20-r':'Kecil hingga sedang','t20-fq':'Mingguan',
 't50-f':'Special Quiz lore / Quest karya','t50-r':'Besar','t50-fq':'Bulanan',
 't100-f':'Hard Quiz tanpa clue','t100-r':'Eksklusif / jackpot','t100-fq':'Insidental',
 'tw-f':'Event pamungkas','tw-r':'“Satu permintaan”','tw-fq':'Sangat jarang',
 'tier-note':'Naik tier mensyaratkan status CLEAR pada tier di bawahnya. Hadiah “Exclusive” disediakan bagi peserta setia.',
 'k-format':'FORMAT TRIAL','format-h2':'Enam wajah kuis QOWNER.',
-'f1-h':'Fast Quiz Bernomor','f1-p':'Satu soal, clue asbun, jawab di komentar. Seri telah mencapai #399 — kelanjutannya lahir dari #400.',
+'f1-h':'Fast Quiz Bernomor','f1-p':'Satu soal, clue asbun, jawab di komentar. Seri telah mencapai #399 : kelanjutannya lahir dari #400.',
 'f2-h':'Special Quiz Lore','f2-p':'Soal yang hanya bisa dijawab pembaca semesta Void. Pengetahuan kanon adalah kuncinya.',
 'f3-h':'Hard Quiz tanpa Clue','f3-p':'Tersemat permanen. Tanpa petunjuk. Status CLEAR diumumkan terpisah saat ada yang berhasil.',
-'f4-h':'Mini Quiz Edukatif','f4-p':'Bahasa, budaya, pengetahuan umum — belajar dengan gaya Void.',
+'f4-h':'Mini Quiz Edukatif','f4-p':'Bahasa, budaya, pengetahuan umum : belajar dengan gaya Void.',
 'f5-h':'Quest Non-Soal','f5-p':'Seperti Quest LOGO D.M.D: peserta menyerahkan karya, bukan jawaban. Dinaril lewat DM.',
 'f6-h':'Trial Kolaborasi','f6-p':'Kuis bersama kreator lain, saling menyebut dan menghadiahi peserta lintas komunitas.',
 'k-anatomi':'ANATOMI POSTINGAN','anatomi-h2':'Kerangka standar tiap Trial.',
@@ -194,18 +202,18 @@ id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','n
 'g3-b':'Hadiah nyata terdokumentasi.','g3-p':'Transfer dan penyerahan hadiah dicatat dan dipublikasikan kepada pemenang.',
 'g4-b':'Batas antar akun.','g4-p':'Challenge milik akun tertentu dinyatakan eksplisit; tidak ada ambiguitas kepemilikan.',
 'g5-b':'Perlindungan simbol.','g5-p':'Konsep boleh ditiru siapa pun; simbol & ikon resmi QOWNER tidak boleh diklaim atau diedit pihak lain (deklarasi 6 Juni).',
-'g6-b':'Reward berbeda-beda itu fitur.','g6-p':'Bentuk hadiah berubah tiap sesi — seperti filosofi game survival: tak ada dua trial yang sama.',
-'hoc-t':'Hall of Clear','hoc-p':'Status CLEAR adalah aset publik yang dapat diverifikasi siapa saja. Papan permanen para pemegang status — termasuk pemegang Hard Quiz lifetime — akan hidup di halaman ini.',
+'g6-b':'Reward berbeda-beda itu fitur.','g6-p':'Bentuk hadiah berubah tiap sesi : seperti filosofi game survival: tak ada dua trial yang sama.',
+'hoc-t':'Hall of Clear','hoc-p':'Status CLEAR adalah aset publik yang dapat diverifikasi siapa saja. Papan permanen para pemegang status : termasuk pemegang Hard Quiz lifetime : akan hidup di halaman ini.',
 'k-krono':'KRONOLOGI TERVERIFIKASI','krono-h2':'Perjalanan sang Quiz Maker.',
-'tl1':'Kuis Magic Com pertama yang terverifikasi — 250 suka · 121 komentar; pemenang diumumkan dan dihadiahi.',
+'tl1':'Kuis Magic Com pertama yang terverifikasi : 250 suka · 121 komentar; pemenang diumumkan dan dihadiahi.',
 'tl2':'Kuis Impositor + kebijakan reward resmi: DM bagi yang benar, next quiz after reward.',
-'tl3':'Utas lore QOWNER diterbitkan — hukum konsekuensi, Void Energy, dan kelima ability didefinisikan.',
+'tl3':'Utas lore QOWNER diterbitkan : hukum konsekuensi, Void Energy, dan kelima ability didefinisikan.',
 'tl4':'Hadiah “Exclusive” untuk semua peserta setia diumumkan.',
 'tl5':'Akun @qowner.quizmaker lahir: “Aku adalah Qowner… Ceritaku akan dimulai dari sini.”',
 'tl6':'Deklarasi IP: konsep bebas ditiru, simbol & ikon tidak boleh diklaim orang lain.',
 'tl7':'Aturan anti-nego & diskualifikasi ditetapkan; Quest LOGO D.M.D tuntas dengan pemenang.',
 'tl8':'Fast Quiz bernomor merayap sampai #399; kuis malam Sabtu menjadi tradisi.',
-'tl9':'Konsep Hard Quiz tanpa clue dipermanenkan — dipin lifetime, status CLEAR.',
+'tl9':'Konsep Hard Quiz tanpa clue dipermanenkan : dipin lifetime, status CLEAR.',
 'tl10':'Arsip identitas lengkap disusun; dokumentasi ini menjadi fondasi resmi ke depan.',
 'foot-tagline':'Build beyond the known.','foot-home':'Beranda','foot-duka':'Dukungan','foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak',
 'btn-masuk':'Masuk','btn-daftar':'Buat akun','btn-keluar':'Keluar','menu-dashboard':'Dasbor',
@@ -214,29 +222,29 @@ id:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Kanon','nav-tier':'Sistem Tier','n
 'lock-btn':'Masuk ke Void','lock-btn-daftar':'Buat akun Void',
 'lock-switch':'Belum punya akun? Buat akun','lock-switch-to-masuk':'Sudah punya akun? Masuk',
 'lock-note':'Akses kanon menggunakan sesi masuk yang aman.','lock-github':'Lanjutkan dengan GitHub','lock-google':'Lanjutkan dengan Google','lock-auth-status':'Memeriksa koneksi autentikasi…','lock-auth-status-ready':'Masuk untuk membuka arsip.','lock-auth-status-off':'Login belum dikonfigurasi.','lock-auth-status-error':'Layanan autentikasi tidak dapat dijangkau.',
-'foot-copy':'© 2026 Void Scriptor Corporation · Choirudin — QOWNER canon & quiz identity.'},
+'foot-copy':'© 2026 Void Scriptor · Choirudin : QOWNER canon & quiz identity.','mobile-note':'QOWNER sedang disiapkan sebagai aplikasi mobile untuk iOS dan Android. Halaman ini berisi arsip kanon dan dokumentasi, bukan aplikasi web.','cta-ios':'iOS · Belum tersedia','cta-android':'Android · Belum tersedia'},
 en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','nav-format':'Formats','nav-gov':'Rules','nav-krono':'Timeline',
 'hero-eyebrow':'QOWNER · THE QUIZ MAKER OF THE VOID','hero-h1a':'Every question has an answer.','hero-h1b':'Are you worthy to find it?',
-'hero-lead':'Official documentation of Choirudin’s quiz universe: the QOWNER canon, consequence-backed tier system, and the April—August 2026 journey.',
+'hero-lead':'Official documentation of Choirudin’s quiz universe: the QOWNER canon, consequence-backed tier system, and the April to August 2026 journey.',
 'cta-profile':'@choirudin_choi ↗','k-kanon':'OFFICIAL CANON','kanon-h2':'QOWNER, the Wanderer Between Dimensions.',
-'kanon-p1b':'Who is QOWNER?','kanon-p1':'An entity wandering dimension after dimension, carrying riddles no civilization could ever solve. It never forces — it offers. And every offer has a price.',
+'kanon-p1b':'Who is QOWNER?','kanon-p1':'An entity wandering dimension after dimension, carrying riddles no civilization could ever solve. It never forces : it offers. And every offer has a price.',
 'kanon-q1':'“I make your road harder, but you will get the prize.”',
-'kanon-q2':'“Good thing I didn’t make this a quiz.” — the Quiz Maker’s daily filter',
-'law-fail-tag':'ON FAILURE','law-fail-h':'Vanish without a trace','law-fail-p':'Losers are not punished — they simply fade from the story. No drama, no second round.',
+'kanon-q2':'“Good thing I didn’t make this a quiz.” : the Quiz Maker’s daily filter',
+'law-fail-tag':'ON FAILURE','law-fail-h':'Vanish without a trace','law-fail-p':'Losers are not punished : they simply fade from the story. No drama, no second round.',
 'law-win-tag':'ON VICTORY','law-win-h':'One wish granted','law-win-p':'Prizes always differ in form and always carry equal consequences. Free rewards are an anomaly in this universe.',
 'k-tier':'TIER SYSTEM','tier-h2':'Five abilities, five levels of trial.','tier-sub':'The @d.m.d_quiz bio tiers are QOWNER abilities from the Void Energy canon. Participants are called 🦖 in regular trials, 🦕 in higher tiers.',
 'th-mult':'Multiplier','th-trial':'Trial Name','th-form':'Form','th-reward':'Prize Weight','th-freq':'Frequency',
 't10-f':'Numbered Fast Quiz','t10-r':'Symbolic / no prize','t10-fq':'Almost daily',
-'t20-f':'Weekly themed / educational mini','t20-r':'Small—medium','t20-fq':'Weekly',
+'t20-f':'Weekly themed / educational mini','t20-r':'Small to medium','t20-fq':'Weekly',
 't50-f':'Lore Special / Quest works','t50-r':'Large','t50-fq':'Monthly',
 't100-f':'Clueless Hard Quiz','t100-r':'Exclusive / jackpot','t100-fq':'Ad hoc',
-'tw-f':'Ultimate event','tw-r':'“One wish”','tw-fq':'Very rare',
+'tw-f':'Final event','tw-r':'“One wish”','tw-fq':'Very rare',
 'tier-note':'Tier promotion requires CLEAR status on the tier below. “Exclusive” prizes are reserved for loyal participants.',
 'k-format':'TRIAL FORMATS','format-h2':'Six faces of the QOWNER quiz.',
-'f1-h':'Numbered Fast Quiz','f1-p':'One question, quirky clue, answer in comments. The series reached #399 — its successor begins at #400.',
+'f1-h':'Numbered Fast Quiz','f1-p':'One question, quirky clue, answer in comments. The series reached #399 : its successor begins at #400.',
 'f2-h':'Lore Special Quiz','f2-p':'Only readers of the Void universe can answer. Canon knowledge is the key.',
 'f3-h':'Clueless Hard Quiz','f3-p':'Pinned permanently. No hints. CLEAR status announced separately when someone conquers it.',
-'f4-h':'Educational Mini Quiz','f4-p':'Language, culture, general knowledge — learning, Void style.',
+'f4-h':'Educational Mini Quiz','f4-p':'Language, culture, general knowledge : learning, Void style.',
 'f5-h':'Non-Question Quest','f5-p':'Like the D.M.D LOGO Quest: contestants submit works, not answers. Judged via DM.',
 'f6-h':'Collaboration Trial','f6-p':'Quizzes co-hosted with other creators, cross-community mentions and prizes.',
 'k-anatomi':'POST ANATOMY','anatomi-h2':'The standard frame of every Trial.',
@@ -244,20 +252,20 @@ en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','n
 'g1-b':'No negotiation.','g1-p':'Lobbying or bargaining results = immediate disqualification (official rule since June 24).',
 'g2-b':'Rewards via DM.','g2-p':'Winners are confirmed through direct messages; the next quiz waits until rewards are delivered.',
 'g3-b':'Real prizes, documented.','g3-p':'Transfers and handovers are recorded and published to the winners.',
-'g4-b':'Account boundaries.','g4-p':'Challenges belonging to a specific account are declared explicitly — zero ownership ambiguity.',
+'g4-b':'Account boundaries.','g4-p':'Challenges belonging to a specific account are declared explicitly : zero ownership ambiguity.',
 'g5-b':'Symbol protection.','g5-p':'Concepts may be imitated by anyone; official QOWNER symbols and icons may not be claimed or edited by others (June 6 declaration).',
-'g6-b':'Different rewards by design.','g6-p':'Prize forms change each session — survival-game philosophy: no two trials are alike.',
-'hoc-t':'Hall of Clear','hoc-p':'CLEAR status is a public asset anyone can verify. The permanent board of status holders — including the lifetime Hard Quiz holder — will live on this page.',
+'g6-b':'Different rewards by design.','g6-p':'Prize forms change each session : survival-game philosophy: no two trials are alike.',
+'hoc-t':'Hall of Clear','hoc-p':'CLEAR status is a public asset anyone can verify. The permanent board of status holders : including the lifetime Hard Quiz holder : will live on this page.',
 'k-krono':'VERIFIED TIMELINE','krono-h2':'The Quiz Maker’s journey.',
-'tl1':'First verified Magic Com quiz — 250 likes · 121 comments; winners announced and rewarded.',
+'tl1':'First verified Magic Com quiz : 250 likes · 121 comments; winners announced and rewarded.',
 'tl2':'Impositor Quiz + official reward policy: DM if correct, next quiz after reward.',
-'tl3':'The QOWNER lore thread published — law of consequence, Void Energy, and the five abilities defined.',
+'tl3':'The QOWNER lore thread published : law of consequence, Void Energy, and the five abilities defined.',
 'tl4':'“Exclusive” prizes for all loyal participants announced.',
 'tl5':'@qowner.quizmaker born: “I am the Qowner… My story starts here.”',
 'tl6':'IP declaration: concepts free to imitate, official symbols & icons off-limits.',
 'tl7':'Anti-negotiation & disqualification rules set; D.M.D LOGO Quest completed with winners.',
 'tl8':'Numbered Fast Quiz marches to #399; Saturday-night quizzes become tradition.',
-'tl9':'Clueless Hard Quiz made permanent — pinned for life, CLEAR status.',
+'tl9':'Clueless Hard Quiz made permanent : pinned for life, CLEAR status.',
 'tl10':'Full identity archive compiled; this documentation becomes the official foundation.',
 'foot-tagline':'Build beyond the known.','foot-home':'Home','foot-duka':'Support','foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact',
 'btn-masuk':'Sign In','btn-daftar':'Sign Up','btn-keluar':'Sign Out','menu-dashboard':'Dashboard',
@@ -266,7 +274,7 @@ en:{'brand-sub':'QOWNER ARCHIVE','nav-kanon':'Canon','nav-tier':'Tier System','n
 'lock-btn':'Enter the Void','lock-btn-daftar':'Create your Void account',
 'lock-switch':"Don't have an account? Sign up",'lock-switch-to-masuk':'Already have an account? Sign in',
 'lock-note':'Archive access uses a secure sign-in session.','lock-github':'Continue with GitHub','lock-google':'Continue with Google','lock-auth-status':'Checking authentication…','lock-auth-status-ready':'Sign in to open the archive.','lock-auth-status-off':'Sign-in is not configured.','lock-auth-status-error':'Authentication service is unreachable.',
-'foot-copy':'© 2026 Void Scriptor Corporation · Choirudin — QOWNER canon & quiz identity.'}};
+'foot-copy':'© 2026 Void Scriptor · Choirudin : QOWNER canon & quiz identity.','mobile-note':'QOWNER is being prepared as a mobile app for iOS and Android. This page is the canon archive and documentation, not the web app.','cta-ios':'iOS · Not available yet','cta-android':'Android · Not available yet'}};
 var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
 if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
@@ -316,6 +324,8 @@ btnOut.onclick=function(){fetch('/api/auth/logout',{method:'POST',credentials:'s
 sync();
 window.__quizAuthSync=sync;
 })();
+var quizNav=document.querySelector('header nav'),quizMenu=document.getElementById('quizMenu');
+if(quizNav&&quizMenu){quizNav.id='quizNav';quizMenu.onclick=function(){var open=quizNav.classList.toggle('open');quizMenu.setAttribute('aria-expanded',open?'true':'false')};quizNav.querySelectorAll('a').forEach(function(link){link.onclick=function(){quizNav.classList.remove('open');quizMenu.setAttribute('aria-expanded','false')}})}
 setLang(lang);
 })();</script>
 </body>
