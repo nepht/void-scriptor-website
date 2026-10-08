@@ -118,6 +118,9 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h3 data-i18n="dash-local-plan-title">Rencana aman Byte</h3>
 <ol id="dashWorkspacePlanList"></ol>
 </div>
+<div class="dash-workspace-tools">
+<button class="ghost" id="dashWorkspaceClear" type="button" data-i18n="dash-local-clear">Hapus ringkasan lokal</button>
+</div>
 </div>
 </section>
 <div class="dash-grid">
@@ -337,6 +340,19 @@ function restoreWorkspaceResult(){
     }
   }catch(e){}
 }
+function clearWorkspaceCache(){
+  try{localStorage.removeItem('vs-dashboard-workspace-v1')}catch(e){}
+  var result=document.getElementById('dashWorkspaceResult'),plan=document.getElementById('dashWorkspacePlanResult'),list=document.getElementById('dashWorkspaceList'),planList=document.getElementById('dashWorkspacePlanList'),count=document.getElementById('dashWorkspaceCount'),root=document.getElementById('dashWorkspaceRoot'),time=document.getElementById('dashWorkspaceTime'),note=document.getElementById('dashWorkspaceNote');
+  if(result)result.hidden=true;
+  if(plan)plan.hidden=true;
+  if(list)list.textContent='';
+  if(planList)planList.textContent='';
+  if(count)count.textContent='0';
+  if(root)root.textContent='—';
+  if(time)time.textContent='—';
+  if(note)note.textContent='Ringkasan lokal dihapus dari browser ini.';
+  renderWorkspaceState('Belum diperiksa','');
+}
 function extractWorkspaceReply(data){
   if(!data)return '';
   if(data.choices&&data.choices[0]&&data.choices[0].message)return String(data.choices[0].message.content||'').trim();
@@ -469,6 +485,8 @@ function exportData(){
   if(ws)ws.onclick=function(){scanDashboardWorkspace(ws)};
   var wp=document.getElementById('dashWorkspacePlan');
   if(wp)wp.onclick=function(){planDashboardWorkspace(wp)};
+  var wc=document.getElementById('dashWorkspaceClear');
+  if(wc)wc.onclick=function(){clearWorkspaceCache()};
   restoreWorkspaceResult();
   renderSteps();
 })();
@@ -488,7 +506,7 @@ var dict = {
     'nav-produk':'Produk','nav-download':'Download','nav-quiz':'Quiz QOWNER','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
-    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
+    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
     'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun. Keluar kapan saja untuk mengakhirinya sekarang.',
@@ -509,7 +527,7 @@ var dict = {
     'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Quiz','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
-    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
+    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
     'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database. Sign out any time to end it now.',
