@@ -106,18 +106,15 @@ p,li{color:var(--ash)}
 .page-home .product-intro h2{margin:9px 0 0;max-width:19ch;font-size:clamp(34px,4vw,56px);line-height:1}
 .page-home .product-intro>a{display:inline-flex;min-height:44px;align-items:center;color:var(--primary-pale);font-size:12px;white-space:nowrap}
 .page-home .product-intro>a:hover{text-decoration:underline;text-underline-offset:4px}
-.page-home .product-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
-.page-home .product-tab{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:12px;min-height:76px;padding:12px;border:1px solid rgba(217,207,255,.16);border-radius:var(--radius-card);background:var(--obsidian);color:var(--cloud);text-align:left;cursor:pointer}
-.page-home .product-tab:hover{border-color:rgba(217,207,255,.4);background:#151219}
-.page-home .product-tab.is-active{border-color:var(--primary-pale);background:linear-gradient(135deg,rgba(124,92,255,.2),var(--obsidian) 68%);box-shadow:0 0 22px rgba(124,92,255,.12)}
-.page-home .product-tab img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(124,92,255,.24))}
-.page-home .product-tab span{display:grid;gap:5px;min-width:0}
-.page-home .product-tab b{font-family:var(--font-display);font-size:18px;font-weight:400;line-height:1.05;overflow-wrap:anywhere}
-.page-home .product-tab small{color:var(--faint);font-size:10px;line-height:1.35;overflow-wrap:anywhere}
 .page-home .caro-viewport{border-color:rgba(217,207,255,.2);border-radius:var(--radius-feature);background:linear-gradient(135deg,var(--obsidian),#171324);box-shadow:none}
 .page-home .caro-viewport::before{background:radial-gradient(90% 110% at 12% 0,rgba(124,92,255,.18),transparent 60%)}
-.page-home .caro-slide{padding:clamp(30px,5vw,68px)}
-.page-home .caro-art{border-radius:var(--radius-card);border-color:rgba(217,207,255,.18);box-shadow:0 22px 60px rgba(0,0,0,.34)}
+.page-home .caro-slide{display:block;min-height:clamp(520px,54vw,720px);padding:0;position:relative;isolation:isolate;overflow:hidden}
+.page-home .caro-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;min-height:clamp(520px,54vw,720px);max-width:650px;padding:clamp(34px,6vw,86px);text-align:left}
+.page-home .caro-copy h2{max-width:15ch;color:var(--pure);text-shadow:0 2px 24px rgba(0,0,0,.58)}
+.page-home .caro-copy p{color:rgba(245,245,247,.82);text-shadow:0 1px 16px rgba(0,0,0,.62)}
+.page-home .caro-art{position:absolute;inset:0;z-index:0;margin:0;border:0;border-radius:0;box-shadow:none;background:#08090b}
+.page-home .caro-art::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,5,7,.92) 0%,rgba(5,5,7,.68) 32%,rgba(5,5,7,.12) 72%),linear-gradient(0deg,rgba(5,5,7,.72),transparent 48%)}
+.page-home .caro-art img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;filter:saturate(.92) contrast(1.04)}
 .page-home .caro-arrow{width:44px;height:44px;border-radius:50%;color:var(--cloud)}
 .page-home .caro-dot{width:44px;height:44px;position:relative;padding:0;background:transparent;transform:none}
 .page-home .caro-dot::before{content:"";position:absolute;width:10px;height:10px;inset:50% auto auto 50%;translate:-50% -50%;border-radius:50%;background:rgba(240,233,255,.32);transition:background .25s,transform .25s,box-shadow .25s}
@@ -136,7 +133,7 @@ p,li{color:var(--ash)}
 .page-home .release-link:hover{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:1020px){.page-home .release-strip{grid-template-columns:1fr;align-items:start}.page-home .release-link{justify-self:start}}
 @media(max-width:600px){.page-home .release-strip{gap:18px;padding-top:26px}.page-home .release-facts{grid-template-columns:1fr}.page-home .release-link{width:100%;justify-content:flex-start}}
-@media(max-width:720px){.page-home .product-intro{align-items:start;flex-direction:column;gap:12px}.page-home .product-rail{display:flex;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;scrollbar-width:thin}.page-home .product-tab{flex:0 0 min(82vw,290px);scroll-snap-align:start}}
+@media(max-width:720px){.page-home .product-intro{align-items:start;flex-direction:column;gap:12px}.page-home .caro-copy{min-height:clamp(500px,132vw,620px);padding:28px 24px 34px}.page-home .caro-copy h2{max-width:13ch}.page-home .caro-art::before{background:linear-gradient(0deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.6) 46%,rgba(5,5,7,.18) 86%),linear-gradient(90deg,rgba(5,5,7,.3),transparent)}}
 .page-home .heading{align-items:flex-end;margin-bottom:42px}
 .page-home .heading h2,.page-home .company h2{font-size:clamp(36px,4vw,58px);line-height:1}
 .page-home .cards{grid-template-columns:1.35fr .85fr;grid-template-areas:'studio byte' 'studio quiz';gap:18px}
