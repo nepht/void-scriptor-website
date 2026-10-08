@@ -185,6 +185,24 @@ p,li{color:var(--ash)}
 .page-legal h2{font-size:27px;margin-top:52px}
 .page-legal p,.page-legal li{font-size:15px;line-height:1.78}
 .page-legal .card,.page-legal .note{border-color:rgba(217,207,255,.17);border-radius:var(--radius-card);background:var(--obsidian);box-shadow:none}
+.page-changelog main{padding:clamp(58px,8vw,96px) 0 112px}
+.page-changelog .lede{max-width:680px;font-size:16px;line-height:1.75}
+.page-changelog .changelog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:42px 0 68px}
+.page-changelog .status-item{min-width:0;padding:25px;border:1px solid rgba(217,207,255,.17);border-radius:var(--radius-card);background:var(--obsidian)}
+.page-changelog .status-item--current{background:linear-gradient(145deg,rgba(124,92,255,.18),var(--obsidian) 62%)}
+.page-changelog .status-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.page-changelog .status-tag{color:var(--primary-pale);font-family:var(--font-mono);font-size:10px;letter-spacing:.1em}
+.page-changelog .status-top code{color:var(--faint);font-size:10px}
+.page-changelog .status-item h2,.page-changelog .status-roadmap h2,.page-changelog .status-proof h2{margin:0 0 10px;font-size:clamp(24px,3vw,36px);line-height:1.05}
+.page-changelog .status-item p,.page-changelog .status-roadmap p,.page-changelog .status-proof p{color:var(--ash);font-size:14px;line-height:1.75}
+.page-changelog .status-item a,.page-changelog .status-actions a{display:inline-flex;min-height:44px;align-items:center;color:var(--primary-pale);font-size:12px}
+.page-changelog .status-roadmap,.page-changelog .status-proof{padding:36px 0;border-top:1px solid rgba(217,207,255,.13)}
+.page-changelog .roadmap-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
+.page-changelog .roadmap-list span{display:flex;justify-content:space-between;gap:14px;padding:14px;border:1px solid rgba(217,207,255,.14);border-radius:var(--radius-control);color:var(--cloud);font-size:13px}
+.page-changelog .roadmap-list b{color:var(--faint);font-size:10px;font-weight:500}
+.page-changelog .status-actions{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px}
+@media(max-width:850px){.page-changelog .changelog-grid{grid-template-columns:1fr 1fr}.page-changelog .status-item:first-child{grid-column:1/-1}}
+@media(max-width:600px){.page-changelog .changelog-grid,.page-changelog .roadmap-list{grid-template-columns:1fr}.page-changelog .status-item:first-child{grid-column:auto}.page-changelog .status-item{padding:21px}}
 .page-legal .docnav a{min-height:44px;display:inline-flex;align-items:center;border-radius:var(--radius-control)}
 .page-privacy{--accent:#00b3dd;--accent-dim:rgba(0,179,221,.48);--accent-bg:rgba(0,179,221,.1)}
 .page-terms{--accent:#7c5cff;--accent-dim:rgba(124,92,255,.52);--accent-bg:rgba(124,92,255,.11)}
