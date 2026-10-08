@@ -617,3 +617,15 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home header,.page-dashboard header{background-color:transparent;background-image:linear-gradient(180deg,rgba(5,6,12,.92) 0%,rgba(5,6,12,.7) 64%,rgba(5,6,12,0) 100%);background-attachment:initial;border:0!important;box-shadow:none!important;backdrop-filter:none}
 .page-home header .shell,.page-dashboard header .shell{width:min(1200px,calc(100% - 64px))}
 @media(max-width:760px){.page-home header .shell,.page-dashboard header .shell{width:min(100% - 32px,640px)}}
+
+/* Carousel identity layer: each full-bleed slide keeps its own product mark
+   so the visual and the action remain tied to the same brand. */
+.page-home .caro-brandmark{display:flex;align-items:center;gap:12px;margin:0 0 18px;color:rgba(245,245,247,.78);font-size:10px;font-weight:800;letter-spacing:.18em}
+.page-home .caro-brandmark img{width:64px;height:64px;object-fit:contain;object-position:center;border:1px solid rgba(217,207,255,.3);border-radius:12px;padding:8px;background:rgba(5,5,7,.58);filter:drop-shadow(0 8px 18px rgba(0,0,0,.38))}
+.page-home .caro-brandmark span{line-height:1.2}
+.page-home .caro-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.page-home .caro-cta{min-height:44px;padding:0 16px;justify-content:center;white-space:normal;text-align:center}
+.page-home .caro-cta--primary{border-color:var(--primary-pale);background:var(--primary);color:var(--pure);box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.page-home .caro-cta--primary:hover{border-color:var(--pure);background:var(--primary-pale);box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.page-home .caro-cta--secondary{background:rgba(5,5,7,.42);color:var(--cloud)}
+@media(max-width:720px){.page-home .caro-brandmark{margin-bottom:14px}.page-home .caro-brandmark img{width:56px;height:56px;padding:7px}.page-home .caro-actions{align-items:stretch}.page-home .caro-actions .caro-cta{width:100%}}
