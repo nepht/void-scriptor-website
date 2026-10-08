@@ -21,6 +21,7 @@ const INTERNAL = [
 ];
 const APP_PREVIEW_PREFIX = '/preview';
 const LEGACY_HOSTS = new Set(['voidscriptor.pages.dev']);
+const WWW_HOST = 'www.voidscriptor.com';
 const CANONICAL_HOST = 'voidscriptor.com';
 
 const BASE_HEADERS = {
@@ -659,7 +660,10 @@ async function handleAuth(request, url, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (LEGACY_HOSTS.has(url.hostname) && (request.method === 'GET' || request.method === 'HEAD')) {
+    const isLegacyHost = LEGACY_HOSTS.has(url.hostname)
+      || url.hostname === WWW_HOST
+      || url.hostname.endsWith('.voidscriptor.pages.dev');
+    if (isLegacyHost && (request.method === 'GET' || request.method === 'HEAD')) {
       const target = `https://${CANONICAL_HOST}${url.pathname}${url.search}`;
       return redirect(target, { 'cache-control': 'public, max-age=86400' }, 301);
     }
