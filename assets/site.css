@@ -315,3 +315,29 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-quiz .hero{border-bottom-color:rgba(0,179,221,.2)}
 .page-quiz .eyebrow,.page-quiz .kicker{color:#a8f2ff}
 .page-quiz .clear-box{box-shadow:0 0 32px rgba(0,179,221,.1)}
+
+/* Mobile reflow: Qowner has no hamburger in its header, so its primary nav
+   remains discoverable as a touch-scroll rail instead of disappearing. */
+@media(max-width:760px){
+  body::before,.page-home main,.page-quiz main,.page-dashboard main,.page-contact main,.page-legal main,.page-home .hero,.page-quiz .hero,.page-home .products,.page-home .metrics,.page-home .company-wrap{background-attachment:scroll}
+  .page-home .caro-nav{gap:10px;margin-inline:16px}
+  .page-home .caro-arrow,.page-home .caro-dot{min-width:44px;min-height:44px}
+  .page-home .cmd-path{min-width:0;max-width:100%;overflow:hidden}
+  .page-home .cmd-path code{white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+  .page-quiz .navrow{gap:10px;overflow:hidden}
+  .page-quiz nav{display:flex;flex:1 1 auto;min-width:0;margin-left:0;gap:16px;overflow-x:auto;overflow-y:hidden;padding:0 2px 8px;scrollbar-width:none}
+  .page-quiz nav::-webkit-scrollbar{display:none}
+  .page-quiz nav a{display:inline-flex;align-items:center;flex:0 0 auto;min-height:44px;padding-inline:3px}
+  .page-quiz .navrow>div{flex:0 0 auto}
+  .page-quiz .hero{padding:76px 0 62px}
+  .page-quiz section{padding:56px 0}
+  .page-quiz h1{font-size:clamp(42px,12vw,64px)}
+  .page-quiz table{display:block;max-width:100%;overflow-x:auto}
+  .page-quiz th,.page-quiz td{min-width:140px}
+  .page-quiz pre{overflow-x:auto;max-width:100%}
+}
+
+@media(min-width:761px) and (max-width:1020px){
+  .page-quiz nav{gap:14px}
+  .page-quiz nav a{font-size:11px}
+}
