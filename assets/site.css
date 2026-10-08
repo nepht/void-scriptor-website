@@ -381,6 +381,9 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-form button:hover{transform:translateY(-1px);box-shadow:0 0 24px rgba(124,92,255,.32)}
 .byte-form .byte-voice{width:46px;font-size:15px;letter-spacing:-2px;background:rgba(255,255,255,.04);color:var(--ash);box-shadow:none}
 .byte-form .byte-voice.on{border-color:rgba(0,179,221,.72);background:rgba(0,179,221,.14);color:#a8f2ff;box-shadow:0 0 18px rgba(0,179,221,.16)}
+.byte-form .byte-mic{width:46px;font-size:21px;background:rgba(255,255,255,.04);color:var(--ash);box-shadow:none}
+.byte-form .byte-mic.on{border-color:rgba(255,151,92,.82);background:rgba(255,151,92,.14);color:#ffd0b6;box-shadow:0 0 18px rgba(255,151,92,.18)}
+.byte-form .byte-mic:disabled{cursor:not-allowed;opacity:.42}
 @keyframes byteDockFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-3px)}}
 @keyframes bytePulse{0%,100%{opacity:.7;transform:scale(.88)}50%{opacity:1;transform:scale(1.08)}}
 @keyframes byteTyping{0%,100%{opacity:.45}50%{opacity:1}}
@@ -390,3 +393,15 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   .byte-panel{height:min(520px,calc(100dvh - 92px));min-height:300px;border-radius:22px}
 }
 @media(prefers-reduced-motion:reduce){.byte-launcher-orb img,.byte-pulse,.byte-typing{animation:none}}
+
+/* Desktop mode is intentionally still the same site component: it opens as a
+   clean app window through the launcher script, while the public page keeps
+   the compact capsule treatment. */
+.byte-desktop-mode{min-width:320px;background:var(--abyss)}
+.byte-desktop-mode>header,.byte-desktop-mode>main,.byte-desktop-mode>footer,.byte-desktop-mode>.backdrop,.byte-desktop-mode>.toast{display:none}
+.byte-desktop-mode .byte-assistant{position:fixed;inset:0;width:100%;height:100%;display:block;pointer-events:auto}
+.byte-desktop-mode .byte-launcher{display:none}
+.byte-desktop-mode .byte-panel{width:100%;height:100%;min-height:0;max-height:none;border:0;border-radius:0;box-shadow:none}
+.byte-desktop-mode .byte-panel-head{min-height:78px;padding-inline:20px}
+.byte-desktop-mode .byte-messages{padding:24px;max-width:760px;width:100%;margin-inline:auto}
+.byte-desktop-mode .byte-form{padding:16px max(16px,calc((100% - 760px)/2)) 20px}
