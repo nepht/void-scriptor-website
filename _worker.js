@@ -698,7 +698,7 @@ export default {
     // Resolve the root explicitly so the public homepage always follows the
     // same asset as direct index requests after a deployment.
     const assetRequest = url.pathname === '/'
-      ? new Request(new URL('/index.html', url), request)
+      ? new URL('/index.html', url).toString()
       : request;
     const res = await env.ASSETS.fetch(assetRequest);
     const contentType = res.headers.get('content-type') || '';
