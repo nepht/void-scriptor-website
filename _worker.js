@@ -18,6 +18,7 @@ const INTERNAL = [
   /^\/\.wrangler\//,
   /^\/\.git\//,
 ];
+const APP_PREVIEW_PREFIX = '/preview';
 
 const BASE_HEADERS = {
   'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
@@ -85,6 +86,30 @@ function harden(res, pathname, isHtml) {
     statusText: res.statusText,
     headers,
   });
+}
+
+// Public read-only alias for the Flutter build. `/app/` remains behind
+// Cloudflare Access; the alias lets visitors preview the UI without exposing
+// the private route or duplicating the compiled bundle.
+async function handleAppPreview(request, url, env) {
+  const suffix = url.pathname.slice(APP_PREVIEW_PREFIX.length);
+  const isEntry = suffix === '' || suffix === '/';
+  const targetPath = isEntry ? '/app/index.html' : '/app' + suffix;
+  const target = new URL(targetPath, url);
+  target.search = url.search;
+  const asset = await env.ASSETS.fetch(new Request(target, request));
+  if (!asset.ok) return harden(asset, url.pathname, false);
+
+  if (isEntry) {
+    const html = await asset.text();
+    const rewritten = html.replace('<base href="/app/">', '<base href="/preview/">');
+    const headers = new Headers(asset.headers);
+    headers.set('content-type', 'text/html; charset=utf-8');
+    headers.set('cache-control', 'no-store');
+    return harden(new Response(rewritten, { status: 200, headers }), url.pathname, false);
+  }
+
+  return harden(asset, url.pathname, false);
 }
 
 // ---------------------------------------------------------------------------
@@ -515,6 +540,9 @@ export default {
     const url = new URL(request.url);
     if (INTERNAL.some((rx) => rx.test(url.pathname))) {
       return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+    }
+    if (url.pathname === APP_PREVIEW_PREFIX || url.pathname.startsWith(APP_PREVIEW_PREFIX + '/')) {
+      return handleAppPreview(request, url, env);
     }
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
