@@ -21,6 +21,8 @@ try {
 const upstreamBase = (process.env.BYTE_UPSTREAM_BASE_URL || 'http://127.0.0.1:20128/v1').replace(/\/+$/, '');
 const upstreamKey = process.env.BYTE_UPSTREAM_API_KEY || fileEnv.HERMES_CUSTOM_HERMES_API_KEY;
 const port = Number(process.env.BYTE_BRIDGE_PORT || 8766);
+const workspaceRoot = path.resolve(process.env.BYTE_WORKSPACE_ROOT || path.join(process.env.USERPROFILE || '', 'OneDrive', 'Documents', 'QOWNER'));
+const ignoredDirectories = new Set(['.git', '.dart_tool', 'node_modules', 'build', 'dist', 'coverage', '.wrangler']);
 const allowedOrigins = new Set([
   'https://voidscriptor.pages.dev',
   'http://127.0.0.1:8765',
@@ -35,7 +37,7 @@ function corsHeaders(origin) {
   };
   if (allowedOrigins.has(origin)) {
     headers['access-control-allow-origin'] = origin;
-    headers['access-control-allow-methods'] = 'POST, OPTIONS';
+    headers['access-control-allow-methods'] = 'GET, POST, OPTIONS';
     headers['access-control-allow-headers'] = 'content-type';
     headers['access-control-allow-private-network'] = 'true';
   }
@@ -63,8 +65,72 @@ function readBody(req, limit = 128 * 1024) {
   });
 }
 
+async function readWorkspaceIndex() {
+  const entries = [];
+  let truncated = false;
+  async function walk(dir, depth) {
+    if (depth > 5 || entries.length >= 2000) {
+      truncated = true;
+      return;
+    }
+    let children;
+    try {
+      children = await fs.promises.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const child of children) {
+      if (entries.length >= 2000) {
+        truncated = true;
+        return;
+      }
+      if (child.isDirectory() && ignoredDirectories.has(child.name)) continue;
+      const absolute = path.join(dir, child.name);
+      const relative = path.relative(workspaceRoot, absolute).split(path.sep).join('/');
+      let stats;
+      try {
+        stats = await fs.promises.lstat(absolute);
+      } catch {
+        continue;
+      }
+      const isDirectory = stats.isDirectory();
+      entries.push({
+        path: relative,
+        type: isDirectory ? 'directory' : 'file',
+        extension: isDirectory ? null : path.extname(child.name).toLowerCase() || null,
+        size: isDirectory ? null : stats.size,
+        modified: stats.mtime.toISOString(),
+      });
+      if (isDirectory) await walk(absolute, depth + 1);
+    }
+  }
+  try {
+    const rootStats = await fs.promises.stat(workspaceRoot);
+    if (!rootStats.isDirectory()) throw new Error('not_directory');
+  } catch {
+    return { ok: false, error: 'workspace_not_found', root: workspaceRoot };
+  }
+  await walk(workspaceRoot, 0);
+  entries.sort((a, b) => a.path.localeCompare(b.path));
+  return { ok: true, root: workspaceRoot, scannedAt: new Date().toISOString(), truncated, entries };
+}
+
 const server = http.createServer(async (req, res) => {
   const origin = req.headers.origin || '';
+  if (req.url === '/workspace/index') {
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, corsHeaders(origin));
+      res.end();
+      return;
+    }
+    if (req.method !== 'GET' || !allowedOrigins.has(origin)) {
+      send(res, allowedOrigins.has(origin) ? 405 : 403, { ok: false, error: allowedOrigins.has(origin) ? 'method_not_allowed' : 'origin_not_allowed' }, origin);
+      return;
+    }
+    const result = await readWorkspaceIndex();
+    send(res, result.ok ? 200 : 404, result, origin);
+    return;
+  }
   if (req.url !== '/v1/chat/completions') {
     send(res, 404, { ok: false, error: 'not_found' }, origin);
     return;
