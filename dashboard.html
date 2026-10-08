@@ -5,7 +5,7 @@
 <!-- Private area: never indexed, and the worker refuses to serve it at all
      unless the request carries a valid signed session cookie. -->
 <meta name="robots" content="noindex, nofollow">
-<title data-i18n="page-title">Dasbor — Void Scriptor Corporation</title>
+<title data-i18n="page-title">Dasbor : Void Scriptor Corporation</title>
 <style>
 @font-face{font-family:'DM Serif Display';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-serif-display-latin-400.woff2) format('woff2')}
 @font-face{font-family:'DM Serif Display';font-style:italic;font-weight:400;font-display:swap;src:url(/fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
@@ -76,6 +76,7 @@ footer{padding:30px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
 </style>
+<link rel="stylesheet" href="/assets/site.css">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
@@ -84,13 +85,35 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <link rel="manifest" href="site.webmanifest">
 <meta name="theme-color" content="#050507">
 </head>
-<body id="top">
+<body id="top" class="page-dashboard">
 <header><div class="shell navrow"><a class="brand" href="/"><img class="logo" src="assets/void_scriptor_emblem.webp" alt=""><span>VOID SCRIPTOR</span></a><button class="hamb" id="hamb" aria-label="Buka menu navigasi" aria-controls="nav" aria-expanded="false"><i></i><i></i></button><nav id="nav"><a href="/#products" data-i18n="nav-produk">Produk</a><a href="/#downloads" data-i18n="nav-download">Download</a><a href="/quiz" data-i18n="nav-quiz">Quiz QOWNER</a><a href="/dashboard" aria-current="page" data-i18n="nav-dash">Dasbor</a><a href="/#company" data-i18n="nav-perusahaan">Perusahaan</a></nav><div class="account"><span class="profile-wrap" id="profileWrap" style="display:block"><button class="profile" id="profile" aria-haspopup="true" aria-expanded="false" aria-label="Menu profil"><img id="userAvatar" style="display:none" alt=""><i id="initial">V</i><b id="profileName">Creator</b></button><span class="profile-menu" role="menu"><a href="/dashboard" role="menuitem" data-i18n="menu-dashboard">Dasbor</a><button id="btnSignOut" role="menuitem" data-i18n="btn-keluar">Keluar</button></span></span><button class="btn-lang id" id="btnID" style="display:none" aria-label="Ganti ke bahasa Indonesia">ID</button><button class="btn-lang en" id="btnEN" aria-label="Switch to English">EN</button></div></div></header>
 <main class="shell dash">
 <section class="dash-head">
 <span class="kicker" data-i18n="dash-kicker">DASBOR AKUN</span>
 <h1><span data-i18n="dash-hi">Halo,</span> <b id="dashHiName">…</b></h1>
 <p class="lead" data-i18n="dash-lead">Kelola profil, sesi, dan unduhan Anda di satu tempat.</p>
+</section>
+<section class="dash-command" aria-labelledby="dash-command-title">
+<div class="dash-command-copy">
+<span class="kicker" data-i18n="dash-local-kicker">BYTE / WORKSPACE LOKAL</span>
+<h2 id="dash-command-title" data-i18n="dash-local-title">Ruang kerja yang siap membantu.</h2>
+<p data-i18n="dash-local-lead">Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.</p>
+<div class="dash-local-status" role="status" aria-live="polite"><span class="dash-status-dot" id="dashWorkspaceDot" aria-hidden="true"></span><span id="dashWorkspaceStatus" data-i18n="dash-local-idle">Belum diperiksa</span></div>
+</div>
+<div class="dash-command-actions">
+<button class="primary" id="dashWorkspaceScan" type="button" data-i18n="dash-local-scan">Periksa workspace</button>
+<a class="ghost" href="/?desktop=byte" data-i18n="dash-local-byte">Buka Byte</a>
+<a class="ghost" href="/quiz" data-i18n="dash-local-quiz">Buka QOWNER</a>
+</div>
+<div class="dash-workspace-result" id="dashWorkspaceResult" hidden>
+<div class="dash-workspace-facts" aria-label="Ringkasan workspace">
+<span><b id="dashWorkspaceCount">0</b><small data-i18n="dash-local-files">item terdeteksi</small></span>
+<span><b id="dashWorkspaceRoot">—</b><small data-i18n="dash-local-root">workspace aktif</small></span>
+<span><b id="dashWorkspaceTime">—</b><small data-i18n="dash-local-time">terakhir diperiksa</small></span>
+</div>
+<p class="dash-workspace-note" id="dashWorkspaceNote"></p>
+<ul class="dash-workspace-list" id="dashWorkspaceList" aria-label="Contoh item workspace"></ul>
+</div>
 </section>
 <div class="dash-grid">
 <article class="panel onboard">
@@ -107,24 +130,24 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <article class="panel profile">
 <img id="dashAvatar" alt="" hidden>
 <i class="ini" id="dashInitial">V</i>
-<div class="who"><h2 id="dashNameBig">…</h2><p id="dashLogin">…</p><span class="badge" id="dashProviderBadge" hidden>—</span></div>
+<div class="who"><h2 id="dashNameBig">…</h2><p id="dashLogin">…</p><span class="badge" id="dashProviderBadge" hidden>Belum tersedia</span></div>
 </article>
 <article class="panel">
 <h3 data-i18n="dash-account">Akun</h3>
 <dl>
-<div><dt data-i18n="dash-email">Email</dt><dd><span id="dashEmail">—</span><button class="copy" id="copyEmail" type="button" data-i18n="dash-copy">Salin</button></dd></div>
-<div><dt data-i18n="dash-login-label">Nama pengguna</dt><dd><span id="dashLoginLabel">—</span><button class="copy" id="copyLogin" type="button" data-i18n="dash-copy">Salin</button></dd></div>
-<div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">—</dd></div>
+<div><dt data-i18n="dash-email">Email</dt><dd><span id="dashEmail">Belum tersedia</span><button class="copy" id="copyEmail" type="button" data-i18n="dash-copy">Salin</button></dd></div>
+<div><dt data-i18n="dash-login-label">Nama pengguna</dt><dd><span id="dashLoginLabel">Belum tersedia</span><button class="copy" id="copyLogin" type="button" data-i18n="dash-copy">Salin</button></dd></div>
+<div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">Belum tersedia</dd></div>
 </dl>
 </article>
 <article class="panel">
 <h3 data-i18n="dash-session">Sesi &amp; keamanan</h3>
 <dl>
-<div><dt data-i18n="dash-since">Masuk sejak</dt><dd id="dashSince">—</dd></div>
-<div><dt data-i18n="dash-exp">Berlaku sampai</dt><dd id="dashExp">—</dd></div>
-<div><dt data-i18n="dash-left">Sisa waktu</dt><dd id="dashCountdown" class="mono">—</dd></div>
+<div><dt data-i18n="dash-since">Masuk sejak</dt><dd id="dashSince">Belum tersedia</dd></div>
+<div><dt data-i18n="dash-exp">Berlaku sampai</dt><dd id="dashExp">Belum tersedia</dd></div>
+<div><dt data-i18n="dash-left">Sisa waktu</dt><dd id="dashCountdown" class="mono">Belum tersedia</dd></div>
 </dl>
-<p class="note" data-i18n="dash-note">Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun — keluar kapan saja untuk mengakhirinya sekarang.</p>
+<p class="note" data-i18n="dash-note">Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun. Keluar kapan saja untuk mengakhirinya sekarang.</p>
 </article>
 <article class="panel">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
@@ -133,14 +156,14 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <a href="/quiz" id="quizLink"><span data-i18n="dash-open-quiz">Buka QOWNER Quiz Maker</span><small data-i18n="dash-web">Web</small></a>
 </div>
 <div class="hashrow">
-<code id="dashSha">—</code>
+<code id="dashSha">Belum tersedia</code>
 <button class="copy" id="copySha" type="button" data-i18n="dash-copy">Salin</button>
 </div>
 <label class="filepick">
 <input type="file" id="dashFile" accept=".exe,application/octet-stream">
 <span data-i18n="dash-verify-pick">Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256</span>
 </label>
-<p class="vmsg" id="dashVerify" data-i18n="dash-verify-idle">Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.</p>
+<p class="vmsg" id="dashVerify" data-i18n="dash-verify-idle">Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.</p>
 </article>
 <article class="panel">
 <h3 data-i18n="dash-actions">Tindakan</h3>
@@ -199,8 +222,8 @@ document.addEventListener('click',function(ev){if(w.classList.contains('open')&&
 document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut()})})();
 
 // --- fill the dashboard from the verified session ------------------------
-function fmt(ts){if(!ts)return '—';try{return new Date(ts*1000).toLocaleString()}catch(e){return '—'}}
-function providerLabel(p){return p==='google'?'Google':(p==='github'?'GitHub':(p||'—'))}
+function fmt(ts){if(!ts)return 'Belum tersedia';try{return new Date(ts*1000).toLocaleString()}catch(e){return 'Belum tersedia'}}
+function providerLabel(p){return p==='google'?'Google':(p==='github'?'GitHub':(p||'Belum tersedia'))}
 function renderSession(d){
   var u=d.user||{},n=u.name||u.login||'Akun';
   applyUser(u);
@@ -213,8 +236,8 @@ function renderSession(d){
   var pl=providerLabel(u.provider);
   var b=document.getElementById('dashProviderBadge');b.hidden=false;b.textContent=pl;
   document.getElementById('dashProvider').textContent=pl;
-  document.getElementById('dashEmail').textContent=u.email||'—';
-  document.getElementById('dashLoginLabel').textContent=u.login?('@'+u.login):'—';
+  document.getElementById('dashEmail').textContent=u.email||'Belum tersedia';
+  document.getElementById('dashLoginLabel').textContent=u.login?('@'+u.login):'Belum tersedia';
   document.getElementById('dashSince').textContent=fmt(u.iat);
   document.getElementById('dashExp').textContent=fmt(u.exp);
   document.getElementById('dashSignOut').onclick=function(){signOut(this)};
@@ -259,7 +282,7 @@ function startCountdown(exp){
 
 // --- copy-to-clipboard ----------------------------------------------------
 function copyText(txt,btn){
-  if(!txt||txt==='—')return;
+  if(!txt||txt==='—'||txt==='Belum tersedia')return;
   var done=function(){if(!btn)return;var old=btn.textContent;btn.textContent='✓';setTimeout(function(){btn.textContent=old},1200)};
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(done,function(){fallback()});
@@ -270,6 +293,39 @@ function copyText(txt,btn){
       document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();
     }catch(e){}
   }
+}
+
+// --- local Byte workspace status -----------------------------------------
+// This endpoint is deliberately read-only. The dashboard never moves,
+// deletes, renames, or opens files; it only displays metadata returned by the
+// local bridge when the user asks for a scan.
+function renderWorkspaceState(state,kind){
+  var dot=document.getElementById('dashWorkspaceDot'),label=document.getElementById('dashWorkspaceStatus');
+  if(!dot||!label)return;
+  dot.className='dash-status-dot '+(kind||'');
+  label.textContent=state;
+}
+function renderWorkspaceResult(data){
+  var result=document.getElementById('dashWorkspaceResult');
+  if(!result)return;
+  result.hidden=false;
+  var entries=Array.isArray(data.entries)?data.entries:[];
+  var count=document.getElementById('dashWorkspaceCount'),root=document.getElementById('dashWorkspaceRoot'),time=document.getElementById('dashWorkspaceTime'),note=document.getElementById('dashWorkspaceNote'),list=document.getElementById('dashWorkspaceList');
+  if(count)count.textContent=String(entries.length);
+  if(root)root.textContent=data.root||'Workspace lokal';
+  if(time)time.textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  if(note)note.textContent=entries.length?'Byte menemukan metadata workspace. Tidak ada isi berkas yang dibaca.':'Workspace dapat dijangkau, tetapi belum ada item yang terdeteksi pada batas pemindaian ini.';
+  if(list){list.textContent='';entries.slice(0,5).forEach(function(item){var li=document.createElement('li'),name=document.createElement('span'),meta=document.createElement('small');name.textContent=item.path||item.name||'item';meta.textContent=[item.type||'file',item.extension||'',item.size!=null?Math.round(item.size/1024)+' KB':''].filter(Boolean).join(' · ');li.appendChild(name);li.appendChild(meta);list.appendChild(li)})}
+}
+function scanDashboardWorkspace(btn){
+  if(!btn)return;
+  btn.disabled=true;btn.setAttribute('aria-busy','true');
+  renderWorkspaceState('Menghubungkan ke Byte…','is-loading');
+  fetch('http://127.0.0.1:8766/workspace/index',{headers:{accept:'application/json'},cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('bridge-'+r.status);return r.json()})
+    .then(function(data){renderWorkspaceState('Byte aktif · workspace terbaca','is-ready');renderWorkspaceResult(data)})
+    .catch(function(){renderWorkspaceState('Byte belum terhubung di komputer ini','is-offline');var note=document.getElementById('dashWorkspaceNote');if(note)note.textContent='Buka Byte Desktop atau jalankan bridge lokal, lalu coba pemeriksaan lagi. Tidak ada perubahan berkas yang dilakukan.'})
+    .then(function(){btn.disabled=false;btn.removeAttribute('aria-busy')},function(){btn.disabled=false;btn.removeAttribute('aria-busy')});
 }
 
 // --- local SHA-256 verification of the download --------------------------
@@ -362,6 +418,8 @@ function exportData(){
   if(ql)ql.addEventListener('click',function(){markStep('stepQuiz')});
   var rs=document.getElementById('dashReset');
   if(rs)rs.onclick=function(){saveSteps({});renderSteps();notice('Kemajuan diatur ulang.')};
+  var ws=document.getElementById('dashWorkspaceScan');
+  if(ws)ws.onclick=function(){scanDashboardWorkspace(ws)};
   renderSteps();
 })();
 
@@ -376,16 +434,17 @@ fetch('/api/auth/session',{credentials:'same-origin'})
 <script>(function(){
 var dict = {
   id: {
-    'page-title':'Dasbor — Void Scriptor Corporation',
+    'page-title':'Dasbor : Void Scriptor Corporation',
     'nav-produk':'Produk','nav-download':'Download','nav-quiz':'Quiz QOWNER','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola profil, sesi, dan unduhan Anda di satu tempat.',
+    'dash-local-kicker':'BYTE / WORKSPACE LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan workspace ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa workspace','dash-local-byte':'Buka Byte','dash-local-quiz':'Buka QOWNER','dash-local-files':'item terdeteksi','dash-local-root':'workspace aktif','dash-local-time':'terakhir diperiksa',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
-    'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun — keluar kapan saja untuk mengakhirinya sekarang.',
+    'dash-note':'Sesi ini adalah cookie bertanda tangan (HMAC) yang berlaku 7 hari. Kami tidak menyimpan kata sandi, token, atau basis data akun. Keluar kapan saja untuk mengakhirinya sekarang.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz':'Buka QOWNER Quiz Maker','dash-web':'Web',
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
-    'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun — hash dihitung di peramban Anda.',
+    'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
     'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — tombol unduh ada di panel Produk.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; hash dihitung lokal di peramban Anda.','dash-step3':'Jalankan Studio','dash-step3-note':'Buka installer, selesaikan penyiapan, lalu masuk kembali untuk membuka proyek.','dash-step4':'Coba QOWNER Quiz Maker','dash-step4-note':'Buat dan pratinjau kuis di web — tanpa pemasangan.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
     'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
@@ -396,16 +455,17 @@ var dict = {
     'foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak','foot-duka':'Dukungan'
   },
   en: {
-    'page-title':'Dashboard — Void Scriptor Corporation',
+    'page-title':'Dashboard : Void Scriptor Corporation',
     'nav-produk':'Products','nav-download':'Download','nav-quiz':'QOWNER Quiz','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your profile, session, and downloads in one place.',
+    'dash-local-kicker':'BYTE / LOCAL WORKSPACE','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-byte':'Open Byte','dash-local-quiz':'Open QOWNER','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
-    'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database — sign out any time to end it now.',
+    'dash-note':'This session is an HMAC-signed cookie valid for 7 days. We store no password, token, or account database. Sign out any time to end it now.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz':'Open QOWNER Quiz Maker','dash-web':'Web',
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
-    'dash-verify-idle':'Local verification: the file is not sent anywhere — the hash is computed in your browser.',
+    'dash-verify-idle':'Local verification: the file is not sent anywhere. The hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
     'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — the download button is in the Products panel.','dash-step2':'Verify SHA-256','dash-step2-note':'Pick the file in the Products & links panel; the hash is computed locally in your browser.','dash-step3':'Run Studio','dash-step3-note':'Open the installer, finish setup, then sign back in to open your projects.','dash-step4':'Try QOWNER Quiz Maker','dash-step4-note':'Build and preview quizzes on the web — no install needed.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
     'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
