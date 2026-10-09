@@ -87,6 +87,22 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .profile-status.ok{color:#8ef0c0}.profile-status.bad{color:#ffb0b0}
 .profile-public-link{display:none;margin:16px 0 0;color:#d9c6ff;font-size:12px;text-decoration:underline;text-underline-offset:3px}
 .profile-public-link.is-visible{display:inline-block}
+.dash-session-manager{grid-column:1/-1}
+.session-manager-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.session-manager-head h3{margin-bottom:8px}
+.session-manager-head .note{margin:0;max-width:620px}
+.session-manager-head .ghost{min-height:44px;flex:0 0 auto}
+.session-list{display:grid;gap:10px;margin:20px 0 0;padding:0;list-style:none}
+.session-list li{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;border:1px solid rgba(155,115,230,.18);border-radius:8px;padding:14px 16px;background:rgba(90,45,255,.04)}
+.session-list .session-state{display:block;color:var(--faint);font-size:12px;line-height:1.6}
+.session-info{display:grid;gap:5px;min-width:0}
+.session-info strong{font-size:13px;color:#efe6ff;font-weight:700;overflow-wrap:anywhere}
+.session-info small{color:var(--faint);font-size:10px;line-height:1.6;overflow-wrap:anywhere}
+.session-current{color:#8ef0c0;font:700 10px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.session-list .session-revoke{min-width:44px;min-height:44px;padding:8px 12px;flex:0 0 auto}
+.session-manager-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+.session-manager-actions .danger{min-height:44px}
+@media(max-width:600px){.session-manager-head{align-items:stretch;flex-direction:column}.session-manager-head .ghost{width:100%}.session-list li{align-items:flex-start;flex-direction:column}.session-list .session-revoke{width:100%}.session-manager-actions{align-items:stretch;flex-direction:column}.session-manager-actions .danger{width:100%}}
 .hashrow{display:flex;align-items:center;gap:10px;border:1px solid rgba(var(--purple-rgb),.25);border-radius:8px;padding:11px 13px;background:rgba(90,45,255,.05);margin-top:14px}
 .hashrow code{font-size:11px;color:#cbb6ff;overflow-wrap:anywhere;flex:1;font-family:var(--font-mono)}
 .filepick{display:inline-flex;align-items:center;gap:10px;margin-top:14px;border:1px dashed rgba(var(--purple-rgb),.45);border-radius:8px;padding:11px 14px;font-size:12px;color:#d9c6ff;cursor:pointer}
@@ -258,6 +274,11 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </dl>
 <p class="note" data-i18n="dash-note">Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.</p>
 </article>
+<article class="panel dash-session-manager">
+<div class="session-manager-head"><div><h3 data-i18n="dash-sessions-title">Perangkat &amp; sesi aktif</h3><p class="note" data-i18n="dash-sessions-note">Kelola sesi website dan aplikasi tanpa menampilkan token rahasia.</p></div><button class="ghost" id="dashSessionsRefresh" type="button" data-i18n="dash-sessions-refresh">Perbarui</button></div>
+<ul class="session-list" id="dashSessionList" aria-live="polite"><li class="session-state" data-i18n="dash-sessions-loading">Memuat sesi aktif…</li></ul>
+<div class="session-manager-actions"><button class="danger" id="dashRevokeOtherSessions" type="button" disabled data-i18n="dash-sessions-revoke-all">Keluar dari perangkat lain</button><p class="profile-status" id="dashSessionsStatus" role="status" aria-live="polite"></p></div>
+</article>
 <article class="panel dash-panel-products">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
@@ -359,6 +380,7 @@ function renderSession(d){
   startCountdown(u.exp);
   renderDashboardOps();
   loadProfile();
+  loadSessions();
 }
 
 // --- persistent profile ---------------------------------------------------
@@ -418,6 +440,58 @@ function saveProfile(){
     .then(function(data){if(!data)return;if(data.profile){renderProfile(data.profile);if(data.profile.locale)localStorage.setItem('vs-lang',data.profile.locale)}setProfileStatus(profileLanguage('Profil tersimpan.','Profile saved.'),'ok');notice(profileLanguage('Profil diperbarui.','Profile updated.'))})
     .catch(function(error){var code=error&&error.data&&error.data.error;var message=code==='handle_taken'?profileLanguage('Username publik sudah dipakai.','That public username is already taken.'):code==='invalid_profile'?profileLanguage('Periksa kembali kolom profil.','Check the profile fields and try again.'):profileLanguage('Profil belum dapat disimpan.','The profile could not be saved.');setProfileStatus(message,'bad')})
     .then(function(){if(button){button.disabled=false;button.removeAttribute('aria-busy')}});
+}
+
+// --- active sessions ------------------------------------------------------
+var SESSION_STATE=[];
+function sessionLanguage(id,en){return document.documentElement.lang==='en'?en:id}
+function sessionClientLabel(client){return client==='desktop'?sessionLanguage('Void Scriptor Desktop','Void Scriptor Desktop'):sessionLanguage('Browser','Browser')}
+function providerLabelForSession(provider){return provider==='google'?'Google':(provider==='github'?'GitHub':sessionLanguage('Provider lain','Other provider'))}
+function sessionSummary(s){
+  return providerLabelForSession(s.provider)+' · '+sessionLanguage('Masuk','Signed in')+' '+fmt(s.created_at)+' · '+sessionLanguage('Berlaku sampai','Valid until')+' '+fmt(s.expires_at);
+}
+function renderSessions(data){
+  var list=document.getElementById('dashSessionList'),revokeAll=document.getElementById('dashRevokeOtherSessions');
+  if(!list)return;
+  SESSION_STATE=data&&Array.isArray(data.sessions)?data.sessions:[];
+  list.textContent='';
+  if(!SESSION_STATE.length){var empty=document.createElement('li');empty.className='session-state';empty.textContent=sessionLanguage('Tidak ada sesi aktif.','No active sessions.');list.appendChild(empty);if(revokeAll)revokeAll.disabled=true;return}
+  var otherCount=0;
+  SESSION_STATE.forEach(function(s){
+    var li=document.createElement('li'),info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
+    info.className='session-info';strong.textContent=sessionClientLabel(s.client)+(s.current?' · '+sessionLanguage('Sesi ini','This session'):'');small.textContent=sessionSummary(s);info.appendChild(strong);info.appendChild(small);li.appendChild(info);
+    if(s.current){var current=document.createElement('span');current.className='session-current';current.textContent=sessionLanguage('Aktif','Active');li.appendChild(current)}
+    else{otherCount++;var revoke=document.createElement('button');revoke.type='button';revoke.className='ghost session-revoke';revoke.textContent=sessionLanguage('Cabut sesi','Revoke session');revoke.setAttribute('aria-label',sessionLanguage('Cabut sesi '+sessionClientLabel(s.client),'Revoke '+sessionClientLabel(s.client)+' session'));revoke.onclick=function(){revokeSession(s.session_ref,revoke)};li.appendChild(revoke)}
+    list.appendChild(li);
+  });
+  if(revokeAll)revokeAll.disabled=otherCount===0;
+}
+function loadSessions(){
+  var refresh=document.getElementById('dashSessionsRefresh');
+  if(refresh){refresh.disabled=true;refresh.setAttribute('aria-busy','true')}
+  fetch('/api/account/sessions',{credentials:'same-origin',cache:'no-store'})
+    .then(function(r){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error('sessions-'+r.status);return r.json()})
+    .then(function(data){if(data)renderSessions(data)})
+    .catch(function(){var list=document.getElementById('dashSessionList');if(list){list.textContent='';var error=document.createElement('li');error.className='session-state';error.textContent=sessionLanguage('Sesi belum dapat dimuat. Coba Perbarui lagi.','Sessions could not be loaded. Try Refresh again.');list.appendChild(error)}setSessionStatus(sessionLanguage('Pemeriksaan sesi gagal.','Session check failed.'),'bad')})
+    .then(function(){if(refresh){refresh.disabled=false;refresh.removeAttribute('aria-busy')}});
+}
+function setSessionStatus(text,kind){var status=document.getElementById('dashSessionsStatus');if(!status)return;status.className='profile-status '+(kind||'');status.textContent=text}
+function revokeSession(sessionRef,button){
+  if(!sessionRef)return;
+  if(button){button.disabled=true;button.setAttribute('aria-busy','true')}
+  fetch('/api/account/sessions/revoke',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({session_ref:sessionRef})})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'revoke');return data})})
+    .then(function(data){if(!data)return;setSessionStatus(sessionLanguage('Sesi perangkat dicabut.','Device session revoked.'),'ok');loadSessions()})
+    .catch(function(){setSessionStatus(sessionLanguage('Sesi tidak dapat dicabut.','The session could not be revoked.'),'bad')})
+    .then(function(){if(button){button.disabled=false;button.removeAttribute('aria-busy')}});
+}
+function revokeOtherSessions(){
+  var button=document.getElementById('dashRevokeOtherSessions');if(!button||button.disabled)return;
+  button.disabled=true;button.setAttribute('aria-busy','true');
+  fetch('/api/account/sessions/revoke-all',{method:'POST',credentials:'same-origin',headers:{accept:'application/json'}})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'revoke-all');return data})})
+    .then(function(data){if(!data)return;var count=Number(data.revoked||0);setSessionStatus(sessionLanguage(count+' sesi perangkat lain dicabut.','Revoked '+count+' other device session(s).'),'ok');loadSessions()})
+    .catch(function(){setSessionStatus(sessionLanguage('Sesi perangkat lain tidak dapat dicabut.','Other device sessions could not be revoked.'),'bad');button.disabled=false;button.removeAttribute('aria-busy')});
 }
 
 // --- live session countdown ----------------------------------------------
@@ -750,6 +824,10 @@ function clearLocalDashboardData(){
   if(importSettingsInput)importSettingsInput.onchange=function(){importDashSettings(this.files&&this.files[0]);this.value=''};
   var profileForm=document.getElementById('dashProfileForm');
   if(profileForm)profileForm.onsubmit=function(ev){ev.preventDefault();saveProfile()};
+  var sessionsRefresh=document.getElementById('dashSessionsRefresh');
+  if(sessionsRefresh)sessionsRefresh.onclick=function(){loadSessions()};
+  var revokeOther=document.getElementById('dashRevokeOtherSessions');
+  if(revokeOther)revokeOther.onclick=function(){revokeOtherSessions()};
   restoreWorkspaceResult();
   refreshDashboardReadiness();
   renderSteps();
@@ -777,7 +855,7 @@ var dict = {
     'dash-local-kicker':'BYTE / PENGHUBUNG LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan ruang kerja ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa ruang kerja','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-files':'item terdeteksi','dash-local-root':'ruang kerja aktif','dash-local-time':'terakhir diperiksa',
     'dash-bridge-help-title':'Bridge belum terhubung?','dash-bridge-help-copy':'Buka Byte Desktop, pastikan Byte Bridge lokal aktif, lalu klik Periksa lagi. Jika Studio belum terpasang, unduh installer Windows di sini.','dash-bridge-open':'Buka Byte Desktop','dash-bridge-download':'Unduh Studio',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
-    'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
+    'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu','dash-sessions-title':'Perangkat & sesi aktif','dash-sessions-note':'Kelola sesi website dan aplikasi tanpa menampilkan token rahasia.','dash-sessions-refresh':'Perbarui','dash-sessions-loading':'Memuat sesi aktif…','dash-sessions-revoke-all':'Keluar dari perangkat lain',
     'dash-note':'Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di','dash-hash-source':'manifest checksum','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
@@ -803,7 +881,7 @@ var dict = {
     'dash-local-kicker':'BYTE / LOCAL CONNECTION','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-bridge-help-title':'Bridge not connected?','dash-bridge-help-copy':'Open Byte Desktop, make sure the local Byte Bridge is active, then click Check again. If Studio is not installed, download the Windows installer here.','dash-bridge-open':'Open Byte Desktop','dash-bridge-download':'Download Studio',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
-    'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
+    'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left','dash-sessions-title':'Devices & active sessions','dash-sessions-note':'Manage website and app sessions without exposing secret tokens.','dash-sessions-refresh':'Refresh','dash-sessions-loading':'Loading active sessions…','dash-sessions-revoke-all':'Sign out other devices',
     'dash-note':'This session uses a 24-hour HMAC cookie linked to a persistent account. Signing out revokes this server-side session and clears the cookie in this browser; sessions on other devices remain separate. To stop provider access, revoke the app with your identity provider.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is available in the','dash-hash-source':'checksum manifest','dash-hash-suffix':'; this does not replace code signing.',
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',

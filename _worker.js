@@ -417,14 +417,16 @@ async function ensureAccount(db, { sub, provider, login, name, avatar, email, em
   return { userId, subject, provider, createdAt: now };
 }
 
-async function createPersistentSession(db, { userId, provider, subject, now, exp }) {
+async function createPersistentSession(db, { userId, provider, subject, now, exp, client = 'web' }) {
   const sid = b64url(crypto.getRandomValues(new Uint8Array(32)));
   const idHash = await sha256B64url(sid);
+  const sessionRef = crypto.randomUUID();
   await db.prepare(`
     INSERT INTO sessions (
-      id_hash, user_id, provider, subject, created_at, expires_at, revoked_at
-    ) VALUES (?, ?, ?, ?, ?, ?, NULL)
-  `).bind(idHash, userId, provider, subject, now, exp).run();
+      id_hash, session_ref, user_id, provider, subject, created_at,
+      expires_at, revoked_at, client, last_seen_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)
+  `).bind(idHash, sessionRef, userId, provider, subject, now, exp, client, now).run();
   return sid;
 }
 
@@ -471,6 +473,7 @@ async function readSession(req, secret, db) {
       const row = await db.prepare(`
         SELECT
           s.user_id, s.provider, s.subject, s.created_at, s.expires_at,
+          s.session_ref, s.client, s.last_seen_at,
           u.email AS user_email, u.display_name AS user_name, u.avatar_url AS user_avatar,
           i.login AS identity_login, i.display_name AS identity_name, i.avatar_url AS identity_avatar,
           i.email AS identity_email
@@ -495,7 +498,9 @@ async function readSession(req, secret, db) {
         uid: row.user_id,
         user_id: row.user_id,
         sid: payload.sid,
+        sessionRef: row.session_ref || await sha256B64url(payload.sid),
         provider: row.provider,
+        client: row.client || 'web',
         sub: row.subject,
         login: row.identity_login || '',
         name: row.user_name || row.identity_name || row.identity_login || '',
@@ -503,6 +508,7 @@ async function readSession(req, secret, db) {
         email: row.user_email || row.identity_email || null,
         iat: row.created_at,
         exp: row.expires_at,
+        lastSeenAt: row.last_seen_at || row.created_at,
         persistent: true,
       };
     } catch {
@@ -715,6 +721,7 @@ async function finishSignIn(
         subject: account.subject,
         now,
         exp,
+        client: 'web',
       });
       const payload = {
         sub: String(sub),
@@ -884,6 +891,7 @@ async function handleNativeExchange(request, env) {
       subject: row.subject,
       now,
       exp,
+      client: 'desktop',
     });
     const session = await signSession({
       uid: row.user_id,
@@ -1173,6 +1181,94 @@ async function handleProfile(request, env) {
     return json(200, { ok: true, profile });
   } catch (error) {
     console.error('account profile update failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+const SESSION_REF_RE = /^[A-Za-z0-9_-]{20,128}$/;
+
+async function handleSessions(request, env, action = 'list') {
+  const allowed = action === 'list' ? request.method === 'GET' : request.method === 'POST';
+  if (!allowed) return json(405, { ok: false, error: 'method_not_allowed' });
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+  const now = Math.floor(Date.now() / 1000);
+  const currentHash = await sha256B64url(session.sid);
+
+  try {
+    if (action === 'list') {
+      // A coarse last-seen update gives the user a useful signal without
+      // writing on every request made by the dashboard.
+      await env.ACCOUNTS_DB.prepare(`
+        UPDATE sessions
+           SET last_seen_at = ?
+         WHERE id_hash = ?
+           AND (last_seen_at IS NULL OR last_seen_at < ?)
+      `).bind(now, currentHash, now - 300).run();
+      const result = await env.ACCOUNTS_DB.prepare(`
+        SELECT session_ref, client, provider, created_at, expires_at, last_seen_at
+          FROM sessions
+         WHERE user_id = ?
+           AND revoked_at IS NULL
+           AND expires_at > ?
+         ORDER BY created_at DESC
+      `).bind(session.uid, now).all();
+      const sessions = (result.results || []).map((row) => ({
+        session_ref: row.session_ref,
+        client: row.client === 'desktop' ? 'desktop' : 'web',
+        provider: row.provider,
+        created_at: row.created_at,
+        expires_at: row.expires_at,
+        last_seen_at: row.last_seen_at || row.created_at,
+        current: row.session_ref === session.sessionRef,
+      }));
+      return json(200, { ok: true, sessions });
+    }
+
+    if (action === 'revoke-all') {
+      const result = await env.ACCOUNTS_DB.prepare(`
+        UPDATE sessions
+           SET revoked_at = ?
+         WHERE user_id = ?
+           AND id_hash <> ?
+           AND revoked_at IS NULL
+           AND expires_at > ?
+      `).bind(now, session.uid, currentHash, now).run();
+      return json(200, {
+        ok: true,
+        revoked: Number(result?.meta?.changes || 0),
+      });
+    }
+
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > 4096) return json(413, { ok: false, error: 'request_too_large' });
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return json(400, { ok: false, error: 'invalid_json' });
+    }
+    const sessionRef = typeof body?.session_ref === 'string' ? body.session_ref.trim() : '';
+    if (!SESSION_REF_RE.test(sessionRef)) return json(400, { ok: false, error: 'invalid_session_ref' });
+    if (sessionRef === session.sessionRef) {
+      return json(400, { ok: false, error: 'use_logout_for_current_session' });
+    }
+    const result = await env.ACCOUNTS_DB.prepare(`
+      UPDATE sessions
+         SET revoked_at = ?
+       WHERE user_id = ?
+         AND session_ref = ?
+         AND revoked_at IS NULL
+         AND expires_at > ?
+    `).bind(now, session.uid, sessionRef, now).run();
+    const revoked = Number(result?.meta?.changes || 0);
+    if (revoked !== 1) return json(404, { ok: false, error: 'session_not_found' });
+    return json(200, { ok: true, revoked: 1 });
+  } catch (error) {
+    console.error('account session management failed', error);
     return json(503, { ok: false, error: 'account_storage' });
   }
 }
@@ -1540,6 +1636,15 @@ export default {
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);
+    }
+    if (url.pathname === '/api/account/sessions') {
+      return handleSessions(request, env, 'list');
+    }
+    if (url.pathname === '/api/account/sessions/revoke') {
+      return handleSessions(request, env, 'revoke');
+    }
+    if (url.pathname === '/api/account/sessions/revoke-all') {
+      return handleSessions(request, env, 'revoke-all');
     }
     if (url.pathname === '/api/public/profile') {
       return handlePublicProfile(request, url, env);
