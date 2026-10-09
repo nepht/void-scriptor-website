@@ -104,7 +104,7 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .session-manager-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
 .session-manager-actions .danger{min-height:44px}
 @media(max-width:600px){.session-manager-head{align-items:stretch;flex-direction:column}.session-manager-head .ghost{width:100%}.session-list li{align-items:flex-start;flex-direction:column}.session-list .session-revoke{width:100%}.session-manager-actions{align-items:stretch;flex-direction:column}.session-manager-actions .danger{width:100%}}
-.dash-panel-connections{grid-column:1/-1}.connection-list{display:grid;gap:10px;margin:18px 0 0;padding:0;list-style:none}.connection-list li{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;border:1px solid rgba(155,115,230,.18);border-radius:8px;padding:14px 16px;background:rgba(90,45,255,.04)}.connection-info{display:grid;gap:5px;min-width:0}.connection-info strong{font-size:13px;color:#efe6ff;font-weight:700;overflow-wrap:anywhere}.connection-info small{color:var(--faint);font-size:10px;line-height:1.6;overflow-wrap:anywhere}.connection-current{color:#8ef0c0;font:700 10px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}.connection-state{display:block;color:var(--faint);font-size:12px;line-height:1.6}
+.dash-panel-connections{grid-column:1/-1}.connection-list{display:grid;gap:10px;margin:18px 0 0;padding:0;list-style:none}.connection-list li{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;border:1px solid rgba(155,115,230,.18);border-radius:8px;padding:14px 16px;background:rgba(90,45,255,.04)}.connection-info{display:grid;gap:5px;min-width:0}.connection-info strong{font-size:13px;color:#efe6ff;font-weight:700;overflow-wrap:anywhere}.connection-info small{color:var(--faint);font-size:10px;line-height:1.6;overflow-wrap:anywhere}.connection-current{color:#8ef0c0;font:700 10px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}.connection-state{display:block;color:var(--faint);font-size:12px;line-height:1.6}.connection-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.connection-actions[hidden]{display:none}.connection-actions .ghost{display:inline-flex;align-items:center;justify-content:center;min-height:44px}
 @media(max-width:600px){.connection-list li{align-items:flex-start;flex-direction:column}.connection-current{align-self:flex-start}}
 .hashrow{display:flex;align-items:center;gap:10px;border:1px solid rgba(var(--purple-rgb),.25);border-radius:8px;padding:11px 13px;background:rgba(90,45,255,.05);margin-top:14px}
 .hashrow code{font-size:11px;color:#cbb6ff;overflow-wrap:anywhere;flex:1;font-family:var(--font-mono)}
@@ -274,6 +274,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h3 data-i18n="dash-connections-title">Akun terhubung</h3>
 <p class="note" data-i18n="dash-connections-note">Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.</p>
 <ul class="connection-list" id="dashConnectionList" aria-live="polite"><li class="connection-state" data-i18n="dash-connections-loading">Memuat koneksi akun…</li></ul>
+<div class="connection-actions" id="dashConnectionActions" hidden aria-live="polite"></div>
+<p class="note" data-i18n="dash-connections-link-note">Hubungkan provider lain untuk memudahkan masuk di website dan aplikasi. Provider yang sudah dimiliki akun lain tidak akan dipindahkan.</p>
 <p class="profile-status" id="dashConnectionsStatus" role="status" aria-live="polite"></p>
 </article>
 <article class="panel dash-panel-session">
@@ -371,6 +373,7 @@ function fmt(ts){if(!ts)return 'Belum tersedia';try{return new Date(ts*1000).toL
 function providerLabel(p){return p==='google'?'Google':(p==='github'?'GitHub':(p||'Belum tersedia'))}
 function renderSession(d){
   var u=d.user||{},n=u.name||u.login||'Akun';
+  AUTH_PROVIDERS=d.providers||{};
   applyUser(u);
   document.getElementById('dashHiName').textContent=n;
   document.getElementById('dashNameBig').textContent=n;
@@ -394,6 +397,7 @@ function renderSession(d){
   loadProfile();
   loadConnections();
   loadSessions();
+  renderLinkResult();
 }
 
 // --- persistent profile ---------------------------------------------------
@@ -462,25 +466,58 @@ function saveProfile(){
 
 // --- linked identity providers ------------------------------------------
 var CONNECTION_STATE=[];
-function connectionLanguage(id,en){return document.documentElement.lang==='en'?en:id}
+var AUTH_PROVIDERS={};
+function connectionLanguage(id,en){return (document.documentElement.lang==='en'||localStorage.getItem('vs-lang')==='en')?en:id}
 function connectionProviderLabel(provider){return provider==='google'?'Google':(provider==='github'?'GitHub':String(provider||connectionLanguage('Provider lain','Other provider')))}
+function renderConnectionActions(){
+  var box=document.getElementById('dashConnectionActions');if(!box)return;
+  box.textContent='';
+  var linked={};CONNECTION_STATE.forEach(function(connection){linked[connection.provider]=true});
+  ['github','google'].forEach(function(provider){
+    if(!AUTH_PROVIDERS[provider]||linked[provider])return;
+    var link=document.createElement('a');link.className='ghost';link.href='/api/auth/'+provider+'?mode=link';link.textContent=connectionLanguage('Hubungkan '+connectionProviderLabel(provider),'Connect '+connectionProviderLabel(provider));box.appendChild(link);
+  });
+  box.hidden=box.childNodes.length===0;
+}
 function renderConnections(data){
   var list=document.getElementById('dashConnectionList');if(!list)return;
   CONNECTION_STATE=data&&Array.isArray(data.connections)?data.connections:[];
   list.textContent='';
-  if(!CONNECTION_STATE.length){var empty=document.createElement('li');empty.className='connection-state';empty.textContent=connectionLanguage('Belum ada provider terhubung.','No provider is connected yet.');list.appendChild(empty);return}
+  if(!CONNECTION_STATE.length){var empty=document.createElement('li');empty.className='connection-state';empty.textContent=connectionLanguage('Belum ada provider terhubung.','No provider is connected yet.');list.appendChild(empty);renderConnectionActions();return}
   CONNECTION_STATE.forEach(function(connection){
     var li=document.createElement('li'),info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
     info.className='connection-info';strong.textContent=connectionProviderLabel(connection.provider);var accountName=connection.login||connection.display_name||connectionProviderLabel(connection.provider);var state=connection.email_verified?connectionLanguage('email terverifikasi','verified email'):connectionLanguage('email belum terverifikasi','unverified email');small.textContent=accountName+' · '+state+' · '+connectionLanguage('terhubung','linked')+' '+fmt(connection.linked_at);info.appendChild(strong);info.appendChild(small);li.appendChild(info);
     if(connection.current){var current=document.createElement('span');current.className='connection-current';current.textContent=connectionLanguage('Sesi ini','This session');li.appendChild(current)}
     list.appendChild(li);
   });
+  renderConnectionActions();
 }
 function loadConnections(){
   fetch('/api/account/connections',{credentials:'same-origin',cache:'no-store'})
     .then(function(r){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error('connections-'+r.status);return r.json()})
     .then(function(data){if(data)renderConnections(data)})
     .catch(function(){var list=document.getElementById('dashConnectionList');if(list){list.textContent='';var error=document.createElement('li');error.className='connection-state';error.textContent=connectionLanguage('Koneksi akun belum dapat dimuat.','Account connections could not be loaded.');list.appendChild(error)}var status=document.getElementById('dashConnectionsStatus');if(status){status.className='profile-status bad';status.textContent=connectionLanguage('Pemeriksaan koneksi gagal.','Connection check failed.')}});
+}
+function renderLinkResult(){
+  var params=new URLSearchParams(location.search),auth=params.get('auth');
+  if(!auth||!['linked','link_cancelled','link_failed'].includes(auth))return;
+  var status=document.getElementById('dashConnectionsStatus'),provider=connectionProviderLabel(params.get('provider'));
+  var message='',kind='';
+  if(auth==='linked'){message=connectionLanguage(provider+' berhasil dihubungkan ke akun ini.',''+provider+' was linked to this account.');kind='ok'}
+  else if(auth==='link_cancelled')message=connectionLanguage('Proses menghubungkan provider dibatalkan.','The provider-linking flow was cancelled.');
+  else {
+    var reason=params.get('reason')||'';
+    if(reason==='already_linked')message=connectionLanguage('Provider ini sudah terhubung ke akun ini.','This provider is already linked to this account.');
+    else if(reason==='provider_already_linked')message=connectionLanguage('Provider tersebut sudah terhubung ke akun lain dan tidak dipindahkan.','That provider is already linked to another account and was not moved.');
+    else if(reason==='email_already_used')message=connectionLanguage('Email terverifikasi provider tersebut terkait akun lain.','The provider’s verified email belongs to another account.');
+    else if(reason==='not_configured')message=connectionLanguage('Koneksi provider belum dikonfigurasi.','Provider linking is not configured yet.');
+    else if(reason==='unauthenticated')message=connectionLanguage('Masuk kembali untuk menghubungkan provider.','Sign in again to link a provider.');
+    else message=connectionLanguage('Provider belum dapat dihubungkan. Coba lagi nanti.','The provider could not be linked. Try again later.');
+    kind='bad';
+  }
+  if(status){status.className='profile-status '+kind;status.textContent=message}
+  if(auth==='linked')notice(message);
+  var clean=new URL(location.href);['auth','provider','reason'].forEach(function(key){clean.searchParams.delete(key)});history.replaceState({},'',clean.pathname+(clean.search||'')+(clean.hash||''));
 }
 
 // --- active sessions ------------------------------------------------------
@@ -901,7 +938,7 @@ var dict = {
     'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-safe':'Mode aman','dash-settings-voice':'Balasan dengan suara','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Karakter, suara, dan mode aman disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
     'dash-local-kicker':'BYTE / PENGHUBUNG LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan ruang kerja ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa ruang kerja','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-files':'item terdeteksi','dash-local-root':'ruang kerja aktif','dash-local-time':'terakhir diperiksa',
     'dash-bridge-help-title':'Bridge belum terhubung?','dash-bridge-help-copy':'Buka Byte Desktop, pastikan Byte Bridge lokal aktif, lalu klik Periksa lagi. Jika Studio belum terpasang, unduh installer Windows di sini.','dash-bridge-open':'Buka Byte Desktop','dash-bridge-download':'Unduh Studio',
-    'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk','dash-connections-title':'Akun terhubung','dash-connections-note':'Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.','dash-connections-loading':'Memuat koneksi akun…','dash-connections-empty':'Belum ada provider terhubung.','dash-connections-current':'Sesi ini','dash-connections-verified':'email terverifikasi','dash-connections-unverified':'email belum terverifikasi','dash-connections-failed':'Pemeriksaan koneksi gagal.',
+    'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk','dash-connections-title':'Akun terhubung','dash-connections-note':'Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.','dash-connections-link-note':'Hubungkan provider lain untuk memudahkan masuk di website dan aplikasi. Provider yang sudah dimiliki akun lain tidak akan dipindahkan.','dash-connections-loading':'Memuat koneksi akun…','dash-connections-empty':'Belum ada provider terhubung.','dash-connections-current':'Sesi ini','dash-connections-verified':'email terverifikasi','dash-connections-unverified':'email belum terverifikasi','dash-connections-failed':'Pemeriksaan koneksi gagal.',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu','dash-sessions-title':'Perangkat & sesi aktif','dash-sessions-note':'Kelola sesi website dan aplikasi tanpa menampilkan token rahasia.','dash-sessions-refresh':'Perbarui','dash-sessions-loading':'Memuat sesi aktif…','dash-sessions-revoke-all':'Keluar dari perangkat lain',
     'dash-note':'Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di','dash-hash-source':'manifest checksum','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
@@ -927,7 +964,7 @@ var dict = {
     'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-safe':'Safe mode','dash-settings-voice':'Reply with voice','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Character, voice, and safe mode are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
     'dash-local-kicker':'BYTE / LOCAL CONNECTION','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-bridge-help-title':'Bridge not connected?','dash-bridge-help-copy':'Open Byte Desktop, make sure the local Byte Bridge is active, then click Check again. If Studio is not installed, download the Windows installer here.','dash-bridge-open':'Open Byte Desktop','dash-bridge-download':'Download Studio',
-    'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method','dash-connections-title':'Connected accounts','dash-connections-note':'These providers identify the same account across the website, Void Scriptor, and QOWNER.','dash-connections-loading':'Loading account connections…','dash-connections-empty':'No provider is connected yet.','dash-connections-current':'This session','dash-connections-verified':'verified email','dash-connections-unverified':'unverified email','dash-connections-failed':'Connection check failed.',
+    'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method','dash-connections-title':'Connected accounts','dash-connections-note':'These providers identify the same account across the website, Void Scriptor, and QOWNER.','dash-connections-link-note':'Connect another provider for easier sign-in across the website and apps. A provider already owned by another account will not be moved.','dash-connections-loading':'Loading account connections…','dash-connections-empty':'No provider is connected yet.','dash-connections-current':'This session','dash-connections-verified':'verified email','dash-connections-unverified':'unverified email','dash-connections-failed':'Connection check failed.',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left','dash-sessions-title':'Devices & active sessions','dash-sessions-note':'Manage website and app sessions without exposing secret tokens.','dash-sessions-refresh':'Refresh','dash-sessions-loading':'Loading active sessions…','dash-sessions-revoke-all':'Sign out other devices',
     'dash-note':'This session uses a 24-hour HMAC cookie linked to a persistent account. Signing out revokes this server-side session and clears the cookie in this browser; sessions on other devices remain separate. To stop provider access, revoke the app with your identity provider.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is available in the','dash-hash-source':'checksum manifest','dash-hash-suffix':'; this does not replace code signing.',

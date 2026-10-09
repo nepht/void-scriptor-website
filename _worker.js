@@ -142,6 +142,7 @@ async function handleAppPreview(request, url, env) {
 
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
 const OAUTH_FLOW_COOKIE = 'vs_oauth_flow';
+const OAUTH_LINK_COOKIE = 'vs_oauth_link';
 const SESSION_COOKIE = 'vs_session';
 const SESSION_TTL = 24 * 60 * 60; // 24 hours, in seconds
 const STATE_TTL = 600; // 10 minutes to finish the round trip
@@ -307,10 +308,40 @@ async function readNativeFlow(req, secret, provider) {
   return payload;
 }
 
+// A provider-link flow is separate from sign-in. It is bound to the current
+// persistent session by user id and a one-way hash of the session id, so a
+// callback cannot silently attach an identity to whichever account happens to
+// be selected at the provider.
+async function readLinkFlow(req, secret, db, provider) {
+  const raw = parseCookies(req)[OAUTH_LINK_COOKIE] || '';
+  if (!raw) return { present: false, flow: null };
+  const payload = await verifySignedPayload(raw, secret);
+  if (
+    !payload ||
+    payload.kind !== 'link' ||
+    payload.provider !== provider ||
+    typeof payload.uid !== 'string' ||
+    typeof payload.session_hash !== 'string' ||
+    typeof payload.exp !== 'number' ||
+    payload.exp * 1000 < Date.now()
+  ) return { present: true, flow: null };
+
+  const session = await readSession(req, secret, db);
+  if (!session || session.uid !== payload.uid || !session.sid) {
+    return { present: true, flow: null };
+  }
+  const currentHash = await sha256B64url(session.sid);
+  if (!timingSafeEqual(payload.session_hash, currentHash)) {
+    return { present: true, flow: null };
+  }
+  return { present: true, flow: payload };
+}
+
 function clearOAuthCookies() {
   return [
     cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
     cookie(OAUTH_FLOW_COOKIE, '', { clear: true }),
+    cookie(OAUTH_LINK_COOKIE, '', { clear: true }),
   ];
 }
 
@@ -693,6 +724,131 @@ function googleConfigured(env) {
 // new URL added to each provider's console — no code change.
 function callbackUrl(url, provider = 'github') {
   return `${url.origin}/api/auth/${provider}/callback`;
+}
+
+async function beginProviderLink(request, env, provider) {
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) return { error: 'not_configured' };
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session || !session.sid) return { error: 'unauthenticated' };
+  try {
+    const existing = await env.ACCOUNTS_DB.prepare(`
+      SELECT 1 FROM identities WHERE user_id = ? AND provider = ? LIMIT 1
+    `).bind(session.uid, provider).first();
+    if (existing) return { error: 'already_linked' };
+    const now = Math.floor(Date.now() / 1000);
+    const linkCookie = await signSession({
+      kind: 'link',
+      uid: session.uid,
+      provider,
+      session_hash: await sha256B64url(session.sid),
+      iat: now,
+      exp: now + STATE_TTL,
+    }, env.SESSION_SECRET);
+    return { linkCookie };
+  } catch (error) {
+    console.error('provider link start failed', error);
+    return { error: 'account_storage' };
+  }
+}
+
+function linkResultRedirect(reason = 'provider_error') {
+  return `/dashboard?auth=link_failed&reason=${encodeURIComponent(reason)}`;
+}
+
+async function linkProviderIdentity(db, userId, {
+  sub, provider, login, name, avatar, email, emailVerified = false,
+}) {
+  const now = Math.floor(Date.now() / 1000);
+  const subject = String(sub);
+  const normalized = normalizeEmail(email);
+  const verified = emailVerified ? 1 : 0;
+  const existingIdentity = await db.prepare(`
+    SELECT user_id FROM identities WHERE provider = ? AND subject = ? LIMIT 1
+  `).bind(provider, subject).first();
+  if (existingIdentity && existingIdentity.user_id !== userId) {
+    const error = new Error('provider_already_linked');
+    error.code = 'provider_already_linked';
+    throw error;
+  }
+
+  // A verified address already owned by another account is not silently
+  // merged. Linking must be an explicit action and must never reassign an
+  // identity or turn a provider login into an account-takeover path.
+  if (normalized && verified) {
+    const matchingUser = await db.prepare(`
+      SELECT id FROM users
+       WHERE lower(email) = ? AND email_verified = 1
+       ORDER BY created_at LIMIT 1
+    `).bind(normalized).first();
+    if (matchingUser && matchingUser.id !== userId) {
+      const error = new Error('email_already_used');
+      error.code = 'email_already_used';
+      throw error;
+    }
+  }
+
+  // Do not reassign an identity if a concurrent flow linked it first. The
+  // follow-up ownership check turns that race into a safe, visible error.
+  await db.prepare(`
+    INSERT INTO identities (
+      id, user_id, provider, subject, login, display_name, avatar_url,
+      email, email_verified, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(provider, subject) DO NOTHING
+  `).bind(
+    crypto.randomUUID(),
+    userId,
+    provider,
+    subject,
+    String(login || ''),
+    String(name || login || ''),
+    String(avatar || ''),
+    normalized,
+    verified,
+    now,
+    now,
+  ).run();
+
+  const owner = await db.prepare(`
+    SELECT user_id FROM identities WHERE provider = ? AND subject = ? LIMIT 1
+  `).bind(provider, subject).first();
+  if (!owner || owner.user_id !== userId) {
+    const error = new Error('provider_already_linked');
+    error.code = 'provider_already_linked';
+    throw error;
+  }
+  await db.prepare(`
+    UPDATE identities
+       SET login = ?, display_name = ?, avatar_url = ?, email = ?,
+           email_verified = ?, updated_at = ?
+     WHERE provider = ? AND subject = ? AND user_id = ?
+  `).bind(
+    String(login || ''),
+    String(name || login || ''),
+    String(avatar || ''),
+    normalized,
+    verified,
+    now,
+    provider,
+    subject,
+    userId,
+  ).run();
+}
+
+async function finishProviderLink(env, profile, flow) {
+  try {
+    await linkProviderIdentity(env.ACCOUNTS_DB, flow.uid, profile);
+    return redirect(
+      `/dashboard?auth=linked&provider=${encodeURIComponent(profile.provider)}`,
+      { 'set-cookie': clearOAuthCookies() },
+    );
+  } catch (error) {
+    console.error('provider link failed', error);
+    const reason = ['provider_already_linked', 'email_already_used'].includes(error?.code)
+      ? error.code
+      : 'account_storage';
+    return redirect(linkResultRedirect(reason), { 'set-cookie': clearOAuthCookies() });
+  }
 }
 
 // One session shape for every provider. `provider` and `sub` together are the
@@ -1402,6 +1558,19 @@ async function handleAuth(request, url, env) {
     if (nativeRequest.requested && !nativeRequest.flow) {
       return json(400, { ok: false, error: 'invalid_native_oauth_request' });
     }
+    const linkMode = url.searchParams.get('mode') === 'link';
+    if (linkMode && nativeRequest.requested) {
+      return json(400, { ok: false, error: 'invalid_link_request' });
+    }
+    let linkCookie = null;
+    if (linkMode) {
+      const link = await beginProviderLink(request, env, 'github');
+      if (link.error === 'unauthenticated') return redirect('/?auth=required');
+      if (link.error) {
+        return redirect(linkResultRedirect(link.error), { 'set-cookie': clearOAuthCookies() });
+      }
+      linkCookie = link.linkCookie;
+    }
     const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
     const q = new URLSearchParams({
       client_id: env.GITHUB_CLIENT_ID,
@@ -1421,6 +1590,9 @@ async function handleAuth(request, url, env) {
       'set-cookie': [
         cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
         ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
+        ...(linkCookie
+          ? [cookie(OAUTH_LINK_COOKIE, linkCookie, { maxAge: STATE_TTL })]
+          : [cookie(OAUTH_LINK_COOKIE, '', { clear: true })]),
       ],
     });
   }
@@ -1432,6 +1604,19 @@ async function handleAuth(request, url, env) {
     const nativeRequest = nativeFlowRequest(url, 'google');
     if (nativeRequest.requested && !nativeRequest.flow) {
       return json(400, { ok: false, error: 'invalid_native_oauth_request' });
+    }
+    const linkMode = url.searchParams.get('mode') === 'link';
+    if (linkMode && nativeRequest.requested) {
+      return json(400, { ok: false, error: 'invalid_link_request' });
+    }
+    let linkCookie = null;
+    if (linkMode) {
+      const link = await beginProviderLink(request, env, 'google');
+      if (link.error === 'unauthenticated') return redirect('/?auth=required');
+      if (link.error) {
+        return redirect(linkResultRedirect(link.error), { 'set-cookie': clearOAuthCookies() });
+      }
+      linkCookie = link.linkCookie;
     }
     const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
     const q = new URLSearchParams({
@@ -1455,6 +1640,9 @@ async function handleAuth(request, url, env) {
       'set-cookie': [
         cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
         ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
+        ...(linkCookie
+          ? [cookie(OAUTH_LINK_COOKIE, linkCookie, { maxAge: STATE_TTL })]
+          : [cookie(OAUTH_LINK_COOKIE, '', { clear: true })]),
       ],
     });
   }
@@ -1465,15 +1653,22 @@ async function handleAuth(request, url, env) {
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
     const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'github');
+    const linkFlow = await readLinkFlow(request, env.SESSION_SECRET, env.ACCOUNTS_DB, 'github');
     // Always drop both flow cookies, either way, so they cannot be replayed.
     const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
+      if (linkFlow.present) {
+        return redirect('/dashboard?auth=link_cancelled', { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
@@ -1493,6 +1688,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
@@ -1509,6 +1707,9 @@ async function handleAuth(request, url, env) {
     ).json().catch(() => null);
 
     if (!profile || !profile.id) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
@@ -1532,7 +1733,7 @@ async function handleAuth(request, url, env) {
       }
     }
 
-    return finishSignIn(env, url, {
+    const providerProfile = {
       sub: profile.id,
       provider: 'github',
       login: profile.login || '',
@@ -1540,7 +1741,14 @@ async function handleAuth(request, url, env) {
       avatar: profile.avatar_url || '',
       email,
       emailVerified,
-    }, nativeFlow);
+    };
+    if (linkFlow.present) {
+      if (!linkFlow.flow) {
+        return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
+      }
+      return finishProviderLink(env, providerProfile, linkFlow.flow);
+    }
+    return finishSignIn(env, url, providerProfile, nativeFlow);
   }
 
   // --- finish the round trip (Google) ---------------------------------------
@@ -1549,15 +1757,22 @@ async function handleAuth(request, url, env) {
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
     const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'google');
+    const linkFlow = await readLinkFlow(request, env.SESSION_SECRET, env.ACCOUNTS_DB, 'google');
     // Always drop both flow cookies, either way, so they cannot be replayed.
     const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
+      if (linkFlow.present) {
+        return redirect('/dashboard?auth=link_cancelled', { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
@@ -1579,6 +1794,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
@@ -1592,12 +1810,15 @@ async function handleAuth(request, url, env) {
     // unverified address: it is the identity key we merge accounts on, so an
     // unverified one could let someone claim another person's account.
     if (!info || !info.sub || !info.email || info.email_verified === false) {
+      if (linkFlow.present) {
+        return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
+      }
       return nativeFlow
         ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
         : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
-    return finishSignIn(env, url, {
+    const providerProfile = {
       sub: info.sub,
       provider: 'google',
       login: (info.email || '').split('@')[0],
@@ -1605,7 +1826,14 @@ async function handleAuth(request, url, env) {
       avatar: info.picture || '',
       email: info.email,
       emailVerified: info.email_verified === true,
-    }, nativeFlow);
+    };
+    if (linkFlow.present) {
+      if (!linkFlow.flow) {
+        return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
+      }
+      return finishProviderLink(env, providerProfile, linkFlow.flow);
+    }
+    return finishSignIn(env, url, providerProfile, nativeFlow);
   }
 
   // --- sign out -------------------------------------------------------------
