@@ -1217,7 +1217,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-dashboard .dash-center-live i{width:8px;height:8px;border-radius:50%;background:#ffd27a;box-shadow:0 0 0 4px rgba(255,210,122,.1)}
 .page-dashboard .dash-center-live.is-ready i{background:#78f5bd;box-shadow:0 0 0 4px rgba(120,245,189,.1)}
 .page-dashboard .dash-center-live.is-offline i{background:#ffad7d;box-shadow:0 0 0 4px rgba(255,173,125,.1)}
-.page-dashboard .dash-center-state{padding:6px 8px;border:1px solid rgba(255,173,125,.34);border-radius:999px;color:#ffd0b6;background:rgba(255,173,125,.07)}
+.page-dashboard .dash-center-state{padding:6px 8px;border:1px solid rgba(255,173,125,.34);border-radius:999px;color:#ffd0b6;background:rgba(255,173,125,.07)}.page-dashboard .dash-center-state.is-ready{border-color:rgba(120,245,189,.32);color:#bfffe0;background:rgba(120,245,189,.07)}.page-dashboard .dash-center-state.is-offline{border-color:rgba(255,173,125,.42);color:#ffd0b6;background:rgba(255,173,125,.09)}
 .page-dashboard .dash-center-identity{display:flex;align-items:center;gap:16px;margin-top:24px;min-width:0}
 .page-dashboard .dash-center-avatar{width:78px;height:78px;display:grid;place-items:center;flex:0 0 auto;border:1px solid rgba(66,232,255,.4);border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));overflow:hidden;box-shadow:0 0 28px rgba(66,232,255,.12)}
 .page-dashboard .dash-center-avatar img{width:100%;height:100%;object-fit:cover}.page-dashboard .dash-center-avatar i{color:var(--white);font:700 27px var(--font-display);font-style:normal}
