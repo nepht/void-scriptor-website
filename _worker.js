@@ -2151,6 +2151,99 @@ async function handleCloudBackup(request, env) {
   }
 }
 
+async function handleAccountActivity(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    const response = json(503, { ok: false, error: 'accounts_not_configured' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) {
+    const response = json(401, { ok: false, error: 'unauthenticated' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+
+  try {
+    const [user, identitiesResult, sessionsResult, profile, backup] = await Promise.all([
+      env.ACCOUNTS_DB.prepare(`
+        SELECT created_at, last_login_at
+          FROM users
+         WHERE id = ?
+         LIMIT 1
+      `).bind(session.uid).first(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT provider, created_at
+          FROM identities
+         WHERE user_id = ?
+         ORDER BY created_at DESC
+         LIMIT 20
+      `).bind(session.uid).all(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT client, provider, created_at, revoked_at
+          FROM sessions
+         WHERE user_id = ?
+         ORDER BY created_at DESC
+         LIMIT 20
+      `).bind(session.uid).all(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT created_at, updated_at
+          FROM profiles
+         WHERE user_id = ?
+         LIMIT 1
+      `).bind(session.uid).first(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT size_bytes, updated_at
+          FROM account_backups
+         WHERE user_id = ?
+         LIMIT 1
+      `).bind(session.uid).first(),
+    ]);
+
+    const events = [];
+    const add = (type, at, extra = {}) => {
+      const timestamp = Number(at);
+      if (!Number.isFinite(timestamp) || timestamp <= 0) return;
+      events.push({ type, at: Math.floor(timestamp), ...extra });
+    };
+
+    add('account_created', user?.created_at);
+    add('signed_in', user?.last_login_at, { provider: session.provider });
+    for (const row of identitiesResult.results || []) {
+      add('provider_connected', row.created_at, { provider: row.provider });
+    }
+    if (profile?.updated_at && Number(profile.updated_at) !== Number(profile.created_at)) {
+      add('profile_updated', profile.updated_at);
+    }
+    for (const row of sessionsResult.results || []) {
+      add('session_created', row.created_at, {
+        client: row.client === 'desktop' ? 'desktop' : 'web',
+        provider: row.provider,
+      });
+      add('session_revoked', row.revoked_at, {
+        client: row.client === 'desktop' ? 'desktop' : 'web',
+        provider: row.provider,
+      });
+    }
+    add('backup_saved', backup?.updated_at, {
+      size_bytes: Number(backup?.size_bytes) || 0,
+    });
+
+    events.sort((a, b) => b.at - a.at);
+    const response = json(200, { ok: true, events: events.slice(0, 30) });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  } catch (error) {
+    console.error('account activity lookup failed', error);
+    const response = json(503, { ok: false, error: 'account_storage' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -2178,6 +2271,9 @@ export default {
     }
     if (url.pathname === '/api/account/backup') {
       return handleCloudBackup(request, env);
+    }
+    if (url.pathname === '/api/account/activity') {
+      return handleAccountActivity(request, env);
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);
