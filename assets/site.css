@@ -1161,3 +1161,9 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home .status-item a:hover{color:#fff}
 @media(max-width:1020px){.page-home .status-rail{grid-template-columns:1fr;gap:24px}.page-home .status-heading h2{max-width:16ch}}
 @media(max-width:760px){.page-home .status-rail{display:block;margin-top:36px;padding:36px 16px 42px}.page-home .status-heading{margin-bottom:22px}.page-home .status-list{grid-template-columns:1fr;gap:10px}.page-home .status-item{min-height:0;padding:18px}.page-home .status-item p{min-height:0;margin-bottom:8px}}
+
+/* Quiz auth controls stay reachable on touch screens and in the compact
+   header without adding a new visual container. */
+.page-quiz .plain-gate,.page-quiz .outline-gate,.page-quiz .btn-out,.page-quiz .btn-lang{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.page-quiz .btn-lang{min-width:44px}
+.page-quiz .switch-gate{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
