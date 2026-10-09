@@ -132,11 +132,12 @@ async function handleAppPreview(request, url, env) {
 //   5. POST /api/auth/exchange       -> exchange a one-time PKCE code for a
 //                                       bearer session used by native clients
 //
-// The access token is used once to read the profile and then discarded. Nothing
-// token-shaped is stored or sent to the client. Production sessions carry an
-// opaque session id in an HMAC-signed cookie; the id is hashed in D1 and linked
-// to a durable user account. If D1 is not bound in a local preview, the old
-// stateless cookie fallback remains available for development only.
+// The provider access token is used once to read the profile and then discarded.
+// Web sessions carry an opaque session id in an HMAC-signed cookie; native
+// clients receive the same kind of opaque session token only after a one-time
+// PKCE exchange. The id is hashed in D1 and linked to a durable user account.
+// If D1 is not bound in a local preview, the old stateless cookie fallback
+// remains available for development only; native exchange remains disabled.
 // ---------------------------------------------------------------------------
 
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
