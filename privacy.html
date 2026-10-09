@@ -68,7 +68,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="rule"></div>
 <p class="upd">Berlaku sejak: 9 Oktober 2026 · Terakhir diperbarui: 9 Oktober 2026 (cakupan produk, transfer, retensi, dan insiden)</p>
 
-<div class="note"><b>Ringkas:</b> Kami tidak menjalankan pelacakan iklan, tidak menjual data Anda, dan tidak memakai cookie pihak ketiga. Untuk masuk, kami memakai <b>GitHub atau Google</b>: penyedia itu membagikan nama, email, dan foto profil Anda kepada kami, dan kami menyimpannya di <b>cookie sesi bertanda tangan</b> selama 24 jam agar situs mengenali Anda. Cookie dihapus oleh Keluar hanya pada peramban ini; sesi yang tersalin di perangkat lain tetap berlaku sampai kedaluwarsa. Kami tidak menyimpan kata sandi, tidak menyimpan token akses, dan tidak memiliki basis data akun. Dokumen ini adalah draf operasional, bukan nasihat hukum.</div>
+<div class="note"><b>Ringkas:</b> Kami tidak menjalankan pelacakan iklan, tidak menjual data Anda, dan tidak memakai cookie pihak ketiga. Untuk masuk, kami memakai <b>GitHub atau Google</b>: penyedia itu membagikan nama, email, dan foto profil kepada kami. Profil akun dan identitas provider disimpan di <b>Cloudflare D1</b> agar website dan aplikasi dapat memakai identitas yang sama; cookie HMAC 24 jam hanya membawa rujukan sesi yang ditandatangani. Keluar mencabut sesi ini di server dan menghapus cookie pada peramban ini. Kami tidak menyimpan kata sandi atau token akses OAuth. Dokumen ini adalah draf operasional, bukan nasihat hukum.</div>
 
 <h2><span class="n">00</span>Pengelola, cakupan, dan bahasa</h2>
 <p><b>Pengelola operasional:</b> Void Scriptor, studio independen yang dikelola oleh Choirudin. Kontak untuk pertanyaan privasi, permintaan data, dan korespondensi hukum: <a href="mailto:voidscriptor@gmail.com">voidscriptor@gmail.com</a>. Kami tidak mengklaim nama ini sebagai badan hukum terpisah dari pemilik/pengelolanya.</p>
@@ -79,14 +79,14 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h2><span class="n">01</span>Data yang kami proses</h2>
 <p>Kami berupaya memproses data sesedikit mungkin (data minimization):</p>
 <ul>
-<li><b>Data akun (masuk dengan GitHub/Google):</b> saat Anda masuk, penyedia identitas membagikan <b>ID akun, nama tampilan, nama pengguna, alamat email, dan URL foto profil</b> Anda kepada kami. Kami memakainya hanya untuk menampilkan identitas Anda di situs, dan menyimpannya di <b>cookie sesi</b> (lihat bagian 03). Kami <b>tidak pernah</b> menerima atau menyimpan kata sandi Anda, dan <b>tidak menyimpan token akses</b> OAuth : token itu dipakai sekali di server untuk membaca profil Anda, lalu dibuang. Kami tidak memiliki basis data akun: satu-satunya salinan data profil Anda ada di cookie di peramban Anda.</li>
+<li><b>Data akun (masuk dengan GitHub/Google):</b> saat Anda masuk, penyedia identitas membagikan <b>ID akun, nama tampilan, nama pengguna, alamat email, dan URL foto profil</b> Anda kepada kami. Kami memakainya untuk mengenali akun, menampilkan identitas, dan menghubungkan website dengan aplikasi yang memakai layanan akun yang sama. Profil akun, identitas provider, dan sesi aktif disimpan di <b>Cloudflare D1</b>. Kami <b>tidak pernah</b> menerima atau menyimpan kata sandi, dan <b>tidak menyimpan token akses</b> OAuth: token hanya dipakai sekali di server untuk membaca profil lalu dibuang.</li>
 <li><b>Preferensi bahasa:</b> pilihan ID/EN disimpan di peramban Anda.</li>
 <li><b>Log server:</b> penyedia hosting (Cloudflare) secara otomatis mencatat data teknis standar seperti alamat IP, jenis peramban, dan waktu akses untuk keamanan dan pencegahan penyalahgunaan.</li>
 <li><b>Byte dan ruang kerja lokal:</b> pesan yang Anda kirim ke Byte, pilihan karakter/suara, serta ringkasan metadata yang Anda minta untuk dibaca (nama, tipe, ukuran, ekstensi, dan waktu perubahan berkas). Bridge lokal tidak mengirim isi berkas untuk pemindaian; ringkasan dapat diteruskan ke model AI lokal atau penyedia model yang Anda konfigurasi untuk menyusun jawaban.</li>
 <li><b>Suara:</b> keluaran suara Byte dibuat oleh kemampuan suara di peramban. Jika Anda menyalakan mikrofon, pengenalan suara mengikuti pemrosesan yang disediakan oleh peramban/perangkat Anda; kami tidak menyimpan rekaman suara melalui situs ini.</li>
 <li><b>Produk mendatang:</b> jika Studio atau QOWNER mengaktifkan analitik, telemetri, crash report, leaderboard, atau data progres tersimpan di server, jenis data dan tujuannya akan dijelaskan sebelum fitur tersebut aktif.</li>
 </ul>
-<p class="en">In short: no ad trackers, no third-party cookies, no data selling. Sign-in uses GitHub or Google, which shares your name, email and avatar with us; we keep those in a signed session cookie for 24 hours so the site can recognise you. Signing out clears the cookie only in this browser; a copied session on another device remains valid until it expires. We never store your password, never keep the OAuth access token, and hold no account database.</p>
+<p class="en">In short: no ad trackers, no third-party cookies, no data selling. Sign-in uses GitHub or Google, which shares your name, email, avatar, and provider ID with us. We store the account identity in Cloudflare D1 so the website and future apps can share it; a signed 24-hour cookie carries only a session reference. Signing out revokes this server-side session and clears this browser cookie. We never store your password or OAuth access token.</p>
 
 <h2><span class="n">02</span>Cara kami menggunakan data</h2>
 <ul>
@@ -99,15 +99,15 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h2><span class="n">03</span>Cookie &amp; penyimpanan lokal</h2>
 <p>Kami <b>tidak</b> memakai cookie untuk periklanan atau pelacakan lintas situs, dan tidak ada cookie pihak ketiga.</p>
 <ul>
-<li><b>Cookie sesi (<code>vs_session</code>):</b> diisi hanya setelah Anda masuk. Isinya adalah data profil publik Anda (nama, nama pengguna, email, foto) beserta waktu masuk dan waktu kedaluwarsa, ditandatangani secara kriptografis (HMAC-SHA256) sehingga tidak dapat diubah orang lain. Bersifat <code>HttpOnly</code>, <code>Secure</code>, dan <code>SameSite=Lax</code> : tidak dapat dibaca oleh skrip halaman dan <b>berlaku 24 jam</b>, setelah itu Anda otomatis keluar.</li>
+<li><b>Cookie sesi (<code>vs_session</code>):</b> diisi hanya setelah Anda masuk. Isinya adalah rujukan sesi acak, ID akun, provider, dan waktu kedaluwarsa yang ditandatangani secara kriptografis (HMAC-SHA256); token OAuth tidak pernah dimasukkan. Rujukan sesi disimpan sebagai hash di D1, sehingga dapat dicabut di server. Cookie bersifat <code>HttpOnly</code>, <code>Secure</code>, dan <code>SameSite=Lax</code>, serta <b>berlaku 24 jam</b>.</li>
 <li><b>Cookie state OAuth (<code>vs_oauth_state</code>):</b> berumur pendek (10 menit) dan hanya dipakai untuk mencegah serangan CSRF selama proses masuk. Cookie ini dihapus begitu proses selesai.</li>
 <li><b><code>localStorage</code>:</b> menyimpan preferensi bahasa (ID/EN), preferensi Byte, kemajuan checklist, dan ringkasan metadata ruang kerja bila Anda menggunakannya. Data ini tetap di peramban Anda dan tidak menjadi basis data akun.</li>
 </ul>
-<p>Menekan <b>Keluar</b> menghapus cookie sesi dari peramban ini seketika. Jika sesi mungkin pernah tersalin ke perangkat lain, cabut izin aplikasi di pengaturan GitHub atau Google. Anda juga dapat menghapus seluruh cookie dan data situs ini kapan saja melalui pengaturan peramban.</p>
-<p>Jika kunci tanda tangan sesi diduga bocor, kami dapat merotasi <code>SESSION_SECRET</code>; tindakan itu membatalkan seluruh cookie sesi yang ada dan memaksa semua pengguna masuk kembali. Desain cookie tanpa basis data berarti kami tidak dapat mencabut satu cookie tersalin secara individual sebelum masa berlakunya habis.</p>
+<p>Menekan <b>Keluar</b> mencabut sesi ini di server dan menghapus cookie dari peramban ini. Sesi pada perangkat lain tetap terpisah; keluar dari perangkat tersebut atau cabut izin aplikasi di pengaturan GitHub/Google bila diperlukan. Anda juga dapat menghapus seluruh cookie dan data situs ini kapan saja melalui pengaturan peramban.</p>
+<p>Jika kunci tanda tangan sesi diduga bocor, kami dapat merotasi <code>SESSION_SECRET</code>; tindakan itu membatalkan seluruh cookie sesi yang ada dan memaksa semua pengguna masuk kembali. D1 juga memungkinkan sesi individual yang tersimpan dicabut tanpa menghapus akun.</p>
 
 <h2><span class="n">04</span>Pihak ketiga</h2>
-<p>Situs ini dihosting oleh <b>Cloudflare Pages</b>, dan halaman unduhan dilayani melalui <b>Cloudflare R2</b>. Cloudflare memproses data teknis sesuai kebijakan privasinya sendiri.</p>
+<p>Situs ini dihosting oleh <b>Cloudflare Pages</b>, profil akun dan sesi dikelola melalui <b>Cloudflare D1</b>, dan halaman unduhan dilayani melalui <b>Cloudflare R2</b>. Cloudflare memproses data teknis dan akun sesuai peran serta kebijakan privasinya sendiri.</p>
 <ul>
 <li><b>GitHub</b> : bila Anda memilih masuk dengan GitHub, profil Anda diproses sesuai <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">kebijakan privasi GitHub</a>.</li>
 <li><b>Google</b> : bila Anda memilih masuk dengan Google, profil Anda diproses sesuai <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">kebijakan privasi Google</a>.</li>
@@ -116,9 +116,10 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 
 <h2><span class="n">05</span>Dasar pemrosesan, transfer, dan retensi</h2>
 <p>Dasar pemrosesan dapat mencakup: persetujuan Anda saat memilih login atau mengirim permintaan dukungan; pelaksanaan layanan saat kami membuat sesi akun; kepentingan yang sah untuk keamanan, pencegahan penyalahgunaan, dan keandalan; serta kewajiban hukum jika diwajibkan. Jika GDPR berlaku, dasar dan hak yang relevan akan dinilai berdasarkan konteks pemrosesan, bukan diasumsikan otomatis.</p>
-<p>Cloudflare Pages/R2, GitHub, Google, dan penyedia email dapat memproses data dari atau di luar Indonesia. Pemrosesan tersebut tunduk pada peran, kebijakan, dan mekanisme transfer yang mereka gunakan. Data profil yang kami terima untuk sesi tidak sengaja dipindahkan ke database akun kami karena kami memang tidak mengoperasikan database tersebut.</p>
+<p>Cloudflare Pages/D1/R2, GitHub, Google, dan penyedia email dapat memproses data dari atau di luar Indonesia. D1 akun Void Scriptor dibuat di region APAC; pemrosesan lain tunduk pada peran, kebijakan, dan mekanisme transfer yang mereka gunakan.</p>
 <ul>
-<li><b>Sesi:</b> sampai 24 jam; OAuth state sampai 10 menit.</li>
+<li><b>Sesi:</b> sampai 24 jam atau sampai dicabut; OAuth state sampai 10 menit. Catatan sesi yang sudah kedaluwarsa dibersihkan sebagai bagian dari operasional database.</li>
+<li><b>Profil akun dan identitas provider:</b> selama akun aktif atau sampai Anda mengajukan penghapusan melalui Kontak, dengan pengecualian yang diperlukan untuk keamanan, sengketa, atau kewajiban hukum.</li>
 <li><b>Preferensi dan ringkasan Byte:</b> tetap di peramban sampai Anda menghapusnya atau memakai Hapus data saya.</li>
 <li><b>Email dukungan:</b> ditinjau dan disimpan selama diperlukan untuk menjawab, menjaga riwayat dukungan, atau memenuhi kewajiban; target operasionalnya paling lama 24 bulan setelah interaksi terakhir kecuali diperlukan lebih lama.</li>
 <li><b>Log Cloudflare:</b> kami tidak mengendalikan retensi teknis yang dikelola Cloudflare. Log yang tersedia bagi kami dipakai untuk keamanan dan operasional selama diperlukan; retensi aktual dapat mengikuti produk, paket, dan kebijakan Cloudflare.</li>
@@ -126,10 +127,10 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p>Jika terjadi insiden keamanan yang berdampak pada data pribadi, kami akan menyelidiki, mengambil langkah pengamanan, dan memberikan pemberitahuan kepada pihak yang terdampak atau otoritas jika diwajibkan oleh hukum yang berlaku.</p>
 
 <h2><span class="n">06</span>Hak Anda</h2>
-<p>Kami tidak memiliki basis data akun, sehingga tidak ada data profil Anda yang tersimpan di server kami untuk diakses, diperbaiki, atau dihapus. Profil sesi berada di cookie peramban Anda; preferensi dan ringkasan Byte berada di penyimpanan lokal peramban, dan Anda memegang kendali penuh:</p>
+<p>Kami menyimpan profil akun, identitas provider, dan catatan sesi minimum di Cloudflare D1 agar website dan aplikasi dapat memakai identitas yang sama. Preferensi dan ringkasan Byte tetap berada di penyimpanan lokal peramban. Anda dapat meminta akses, koreksi, atau penghapusan akun melalui Kontak:</p>
 <ul>
 <li><b>Melihat &amp; mengunduh data Anda:</b> tombol <b>Unduh data saya</b> di dasbor menyalin profil sesi (nama, nama pengguna, surel, penyedia, dan waktu sesi) serta data lokal Byte yang tersimpan di browser ke sebuah berkas JSON di perangkat Anda. Tidak ada data yang dikirim ke server untuk ini.</li>
-<li><b>Menghapus data akun:</b> tombol <b>Hapus data saya</b> di dasbor menghapus data lokal dashboard dan cookie sesi pada peramban ini. Tombol <b>Keluar</b> hanya menghapus cookie sesi; untuk sesi yang tersalin atau akses aplikasi, cabut izin di penyedia identitas.</li>
+<li><b>Menghapus data akun:</b> tombol <b>Hapus data lokal &amp; keluar</b> di dasbor menghapus data lokal dan mencabut sesi pada peramban ini. Untuk penghapusan profil akun, identitas provider, dan sesi lain, kirim permintaan melalui Kontak setelah verifikasi kepemilikan akun.</li>
 <li><b>Mencabut akses aplikasi:</b> Anda dapat mencabut izin Void Scriptor kapan saja dari pengaturan akun GitHub atau Google Anda (dasbor menyediakan tautan langsung), sehingga kami tidak lagi dapat membaca profil Anda.</li>
 <li><b>Preferensi bahasa:</b> dapat Anda ubah atau hapus melalui pengaturan peramban.</li>
 </ul>

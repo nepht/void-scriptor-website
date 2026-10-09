@@ -5,3 +5,8 @@ compatibility_date = "2026-08-23"
 [[r2_buckets]]
 binding = "DOWNLOADS"
 bucket_name = "voidscriptor-downloads"
+
+[[d1_databases]]
+binding = "ACCOUNTS_DB"
+database_name = "voidscriptor-accounts"
+database_id = "1f3eb832-0ebe-49b8-a63a-3f28a3d1dd08"

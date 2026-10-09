@@ -131,11 +131,10 @@ async function handleAppPreview(request, url, env) {
 //   4. POST /api/auth/logout         -> clear the session cookie
 //
 // The access token is used once to read the profile and then discarded. Nothing
-// token-shaped is stored or sent to the client: the session is an HMAC-signed,
-// expiring cookie carrying only public profile fields. So there is no database
-// and no server-side session store. The trade-off: a session cannot be revoked
-// individually before its 24-hour expiry; rotating SESSION_SECRET ends every
-// session at once.
+// token-shaped is stored or sent to the client. Production sessions carry an
+// opaque session id in an HMAC-signed cookie; the id is hashed in D1 and linked
+// to a durable user account. If D1 is not bound in a local preview, the old
+// stateless cookie fallback remains available for development only.
 // ---------------------------------------------------------------------------
 
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
@@ -225,9 +224,112 @@ async function signSession(payload, secret) {
   return `${body}.${b64url(new Uint8Array(sig))}`;
 }
 
+async function sha256B64url(value) {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(String(value)),
+  );
+  return b64url(new Uint8Array(digest));
+}
+
+function normalizeEmail(email) {
+  const value = String(email || '').trim().toLowerCase();
+  return value || null;
+}
+
+function newAccountId() {
+  return `usr_${crypto.randomUUID()}`;
+}
+
+async function ensureAccount(db, { sub, provider, login, name, avatar, email, emailVerified }) {
+  const now = Math.floor(Date.now() / 1000);
+  const subject = String(sub);
+  const normalized = normalizeEmail(email);
+  const verified = emailVerified ? 1 : 0;
+  const existingIdentity = await db
+    .prepare('SELECT user_id FROM identities WHERE provider = ? AND subject = ?')
+    .bind(provider, subject)
+    .first();
+  let userId = existingIdentity && existingIdentity.user_id;
+
+  // A provider subject is the primary identity key. A verified email may link
+  // a second provider to the same account, but an unverified address never can.
+  if (!userId && normalized && verified) {
+    const matchingUser = await db
+      .prepare('SELECT id FROM users WHERE lower(email) = ? AND email_verified = 1 ORDER BY created_at LIMIT 1')
+      .bind(normalized)
+      .first();
+    userId = matchingUser && matchingUser.id;
+  }
+  if (!userId) userId = newAccountId();
+
+  await db.prepare(`
+    INSERT INTO users (
+      id, email, email_verified, display_name, avatar_url,
+      created_at, updated_at, last_login_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET
+      email = CASE WHEN excluded.email IS NOT NULL THEN excluded.email ELSE users.email END,
+      email_verified = CASE WHEN excluded.email_verified = 1 THEN 1 ELSE users.email_verified END,
+      display_name = CASE WHEN excluded.display_name <> '' THEN excluded.display_name ELSE users.display_name END,
+      avatar_url = CASE WHEN excluded.avatar_url <> '' THEN excluded.avatar_url ELSE users.avatar_url END,
+      updated_at = excluded.updated_at,
+      last_login_at = excluded.last_login_at
+  `).bind(
+    userId,
+    normalized,
+    verified,
+    String(name || login || ''),
+    String(avatar || ''),
+    now,
+    now,
+    now,
+  ).run();
+
+  await db.prepare(`
+    INSERT INTO identities (
+      id, user_id, provider, subject, login, display_name, avatar_url,
+      email, email_verified, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(provider, subject) DO UPDATE SET
+      user_id = excluded.user_id,
+      login = excluded.login,
+      display_name = excluded.display_name,
+      avatar_url = excluded.avatar_url,
+      email = excluded.email,
+      email_verified = excluded.email_verified,
+      updated_at = excluded.updated_at
+  `).bind(
+    crypto.randomUUID(),
+    userId,
+    provider,
+    subject,
+    String(login || ''),
+    String(name || login || ''),
+    String(avatar || ''),
+    normalized,
+    verified,
+    now,
+    now,
+  ).run();
+
+  return { userId, subject, provider, createdAt: now };
+}
+
+async function createPersistentSession(db, { userId, provider, subject, now, exp }) {
+  const sid = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  const idHash = await sha256B64url(sid);
+  await db.prepare(`
+    INSERT INTO sessions (
+      id_hash, user_id, provider, subject, created_at, expires_at, revoked_at
+    ) VALUES (?, ?, ?, ?, ?, ?, NULL)
+  `).bind(idHash, userId, provider, subject, now, exp).run();
+  return sid;
+}
+
 // The identity, or null for anything that is not a valid, unexpired,
 // correctly-signed session cookie.
-async function readSession(req, secret) {
+async function readSession(req, secret, db) {
   const raw = parseCookies(req)[SESSION_COOKIE];
   if (!raw) return null;
   const dot = raw.lastIndexOf('.');
@@ -254,6 +356,54 @@ async function readSession(req, secret) {
   }
   if (!payload || typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) {
     return null;
+  }
+  if (db) {
+    // Once persistence is enabled, old stateless cookies are intentionally
+    // rejected so every authenticated browser has a durable user identity.
+    if (!payload.uid || !payload.sid) return null;
+    try {
+      const row = await db.prepare(`
+        SELECT
+          s.user_id, s.provider, s.subject, s.created_at, s.expires_at,
+          u.email AS user_email, u.display_name AS user_name, u.avatar_url AS user_avatar,
+          i.login AS identity_login, i.display_name AS identity_name, i.avatar_url AS identity_avatar,
+          i.email AS identity_email
+        FROM sessions s
+        JOIN users u ON u.id = s.user_id
+        LEFT JOIN identities i
+          ON i.user_id = s.user_id
+         AND i.provider = s.provider
+         AND i.subject = s.subject
+        WHERE s.id_hash = ?
+          AND s.user_id = ?
+          AND s.expires_at > ?
+          AND s.revoked_at IS NULL
+        LIMIT 1
+      `).bind(
+        await sha256B64url(payload.sid),
+        String(payload.uid),
+        Math.floor(Date.now() / 1000),
+      ).first();
+      if (!row) return null;
+      return {
+        uid: row.user_id,
+        user_id: row.user_id,
+        sid: payload.sid,
+        provider: row.provider,
+        sub: row.subject,
+        login: row.identity_login || '',
+        name: row.user_name || row.identity_name || row.identity_login || '',
+        avatar: row.user_avatar || row.identity_avatar || '',
+        email: row.user_email || row.identity_email || null,
+        iat: row.created_at,
+        exp: row.expires_at,
+        persistent: true,
+      };
+    } catch {
+      // Fail closed if the account store is unavailable; do not turn a stale
+      // signed cookie into an authenticated account during a database outage.
+      return null;
+    }
   }
   return payload;
 }
@@ -415,19 +565,55 @@ function callbackUrl(url, provider = 'github') {
 // One session shape for every provider. `provider` and `sub` together are the
 // account key; `email` is the cross-provider identity, so signing in with
 // GitHub and Google on the same address lands on the same account.
-async function finishSignIn(env, url, { sub, login, name, avatar, email, provider }) {
+async function finishSignIn(env, url, { sub, login, name, avatar, email, emailVerified = false, provider }) {
   const now = Math.floor(Date.now() / 1000);
+  const exp = now + SESSION_TTL;
+  let userId = null;
+  let sid = null;
+
+  if (env.ACCOUNTS_DB) {
+    try {
+      const account = await ensureAccount(env.ACCOUNTS_DB, {
+        sub,
+        provider,
+        login,
+        name,
+        avatar,
+        email,
+        emailVerified,
+      });
+      userId = account.userId;
+      sid = await createPersistentSession(env.ACCOUNTS_DB, {
+        userId,
+        provider,
+        subject: account.subject,
+        now,
+        exp,
+      });
+    } catch (error) {
+      console.error('account persistence failed', error);
+      return redirect('/?auth=failed&reason=account_storage', {
+        'set-cookie': cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
+      });
+    }
+  }
+
+  const payload = {
+    sub: String(sub),
+    provider,
+    login: login || '',
+    name: name || login || '',
+    avatar: avatar || '',
+    email: email || null,
+    iat: now,
+    exp,
+  };
+  if (userId && sid) {
+    payload.uid = userId;
+    payload.sid = sid;
+  }
   const session = await signSession(
-    {
-      sub: String(sub),
-      provider,
-      login: login || '',
-      name: name || login || '',
-      avatar: avatar || '',
-      email: email || null,
-      iat: now,
-      exp: now + SESSION_TTL,
-    },
+    payload,
     env.SESSION_SECRET,
   );
   return redirect('/?auth=ok', {
@@ -448,10 +634,11 @@ async function handleAuth(request, url, env) {
   // deployment must answer cleanly ("nobody is signed in, sign-in is off")
   // rather than 500. The sign-in endpoints themselves fail loudly.
   if (path === '/api/auth/session') {
-    const session = configured ? await readSession(request, env.SESSION_SECRET) : null;
+    const session = configured ? await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB) : null;
     return json(200, {
       ok: true,
       configured,
+      persistent_accounts: Boolean(env.ACCOUNTS_DB),
       // Which buttons the UI may show. Reported per provider so enabling only
       // one does not advertise a button that would 500 on click.
       providers: { github: ghOn, google: ggOn },
@@ -469,6 +656,19 @@ async function handleAuth(request, url, env) {
   if (path === '/api/auth/logout') {
     if (request.method !== 'POST') {
       return json(405, { ok: false, error: 'method_not_allowed' });
+    }
+    if (env.ACCOUNTS_DB && env.SESSION_SECRET) {
+      const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+      if (session && session.sid) {
+        try {
+          await env.ACCOUNTS_DB.prepare(
+            'UPDATE sessions SET revoked_at = ? WHERE id_hash = ? AND revoked_at IS NULL',
+          ).bind(Math.floor(Date.now() / 1000), await sha256B64url(session.sid)).run();
+        } catch {
+          // Clearing the browser cookie still succeeds; the server will reject
+          // the copied session once it expires if revocation storage is down.
+        }
+      }
     }
     return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
   }
@@ -571,16 +771,18 @@ async function handleAuth(request, url, env) {
     // GitHub keeps the address private unless the person made it public, so
     // fall back to the emails endpoint and take the primary verified one.
     let email = profile.email || null;
-    if (!email) {
-      const emails = await (
-        await fetch(`${GITHUB_API}/user/emails`, { headers: ghHeaders })
-      ).json().catch(() => []);
-      if (Array.isArray(emails)) {
-        const hit =
-          emails.find((e) => e.primary && e.verified) ||
-          emails.find((e) => e.verified) ||
-          emails.find((e) => e.primary);
-        if (hit) email = hit.email;
+    let emailVerified = false;
+    const emails = await (
+      await fetch(`${GITHUB_API}/user/emails`, { headers: ghHeaders })
+    ).json().catch(() => []);
+    if (Array.isArray(emails)) {
+      const hit =
+        emails.find((e) => e.primary && e.verified) ||
+        emails.find((e) => e.verified) ||
+        emails.find((e) => e.primary);
+      if (hit && hit.email) {
+        email = hit.email;
+        emailVerified = hit.verified === true;
       }
     }
 
@@ -591,6 +793,7 @@ async function handleAuth(request, url, env) {
       name: profile.name || profile.login || '',
       avatar: profile.avatar_url || '',
       email,
+      emailVerified,
     });
   }
 
@@ -646,6 +849,7 @@ async function handleAuth(request, url, env) {
       name: info.name || info.email || '',
       avatar: info.picture || '',
       email: info.email,
+      emailVerified: info.email_verified === true,
     });
   }
 
@@ -655,6 +859,41 @@ async function handleAuth(request, url, env) {
     // (Handled above, ahead of the configured check.)
 
   return json(404, { ok: false, error: 'not_found' });
+}
+
+async function handleAccount(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    const response = json(503, {
+      ok: false,
+      error: 'accounts_not_configured',
+      persistent_accounts: false,
+    });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) {
+    const response = json(401, { ok: false, error: 'unauthenticated' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+  const response = json(200, {
+    ok: true,
+    persistent_accounts: true,
+    user: {
+      id: session.uid,
+      provider: session.provider,
+      login: session.login,
+      name: session.name,
+      avatar: session.avatar,
+      email: session.email,
+    },
+  });
+  response.headers.set('cache-control', 'no-store');
+  return response;
 }
 
 export default {
@@ -675,6 +914,9 @@ export default {
     }
     if (url.pathname === '/api/byte') {
       return handleByte(request, env);
+    }
+    if (url.pathname === '/api/account/me') {
+      return handleAccount(request, env);
     }
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
@@ -759,7 +1001,9 @@ export default {
     // receives the markup at all -- and `.html` is gated too, otherwise
     // /dashboard.html would be served straight from ASSETS and slip past it.
     if (url.pathname === '/dashboard' || url.pathname === '/dashboard.html' || url.pathname === '/dashboard/') {
-      const session = env.SESSION_SECRET ? await readSession(request, env.SESSION_SECRET) : null;
+      const session = env.SESSION_SECRET
+        ? await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB)
+        : null;
       if (!session) {
         // no-store: a cached redirect must never bounce a signed-in visitor.
         return redirect('/?auth=required', { 'cache-control': 'no-store' });

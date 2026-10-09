@@ -206,7 +206,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div><dt data-i18n="dash-exp">Berlaku sampai</dt><dd id="dashExp">Belum tersedia</dd></div>
 <div><dt data-i18n="dash-left">Sisa waktu</dt><dd id="dashCountdown" class="mono">Belum tersedia</dd></div>
 </dl>
-<p class="note" data-i18n="dash-note">Sesi ini adalah cookie bertanda tangan HMAC yang tersimpan di peramban ini dan berlaku sampai kedaluwarsa. Keluar menghapus cookie dari peramban ini; sesi yang sudah tersalin di perangkat lain tidak ikut tercabut. Untuk menghentikan akses aplikasi, cabut izin di penyedia akun.</p>
+<p class="note" data-i18n="dash-note">Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.</p>
 </article>
 <article class="panel dash-panel-products">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
@@ -237,11 +237,11 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h3 data-i18n="dash-data">Data &amp; privasi</h3>
 <div class="plinks">
 <button class="ghost" id="dashExport" type="button" data-i18n="dash-export">Unduh data saya (.json)</button>
-<button class="danger" id="dashDelete" type="button" data-i18n="dash-delete">Hapus data saya</button>
+<button class="danger" id="dashDelete" type="button" data-i18n="dash-delete">Hapus data lokal &amp; keluar</button>
 </div>
-<p class="note" data-i18n="dash-data-note">Kami tidak menyimpan basis data akun. Profil sesi berasal dari cookie bertanda tangan; preferensi Byte, checklist, dan ringkasan ruang kerja tersimpan lokal di peramban ini. Ekspor menyalin semuanya ke berkas; hapus menghilangkan data lokal terkait dan mengeluarkan Anda dari peramban ini.</p>
+<p class="note" data-i18n="dash-data-note">Profil akun, identitas provider, dan sesi login tersimpan di basis data akun agar web dan aplikasi dapat memakai identitas yang sama. Preferensi Byte, checklist, dan ringkasan ruang kerja tetap lokal di peramban ini. Ekspor menyalin profil sesi dan data lokal ke berkas; tombol hapus di sini menghapus data lokal serta mencabut sesi peramban ini.</p>
 <div id="dashDeleteConfirm" hidden>
-<p class="note" data-i18n="dash-delete-ask">Yakin? Cookie sesi di peramban ini akan dihapus. Jika ingin menghentikan akses yang masih tersalin di perangkat lain, cabut akses aplikasi pada penyedia akun:</p>
+<p class="note" data-i18n="dash-delete-ask">Yakin? Data Byte, checklist, dan ringkasan lokal akan dihapus, lalu sesi peramban ini dicabut. Ini belum menghapus akun persisten atau sesi pada perangkat lain; untuk permintaan penghapusan akun, hubungi kami melalui Kontak.</p>
 <div class="plinks">
 <button class="danger" id="dashDeleteYes" type="button" data-i18n="dash-delete-yes">Ya, hapus lokal &amp; keluar</button>
 <button class="ghost" id="dashDeleteNo" type="button" data-i18n="dash-delete-no">Batal</button>
@@ -553,14 +553,13 @@ function verifyFile(file){
   },function(){msg.className='vmsg bad';msg.textContent='Gagal membaca berkas.'});
 }
 // --- export / delete my data ---------------------------------------------
-// There is no account database, so "my data" is exactly the signed session
-// payload the browser is holding. Export serialises that object to a file;
-// delete ends the session. Both are honest about what does and does not exist.
+// Export includes the signed-session view plus browser-local data. The account
+// record remains server-side so the web and future apps can share one identity.
 var LAST_USER=null;
 // --- onboarding checklist (client-side only, no server state) -------------
 // Honest by construction: "download" only ticks once the visitor actually
 // clicks the download link, and the progress lives in this browser's
-// localStorage -- there is no account database to sync it to.
+// localStorage; it is intentionally separate from the server-side account.
 var STEP_IDS=['stepDownload','stepVerify','stepRun'];
 function getSteps(){try{return JSON.parse(localStorage.getItem('vs-onboarding')||'{}')||{}}catch(e){return {}}}
 function saveSteps(s){try{localStorage.setItem('vs-onboarding',JSON.stringify(s))}catch(e){}}
@@ -578,7 +577,7 @@ function exportData(){
   var localData={onboarding:getSteps(),byte_settings:readByteSettings(),workspace_summary:cachedWorkspace(),plan:[]};
   try{localData.plan=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'[]')||[]}catch(e){}
   var payload={
-    note:'Void Scriptor has no account database. This export contains the signed-session profile visible in the dashboard and local browser data used by Byte.',
+    note:'This export contains the signed-session profile visible in the dashboard and local browser data used by Byte. The persistent account record is not exported as raw server storage.',
     exported_at:new Date().toISOString(),
     session:LAST_USER||{},
     local_browser_data:localData
@@ -666,15 +665,15 @@ var dict = {
     'dash-bridge-help-title':'Bridge belum terhubung?','dash-bridge-help-copy':'Buka Byte Desktop, pastikan Byte Bridge lokal aktif, lalu klik Periksa lagi. Jika Studio belum terpasang, unduh installer Windows di sini.','dash-bridge-open':'Buka Byte Desktop','dash-bridge-download':'Unduh Studio',
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
-    'dash-note':'Sesi ini adalah cookie bertanda tangan HMAC yang tersimpan di peramban ini dan berlaku sampai kedaluwarsa. Keluar menghapus cookie dari peramban ini; sesi yang sudah tersalin di perangkat lain tidak ikut tercabut. Untuk menghentikan akses aplikasi, cabut izin di penyedia akun.',
+    'dash-note':'Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di','dash-hash-source':'manifest checksum','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
     'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — langkah selesai setelah tautan unduh dipilih.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; langkah selesai hanya jika hash cocok.','dash-step3':'Buka Byte Desktop','dash-step3-note':'Buka mode desktop Byte dari dashboard; langkah dicatat saat tautannya dipilih.','dash-step4':'QOWNER Quiz Maker','dash-step4-note':'Status: belum tersedia. Aplikasi iOS dan Android belum dapat diunduh, jadi langkah ini tidak dihitung.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
-    'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data saya',
-    'dash-data-note':'Kami tidak menyimpan basis data akun. Profil sesi berasal dari cookie bertanda tangan; preferensi Byte, checklist, dan ringkasan ruang kerja tersimpan lokal di peramban ini. Ekspor menyalin semuanya ke berkas; hapus menghilangkan data lokal terkait dan mengeluarkan Anda dari peramban ini.',
-    'dash-delete-ask':'Yakin? Cookie sesi di peramban ini akan dihapus. Jika ingin menghentikan akses yang masih tersalin di perangkat lain, cabut akses aplikasi pada penyedia akun:',
+    'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data lokal & keluar',
+    'dash-data-note':'Profil akun, identitas provider, dan sesi login tersimpan di basis data akun agar web dan aplikasi dapat memakai identitas yang sama. Preferensi Byte, checklist, dan ringkasan ruang kerja tetap lokal di peramban ini. Ekspor menyalin profil sesi dan data lokal ke berkas; tombol hapus di sini menghapus data lokal serta mencabut sesi peramban ini.',
+    'dash-delete-ask':'Yakin? Data Byte, checklist, dan ringkasan lokal akan dihapus, lalu sesi peramban ini dicabut. Ini belum menghapus akun persisten atau sesi pada perangkat lain; untuk permintaan penghapusan akun, hubungi kami melalui Kontak.',
     'dash-delete-yes':'Ya, hapus lokal & keluar','dash-delete-no':'Batal','dash-revoke':'Cabut izin di penyedia',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor · Choirudin',
     'foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak','foot-duka':'Dukungan'
@@ -691,15 +690,15 @@ var dict = {
     'dash-bridge-help-title':'Bridge not connected?','dash-bridge-help-copy':'Open Byte Desktop, make sure the local Byte Bridge is active, then click Check again. If Studio is not installed, download the Windows installer here.','dash-bridge-open':'Open Byte Desktop','dash-bridge-download':'Download Studio',
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
-    'dash-note':'This session is an HMAC-signed cookie stored in this browser and valid until it expires. Signing out clears the cookie in this browser; a copied session on another device is not revoked. To stop app access, revoke the app with your identity provider.',
+    'dash-note':'This session uses a 24-hour HMAC cookie linked to a persistent account. Signing out revokes this server-side session and clears the cookie in this browser; sessions on other devices remain separate. To stop provider access, revoke the app with your identity provider.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is available in the','dash-hash-source':'checksum manifest','dash-hash-suffix':'; this does not replace code signing.',
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere. The hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
     'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — this step completes when you choose the download link.','dash-step2':'Verify SHA-256','dash-step2-note':'Choose the file in Products & links; this step completes only when the hash matches.','dash-step3':'Open Byte Desktop','dash-step3-note':'Open Byte desktop mode from the dashboard; this step is recorded when you choose its link.','dash-step4':'QOWNER Quiz Maker','dash-step4-note':'Status: not available. The iOS and Android apps cannot be downloaded yet, so this is not counted.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
-    'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Delete my data',
-    'dash-data-note':'We keep no account database. The session profile comes from a signed cookie; Byte preferences, the checklist, and the workspace summary stay local to this browser. Export copies them all to a file; delete removes related local data and signs you out of this browser.',
-    'dash-delete-ask':'Are you sure? The session cookie in this browser will be deleted. To stop access that may still exist on another device, revoke the app with your identity provider:',
+    'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Remove local data & sign out',
+    'dash-data-note':'The account profile, provider identity, and login sessions are stored in the account database so the web and future apps can share one identity. Byte preferences, the checklist, and the workspace summary stay local to this browser. Export copies the session view and local data to a file; the delete action removes local data and revokes this browser session.',
+    'dash-delete-ask':'Are you sure? Local Byte data, checklist progress, and the workspace summary will be removed, then this browser session will be revoked. This does not delete the persistent account or sessions on other devices; contact us for an account deletion request.',
     'dash-delete-yes':'Delete local data & sign out','dash-delete-no':'Cancel','dash-revoke':'Revoke at provider',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor · Choirudin',
     'foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact','foot-duka':'Support'
