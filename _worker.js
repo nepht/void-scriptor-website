@@ -917,6 +917,266 @@ async function handleNativeExchange(request, env) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Account profile
+//
+// Provider identities remain read-only. The profile below is the user's own
+// presentation layer and is deliberately separate so changing a display name
+// or QOWNER pseudonym cannot change the Google/GitHub account key.
+// ---------------------------------------------------------------------------
+
+const PROFILE_MAX_BODY_BYTES = 12 * 1024;
+const PROFILE_HANDLE_RE = /^[a-z0-9](?:[a-z0-9_-]{1,22}[a-z0-9])?$/;
+
+function profileText(value, max, collapseWhitespace = false) {
+  let text = String(value ?? '')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    .trim();
+  if (collapseWhitespace) text = text.replace(/\s+/g, ' ');
+  return text.slice(0, max);
+}
+
+function profileTimezone(value) {
+  const timezone = String(value ?? '').trim();
+  if (timezone === 'UTC') return timezone;
+  if (
+    timezone.length > 64 ||
+    !/^[A-Za-z_]+(?:\/[A-Za-z0-9_+.-]+)+$/.test(timezone)
+  ) return null;
+  try {
+    // The runtime's timezone database is the source of truth; accepting only
+    // zones the runtime can format prevents a profile that cannot be rendered.
+    new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format();
+    return timezone;
+  } catch {
+    return null;
+  }
+}
+
+function profileView(row) {
+  return {
+    display_name: row?.display_name || '',
+    public_handle: row?.public_handle || '',
+    bio: row?.bio || '',
+    locale: row?.locale === 'en' ? 'en' : 'id',
+    timezone: row?.timezone || 'Asia/Jakarta',
+    visibility: row?.profile_visibility === 'public' ? 'public' : 'private',
+    qowner_alias: row?.qowner_alias || '',
+    qowner_leaderboard_opt_in: Number(row?.qowner_leaderboard_opt_in) === 1,
+  };
+}
+
+async function readProfile(db, userId) {
+  const row = await db.prepare(`
+    SELECT display_name, public_handle, bio, locale, timezone,
+           profile_visibility, qowner_alias, qowner_leaderboard_opt_in
+      FROM profiles
+     WHERE user_id = ?
+     LIMIT 1
+  `).bind(userId).first();
+  return profileView(row);
+}
+
+async function handlePublicProfile(request, url, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB) return json(503, { ok: false, error: 'accounts_not_configured' });
+  const handle = (url.searchParams.get('handle') || '').trim().toLowerCase();
+  if (!PROFILE_HANDLE_RE.test(handle)) return json(404, { ok: false, error: 'profile_not_found' });
+  let row;
+  try {
+    row = await env.ACCOUNTS_DB.prepare(`
+      SELECT p.display_name, p.public_handle, p.bio, p.locale, p.timezone,
+             p.qowner_alias, p.qowner_leaderboard_opt_in,
+             u.display_name AS provider_name, u.avatar_url
+        FROM profiles p
+        JOIN users u ON u.id = p.user_id
+       WHERE p.public_handle = ? COLLATE NOCASE
+         AND p.profile_visibility = 'public'
+       LIMIT 1
+    `).bind(handle).first();
+  } catch (error) {
+    console.error('public profile lookup failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+  if (!row) return json(404, { ok: false, error: 'profile_not_found' });
+  return json(200, {
+    ok: true,
+    profile: {
+      display_name: row.display_name || row.provider_name || row.public_handle,
+      public_handle: row.public_handle,
+      bio: row.bio || '',
+      locale: row.locale === 'en' ? 'en' : 'id',
+      timezone: row.timezone || 'Asia/Jakarta',
+      avatar: row.avatar_url || '',
+      qowner_alias: Number(row.qowner_leaderboard_opt_in) === 1 ? (row.qowner_alias || '') : '',
+    },
+  });
+}
+
+async function writeProfile(db, userId, profile) {
+  const now = Math.floor(Date.now() / 1000);
+  await db.prepare(`
+    INSERT INTO profiles (
+      user_id, display_name, public_handle, bio, locale, timezone,
+      profile_visibility, qowner_alias, qowner_leaderboard_opt_in,
+      created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(user_id) DO UPDATE SET
+      display_name = excluded.display_name,
+      public_handle = excluded.public_handle,
+      bio = excluded.bio,
+      locale = excluded.locale,
+      timezone = excluded.timezone,
+      profile_visibility = excluded.profile_visibility,
+      qowner_alias = excluded.qowner_alias,
+      qowner_leaderboard_opt_in = excluded.qowner_leaderboard_opt_in,
+      updated_at = excluded.updated_at
+  `).bind(
+    userId,
+    profile.display_name,
+    profile.public_handle,
+    profile.bio,
+    profile.locale,
+    profile.timezone,
+    profile.visibility,
+    profile.qowner_alias,
+    profile.qowner_leaderboard_opt_in ? 1 : 0,
+    now,
+    now,
+  ).run();
+  return profile;
+}
+
+async function handleProfile(request, env) {
+  if (!['GET', 'HEAD', 'PATCH'].includes(request.method)) {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  let current;
+  try {
+    current = await readProfile(env.ACCOUNTS_DB, session.uid);
+  } catch (error) {
+    console.error('account profile lookup failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+
+  if (request.method === 'GET' || request.method === 'HEAD') {
+    return json(200, {
+      ok: true,
+      profile: current,
+      account: {
+        id: session.uid,
+        provider: session.provider,
+        login: session.login,
+        name: session.name,
+        avatar: session.avatar,
+        email: session.email,
+      },
+    });
+  }
+
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > PROFILE_MAX_BODY_BYTES) {
+    return json(413, { ok: false, error: 'request_too_large' });
+  }
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return json(400, { ok: false, error: 'invalid_profile' });
+  }
+
+  const next = { ...current };
+  const errors = {};
+  const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+
+  if (has('display_name')) {
+    if (typeof body.display_name !== 'string' || body.display_name.length > 80) {
+      errors.display_name = 'max_80_characters';
+    } else {
+      next.display_name = profileText(body.display_name, 80, true);
+    }
+  }
+  const handleKey = has('public_handle') ? 'public_handle' : (has('handle') ? 'handle' : null);
+  if (handleKey) {
+    if (typeof body[handleKey] !== 'string') {
+      errors.public_handle = 'invalid_handle';
+    } else {
+      const handle = body[handleKey].trim().toLowerCase();
+      if (handle && !PROFILE_HANDLE_RE.test(handle)) {
+        errors.public_handle = 'use_3_to_24_lowercase_characters';
+      } else {
+        next.public_handle = handle;
+      }
+    }
+  }
+  if (has('bio')) {
+    if (typeof body.bio !== 'string' || body.bio.length > 160) {
+      errors.bio = 'max_160_characters';
+    } else {
+      next.bio = profileText(body.bio, 160);
+    }
+  }
+  if (has('locale')) {
+    if (!['id', 'en'].includes(body.locale)) errors.locale = 'unsupported_locale';
+    else next.locale = body.locale;
+  }
+  if (has('timezone')) {
+    const timezone = profileTimezone(body.timezone);
+    if (!timezone) errors.timezone = 'invalid_timezone';
+    else next.timezone = timezone;
+  }
+  if (has('visibility')) {
+    if (!['private', 'public'].includes(body.visibility)) errors.visibility = 'invalid_visibility';
+    else next.visibility = body.visibility;
+  }
+  if (has('qowner_alias')) {
+    if (typeof body.qowner_alias !== 'string' || body.qowner_alias.length > 40) {
+      errors.qowner_alias = 'max_40_characters';
+    } else {
+      next.qowner_alias = profileText(body.qowner_alias, 40, true);
+    }
+  }
+  if (has('qowner_leaderboard_opt_in')) {
+    if (typeof body.qowner_leaderboard_opt_in !== 'boolean') {
+      errors.qowner_leaderboard_opt_in = 'boolean_required';
+    } else {
+      next.qowner_leaderboard_opt_in = body.qowner_leaderboard_opt_in;
+    }
+  }
+  if (Object.keys(errors).length) {
+    return json(400, { ok: false, error: 'invalid_profile', fields: errors });
+  }
+
+  if (next.public_handle) {
+    const taken = await env.ACCOUNTS_DB.prepare(`
+      SELECT user_id FROM profiles
+       WHERE public_handle = ? COLLATE NOCASE
+         AND user_id <> ?
+       LIMIT 1
+    `).bind(next.public_handle, session.uid).first();
+    if (taken) return json(409, { ok: false, error: 'handle_taken', field: 'public_handle' });
+  }
+
+  try {
+    const profile = await writeProfile(env.ACCOUNTS_DB, session.uid, next);
+    return json(200, { ok: true, profile });
+  } catch (error) {
+    console.error('account profile update failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
 async function handleAuth(request, url, env) {
   const path = url.pathname;
   const ghOn = authConfigured(env);
@@ -1230,6 +1490,15 @@ async function handleAccount(request, env) {
     response.headers.set('cache-control', 'no-store');
     return response;
   }
+  let profile;
+  try {
+    profile = await readProfile(env.ACCOUNTS_DB, session.uid);
+  } catch (error) {
+    console.error('account profile read failed', error);
+    const response = json(503, { ok: false, error: 'account_storage' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
   const response = json(200, {
     ok: true,
     persistent_accounts: true,
@@ -1240,6 +1509,7 @@ async function handleAccount(request, env) {
       name: session.name,
       avatar: session.avatar,
       email: session.email,
+      profile,
     },
   });
   response.headers.set('cache-control', 'no-store');
@@ -1267,6 +1537,12 @@ export default {
     }
     if (url.pathname === '/api/account/me') {
       return handleAccount(request, env);
+    }
+    if (url.pathname === '/api/account/profile') {
+      return handleProfile(request, env);
+    }
+    if (url.pathname === '/api/public/profile') {
+      return handlePublicProfile(request, url, env);
     }
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
@@ -1367,6 +1643,20 @@ export default {
       const headers = new Headers(dash.headers);
       headers.set('cache-control', 'no-store');
       return harden(new Response(dash.body, { status: 200, headers }), '/dashboard', true);
+    }
+
+    // Public profile pages are rendered by one small static shell; the shell
+    // fetches only the explicitly public profile fields from the API.
+    if (url.pathname.startsWith('/u/')) {
+      const handle = decodeURIComponent(url.pathname.slice(3));
+      if (!PROFILE_HANDLE_RE.test(handle)) {
+        return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+      }
+      const profilePage = await env.ASSETS.fetch(new URL('/profile.html', url).toString());
+      if (!profilePage.ok) return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+      const headers = new Headers(profilePage.headers);
+      headers.set('cache-control', 'no-store');
+      return harden(new Response(profilePage.body, { status: 200, headers }), url.pathname, true);
     }
 
     // Pages can retain a stale response for `/` while `/index.html` is fresh.

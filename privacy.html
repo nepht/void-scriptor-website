@@ -80,6 +80,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p>Kami berupaya memproses data sesedikit mungkin (data minimization):</p>
 <ul>
 <li><b>Data akun (masuk dengan GitHub/Google):</b> saat Anda masuk, penyedia identitas membagikan <b>ID akun, nama tampilan, nama pengguna, alamat email, dan URL foto profil</b> Anda kepada kami. Kami memakainya untuk mengenali akun, menampilkan identitas, dan menghubungkan website dengan aplikasi yang memakai layanan akun yang sama. Profil akun, identitas provider, kode OAuth sekali pakai, dan sesi aktif disimpan di <b>Cloudflare D1</b>. Kami <b>tidak pernah</b> menerima atau menyimpan kata sandi, dan <b>tidak menyimpan token akses</b> GitHub/Google: token provider hanya dipakai sekali di server untuk membaca profil lalu dibuang. Aplikasi native menerima token sesi Void Scriptor yang opaque, berumur 24 jam, dan dapat dicabut di server.</li>
+<li><b>Profil yang Anda isi sendiri:</b> dasbor dapat menyimpan nama tampilan, username publik, bio singkat, bahasa akun, zona waktu, dan pilihan visibilitas profil. Username dan profil hanya ditampilkan di halaman publik jika Anda memilih visibilitas <b>Publik</b>; email dan provider login tidak pernah ditampilkan di sana.</li>
 <li><b>Preferensi bahasa:</b> pilihan ID/EN disimpan di peramban Anda.</li>
 <li><b>Log server:</b> penyedia hosting (Cloudflare) secara otomatis mencatat data teknis standar seperti alamat IP, jenis peramban, dan waktu akses untuk keamanan dan pencegahan penyalahgunaan.</li>
 <li><b>Byte dan ruang kerja lokal:</b> pesan yang Anda kirim ke Byte, pilihan karakter/suara, serta ringkasan metadata yang Anda minta untuk dibaca (nama, tipe, ukuran, ekstensi, dan waktu perubahan berkas). Bridge lokal tidak mengirim isi berkas untuk pemindaian; ringkasan dapat diteruskan ke model AI lokal atau penyedia model yang Anda konfigurasi untuk menyusun jawaban.</li>
@@ -92,6 +93,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <ul>
 <li>Menjalankan dan mengamankan situs (deteksi serangan, penyalahgunaan, dan lonjakan trafik).</li>
 <li>Mengenali Anda saat sudah masuk (sesi akun) dan mengingat preferensi bahasa Anda.</li>
+<li>Menyimpan perubahan profil yang Anda minta dan menampilkan profil publik hanya sesuai pilihan visibilitas Anda.</li>
 <li>Menjawab pertanyaan yang Anda kirim melalui email dukungan.</li>
 <li>Membaca metadata ruang kerja hanya ketika Anda meminta Byte melakukannya, dan menyusun rencana tanpa melakukan penghapusan, pemindahan, atau perubahan berkas secara otomatis.</li>
 </ul>

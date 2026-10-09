@@ -40,6 +40,7 @@ main.dash{padding:56px 0 90px}
 .panel.profile img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
 .panel.profile .ini{width:72px;height:72px;flex:0 0 auto;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--purple));font-size:26px;font-weight:800}
 .panel.profile .who{min-width:0}
+.panel.profile .profile-jump{margin-left:auto;flex:0 0 auto}
 .panel.profile h2{margin:0;font-size:22px;letter-spacing:-.01em;overflow-wrap:anywhere}
 .panel.profile p{margin:5px 0 0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
 .badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;border:1px solid rgba(var(--purple-rgb),.5);border-radius:20px;padding:3px 11px;background:rgba(90,45,255,.14);color:#d3bcff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
@@ -61,6 +62,31 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .danger{cursor:pointer}
 .copy{border:1px solid rgba(var(--purple-rgb),.4);background:rgba(90,45,255,.08);color:#d9c6ff;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:.06em;margin-left:8px;cursor:pointer;line-height:1.4}
 .copy:hover{border-color:rgba(var(--purple-rgb),.8);background:rgba(var(--purple-rgb),.16)}
+.dash-profile-editor{grid-column:1/-1;padding:0;overflow:visible}
+.dash-profile-editor>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:72px;padding:20px 24px;cursor:pointer;list-style:none}
+.dash-profile-editor>summary::-webkit-details-marker{display:none}
+.dash-profile-editor>summary>span:first-child{display:grid;gap:6px;min-width:0}
+.dash-profile-editor>summary strong{font-family:var(--font-display);font-size:22px;font-weight:400}
+.dash-profile-editor>summary small{color:var(--muted);font-size:12px;line-height:1.55}
+.profile-summary-action{display:inline-flex;align-items:center;justify-content:center;min-width:76px;min-height:44px;padding:0 14px;border:1px solid rgba(var(--purple-rgb),.45);border-radius:6px;color:#d9c6ff;font-size:11px;font-weight:750;letter-spacing:.075em;text-transform:uppercase;flex:0 0 auto}
+.dash-profile-editor>summary:hover .profile-summary-action,.dash-profile-editor[open]>summary .profile-summary-action{border-color:rgba(var(--purple-rgb),.85);background:rgba(var(--purple-rgb),.12)}
+.dash-profile-editor[open]>summary{border-bottom:1px solid rgba(155,115,230,.18)}
+.profile-editor-body{padding:24px}
+.profile-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}
+.profile-field{display:grid;gap:8px;align-content:start;min-width:0}
+.profile-field--wide{grid-column:1/-1}
+.profile-field>span{color:#efe6ff;font-size:12px;font-weight:700}
+.profile-field small{color:var(--faint);font-size:10px;line-height:1.55}
+.profile-field input,.profile-field textarea,.profile-field select{width:100%;min-height:48px;border:1px solid rgba(var(--purple-rgb),.3);border-radius:6px;padding:11px 13px;background:#090711;color:var(--white);outline:none}
+.profile-field textarea{min-height:104px;resize:vertical;line-height:1.55}
+.profile-field input:focus,.profile-field textarea:focus,.profile-field select:focus{border-color:var(--purple-soft);box-shadow:0 0 0 3px rgba(var(--purple-rgb),.16)}
+.profile-field input:invalid:not(:placeholder-shown){border-color:rgba(255,120,120,.75)}
+.profile-form-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px}
+.profile-form-actions .primary{min-width:150px}
+.profile-status{margin:0;color:var(--faint);font-size:12px;line-height:1.55}
+.profile-status.ok{color:#8ef0c0}.profile-status.bad{color:#ffb0b0}
+.profile-public-link{display:none;margin:16px 0 0;color:#d9c6ff;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.profile-public-link.is-visible{display:inline-block}
 .hashrow{display:flex;align-items:center;gap:10px;border:1px solid rgba(var(--purple-rgb),.25);border-radius:8px;padding:11px 13px;background:rgba(90,45,255,.05);margin-top:14px}
 .hashrow code{font-size:11px;color:#cbb6ff;overflow-wrap:anywhere;flex:1;font-family:var(--font-mono)}
 .filepick{display:inline-flex;align-items:center;gap:10px;margin-top:14px;border:1px dashed rgba(var(--purple-rgb),.45);border-radius:8px;padding:11px 14px;font-size:12px;color:#d9c6ff;cursor:pointer}
@@ -72,6 +98,8 @@ footer{padding:30px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 .toast{display:none;position:fixed;z-index:110;bottom:28px;left:50%;transform:translateX(-50%);padding:12px 18px;border:1px solid rgba(var(--purple-rgb),.45);background:#0c0818;border-radius:7px;font-size:12px}
 @media(max-width:1100px){header{height:72px}.hamb{display:block}nav{display:none;position:absolute;left:18px;right:18px;top:72px;padding:18px;margin:0;background:#08060f;border:1px solid var(--line);flex-direction:column}nav.open{display:flex}.plain,.outline{display:none}}@media(max-width:850px){.shell{width:min(100% - 36px,720px)}.dash-grid{grid-template-columns:1fr}}@media(max-width:600px){.navrow{gap:14px}.account{gap:8px}.footlinks{flex-wrap:wrap;gap:14px 20px}}@media(max-width:480px){.brand span{display:none}}
 @media(max-width:600px){.panel{padding:19px}.panel.profile{flex-direction:column;align-items:flex-start}}
+@media(max-width:850px){.profile-form-grid{grid-template-columns:1fr}.profile-field--wide{grid-column:auto}.panel.profile .profile-jump{margin-left:0}}
+@media(max-width:600px){.dash-profile-editor>summary{align-items:flex-start;padding:18px 19px}.profile-editor-body{padding:19px}.profile-summary-action{min-width:68px}.profile-form-actions{align-items:stretch;flex-direction:column}.profile-form-actions .primary{width:100%}.profile-status{width:100%}}
 /* nocturne-fonts */
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
@@ -190,7 +218,29 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <img id="dashAvatar" alt="" hidden>
 <i class="ini" id="dashInitial">V</i>
 <div class="who"><h2 id="dashNameBig">…</h2><p id="dashLogin">…</p><span class="badge" id="dashProviderBadge" hidden>Belum tersedia</span></div>
+<a class="ghost profile-jump" href="#profile-editor" data-i18n="profile-edit">Edit profil</a>
 </article>
+<details class="panel dash-profile-editor" id="profile-editor">
+<summary>
+<span><span class="kicker" data-i18n="profile-kicker">AKUN / PROFIL</span><strong data-i18n="profile-title">Profil dan identitas publik</strong><small data-i18n="profile-lead">Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.</small></span>
+<span class="profile-summary-action" data-i18n="profile-open">Buka</span>
+</summary>
+<div class="profile-editor-body">
+<form id="dashProfileForm" novalidate>
+<div class="profile-form-grid">
+<label class="profile-field"><span data-i18n="profile-display-name">Nama tampilan</span><input id="profileDisplayName" name="display_name" type="text" maxlength="80" autocomplete="name" placeholder="Nama yang ingin ditampilkan"><small data-i18n="profile-display-name-help">Nama ini dapat dipakai website dan aplikasi Void Scriptor.</small></label>
+<label class="profile-field"><span data-i18n="profile-handle">Username publik</span><input id="profileHandle" name="public_handle" type="text" maxlength="24" pattern="[a-z0-9](?:[a-z0-9_-]{1,22}[a-z0-9])?" autocomplete="nickname" placeholder="contoh: choirudin"><small data-i18n="profile-handle-help">3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.</small></label>
+<label class="profile-field profile-field--wide"><span data-i18n="profile-bio">Bio singkat</span><textarea id="profileBio" name="bio" maxlength="160" rows="4" placeholder="Ceritakan sedikit tentang Anda"></textarea><small data-i18n="profile-bio-help">Opsional, maksimal 160 karakter.</small></label>
+<label class="profile-field"><span data-i18n="profile-locale">Bahasa akun</span><select id="profileLocale" name="locale"><option value="id" data-i18n="profile-locale-id">Bahasa Indonesia</option><option value="en" data-i18n="profile-locale-en">English</option></select></label>
+<label class="profile-field"><span data-i18n="profile-timezone">Zona waktu</span><input id="profileTimezone" name="timezone" type="text" maxlength="64" autocomplete="off" placeholder="Asia/Jakarta"><small data-i18n="profile-timezone-help">Gunakan nama zona IANA, misalnya Asia/Jakarta.</small></label>
+<label class="profile-field"><span data-i18n="profile-visibility">Visibilitas profil</span><select id="profileVisibility" name="visibility"><option value="private" data-i18n="profile-visibility-private">Privat</option><option value="public" data-i18n="profile-visibility-public">Publik</option></select><small data-i18n="profile-visibility-help">Profil publik hanya dapat ditemukan jika Anda memilih username publik.</small></label>
+</div>
+<div class="profile-form-actions"><button class="primary" id="dashProfileSave" type="submit" data-i18n="profile-save">Simpan profil</button><p class="profile-status" id="profileStatus" role="status" aria-live="polite" data-i18n="profile-idle">Belum ada perubahan.</p></div>
+<a class="profile-public-link" id="profilePublicLink" href="#" target="_blank" rel="noopener" data-i18n="profile-view-public">Lihat profil publik</a>
+</form>
+<p class="note" data-i18n="profile-note">Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.</p>
+</div>
+</details>
 <article class="panel dash-panel-account">
 <h3 data-i18n="dash-account">Akun</h3>
 <dl>
@@ -308,6 +358,66 @@ function renderSession(d){
   if(rev)rev.href=(u.provider==='google')?'https://myaccount.google.com/permissions':'https://github.com/settings/applications';
   startCountdown(u.exp);
   renderDashboardOps();
+  loadProfile();
+}
+
+// --- persistent profile ---------------------------------------------------
+var PROFILE_STATE=null;
+function profileLanguage(id,en){return document.documentElement.lang==='en'?en:id}
+function setProfileStatus(text,kind){
+  var status=document.getElementById('profileStatus');
+  if(!status)return;
+  status.className='profile-status '+(kind||'');
+  status.textContent=text;
+}
+function renderProfile(profile){
+  var p=profile||{};
+  PROFILE_STATE=p;
+  var fields={
+    profileDisplayName:p.display_name||'',
+    profileHandle:p.public_handle||'',
+    profileBio:p.bio||'',
+    profileLocale:p.locale||'id',
+    profileTimezone:p.timezone||'Asia/Jakarta',
+    profileVisibility:p.visibility||'private'
+  };
+  Object.keys(fields).forEach(function(id){var el=document.getElementById(id);if(el)el.value=fields[id]});
+  var base=LAST_USER||{},name=p.display_name||base.name||base.login||'Akun';
+  document.getElementById('dashHiName').textContent=name;
+  document.getElementById('dashNameBig').textContent=name;
+  applyUser(Object.assign({},base,{name:name}));
+  var link=document.getElementById('profilePublicLink');
+  if(link&&p.visibility==='public'&&p.public_handle){
+    link.href='/u/'+encodeURIComponent(p.public_handle);
+    link.classList.add('is-visible');
+  }else if(link){
+    link.removeAttribute('href');
+    link.classList.remove('is-visible');
+  }
+}
+function loadProfile(){
+  fetch('/api/account/profile',{credentials:'same-origin',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('profile-'+r.status);return r.json()})
+    .then(function(data){if(data&&data.profile)renderProfile(data.profile)})
+    .catch(function(){setProfileStatus(profileLanguage('Profil belum dapat dimuat. Coba lagi nanti.','The profile could not be loaded. Try again later.'),'bad')});
+}
+function saveProfile(){
+  var button=document.getElementById('dashProfileSave');
+  var payload={
+    display_name:(document.getElementById('profileDisplayName')||{}).value||'',
+    public_handle:(document.getElementById('profileHandle')||{}).value||'',
+    bio:(document.getElementById('profileBio')||{}).value||'',
+    locale:(document.getElementById('profileLocale')||{}).value||'id',
+    timezone:(document.getElementById('profileTimezone')||{}).value||'Asia/Jakarta',
+    visibility:(document.getElementById('profileVisibility')||{}).value||'private'
+  };
+  if(button){button.disabled=true;button.setAttribute('aria-busy','true')}
+  setProfileStatus(profileLanguage('Menyimpan profil…','Saving profile…'),'');
+  fetch('/api/account/profile',{method:'PATCH',credentials:'same-origin',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify(payload)})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw {status:r.status,data:data};return data})})
+    .then(function(data){if(!data)return;if(data.profile){renderProfile(data.profile);if(data.profile.locale)localStorage.setItem('vs-lang',data.profile.locale)}setProfileStatus(profileLanguage('Profil tersimpan.','Profile saved.'),'ok');notice(profileLanguage('Profil diperbarui.','Profile updated.'))})
+    .catch(function(error){var code=error&&error.data&&error.data.error;var message=code==='handle_taken'?profileLanguage('Username publik sudah dipakai.','That public username is already taken.'):code==='invalid_profile'?profileLanguage('Periksa kembali kolom profil.','Check the profile fields and try again.'):profileLanguage('Profil belum dapat disimpan.','The profile could not be saved.');setProfileStatus(message,'bad')})
+    .then(function(){if(button){button.disabled=false;button.removeAttribute('aria-busy')}});
 }
 
 // --- live session countdown ----------------------------------------------
@@ -638,6 +748,8 @@ function clearLocalDashboardData(){
   if(exportSettingsButton)exportSettingsButton.onclick=function(){exportDashSettings()};
   var importSettingsInput=document.getElementById('dashSettingsImport');
   if(importSettingsInput)importSettingsInput.onchange=function(){importDashSettings(this.files&&this.files[0]);this.value=''};
+  var profileForm=document.getElementById('dashProfileForm');
+  if(profileForm)profileForm.onsubmit=function(ev){ev.preventDefault();saveProfile()};
   restoreWorkspaceResult();
   refreshDashboardReadiness();
   renderSteps();
@@ -657,6 +769,7 @@ var dict = {
     'page-title':'Dasbor : Void Scriptor',
     'nav-produk':'Produk','nav-download':'Unduhan','nav-status':'Status rilis','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
+    'profile-edit':'Edit profil','profile-kicker':'AKUN / PROFIL','profile-title':'Profil dan identitas publik','profile-lead':'Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.','profile-open':'Buka','profile-display-name':'Nama tampilan','profile-display-name-help':'Nama ini dapat dipakai website dan aplikasi Void Scriptor.','profile-handle':'Username publik','profile-handle-help':'3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.','profile-bio':'Bio singkat','profile-bio-help':'Opsional, maksimal 160 karakter.','profile-locale':'Bahasa akun','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Zona waktu','profile-timezone-help':'Gunakan nama zona IANA, misalnya Asia/Jakarta.','profile-visibility':'Visibilitas profil','profile-visibility-private':'Privat','profile-visibility-public':'Publik','profile-visibility-help':'Profil publik hanya dapat ditemukan jika Anda memilih username publik.','profile-save':'Simpan profil','profile-idle':'Belum ada perubahan.','profile-view-public':'Lihat profil publik','profile-note':'Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola akun, unduhan, dan koneksi Byte lokal di satu tempat.',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Suara Byte','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-summary':'Diagnostik lanjutan','dash-ops-diag-kicker':'DIAGNOSTIK / LOKAL','dash-ops-diag-title':'Laporan teknis','dash-ops-diag-copy':'Salin laporan',
@@ -682,6 +795,7 @@ var dict = {
     'page-title':'Dashboard : Void Scriptor',
     'nav-produk':'Products','nav-download':'Download','nav-status':'Release status','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
+    'profile-edit':'Edit profile','profile-kicker':'ACCOUNT / PROFILE','profile-title':'Profile and public identity','profile-lead':'Your provider identity stays safe; this form changes how you appear in Void Scriptor.','profile-open':'Open','profile-display-name':'Display name','profile-display-name-help':'This name can be used across the website and Void Scriptor apps.','profile-handle':'Public username','profile-handle-help':'3–24 characters: lowercase letters, numbers, underscore, or hyphen.','profile-bio':'Short bio','profile-bio-help':'Optional, up to 160 characters.','profile-locale':'Account language','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Time zone','profile-timezone-help':'Use an IANA zone name, such as Asia/Jakarta.','profile-visibility':'Profile visibility','profile-visibility-private':'Private','profile-visibility-public':'Public','profile-visibility-help':'A public profile can only be found when you choose a public username.','profile-save':'Save profile','profile-idle':'No changes yet.','profile-view-public':'View public profile','profile-note':'Your email, sign-in provider, and provider avatar are managed by Google or GitHub and cannot be changed here. This profile is the shared identity foundation for the website, Void Scriptor, and QOWNER.',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your account, downloads, and local Byte connection in one place.',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Byte voice output','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-summary':'Advanced diagnostics','dash-ops-diag-kicker':'DIAGNOSTICS / LOCAL','dash-ops-diag-title':'Technical report','dash-ops-diag-copy':'Copy report',
