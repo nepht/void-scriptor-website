@@ -411,7 +411,11 @@ async function readSession(req, secret, db) {
 function json(status, obj) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { 'content-type': 'application/json; charset=utf-8', ...BASE_HEADERS },
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      ...BASE_HEADERS,
+    },
   });
 }
 
