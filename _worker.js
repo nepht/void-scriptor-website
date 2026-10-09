@@ -1185,6 +1185,38 @@ async function handleProfile(request, env) {
   }
 }
 
+async function handleConnections(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  try {
+    const result = await env.ACCOUNTS_DB.prepare(`
+      SELECT provider, subject, login, display_name, email_verified, created_at
+        FROM identities
+       WHERE user_id = ?
+       ORDER BY provider ASC, created_at ASC
+    `).bind(session.uid).all();
+    const connections = (result.results || []).map((row) => ({
+      provider: row.provider,
+      login: row.login || '',
+      display_name: row.display_name || '',
+      email_verified: Number(row.email_verified) === 1,
+      linked_at: row.created_at,
+      current: row.provider === session.provider && row.subject === session.sub,
+    }));
+    return json(200, { ok: true, connections });
+  } catch (error) {
+    console.error('account connections lookup failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
 const SESSION_REF_RE = /^[A-Za-z0-9_-]{20,128}$/;
 
 async function handleSessions(request, env, action = 'list') {
@@ -1636,6 +1668,9 @@ export default {
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);
+    }
+    if (url.pathname === '/api/account/connections') {
+      return handleConnections(request, env);
     }
     if (url.pathname === '/api/account/sessions') {
       return handleSessions(request, env, 'list');

@@ -81,6 +81,7 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .profile-field textarea{min-height:104px;resize:vertical;line-height:1.55}
 .profile-field input:focus,.profile-field textarea:focus,.profile-field select:focus{border-color:var(--purple-soft);box-shadow:0 0 0 3px rgba(var(--purple-rgb),.16)}
 .profile-field input:invalid:not(:placeholder-shown){border-color:rgba(255,120,120,.75)}
+.profile-check-field{gap:9px}.profile-check{display:flex;align-items:center;gap:10px;min-height:44px;color:#efe6ff;font-size:12px;line-height:1.55;cursor:pointer}.profile-check input{width:20px;min-width:20px;height:20px;min-height:20px;margin:0;accent-color:var(--purple)}
 .profile-form-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px}
 .profile-form-actions .primary{min-width:150px}
 .profile-status{margin:0;color:var(--faint);font-size:12px;line-height:1.55}
@@ -103,6 +104,8 @@ dd{margin:0;font-size:13px;text-align:right;overflow-wrap:anywhere}
 .session-manager-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
 .session-manager-actions .danger{min-height:44px}
 @media(max-width:600px){.session-manager-head{align-items:stretch;flex-direction:column}.session-manager-head .ghost{width:100%}.session-list li{align-items:flex-start;flex-direction:column}.session-list .session-revoke{width:100%}.session-manager-actions{align-items:stretch;flex-direction:column}.session-manager-actions .danger{width:100%}}
+.dash-panel-connections{grid-column:1/-1}.connection-list{display:grid;gap:10px;margin:18px 0 0;padding:0;list-style:none}.connection-list li{display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0;border:1px solid rgba(155,115,230,.18);border-radius:8px;padding:14px 16px;background:rgba(90,45,255,.04)}.connection-info{display:grid;gap:5px;min-width:0}.connection-info strong{font-size:13px;color:#efe6ff;font-weight:700;overflow-wrap:anywhere}.connection-info small{color:var(--faint);font-size:10px;line-height:1.6;overflow-wrap:anywhere}.connection-current{color:#8ef0c0;font:700 10px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}.connection-state{display:block;color:var(--faint);font-size:12px;line-height:1.6}
+@media(max-width:600px){.connection-list li{align-items:flex-start;flex-direction:column}.connection-current{align-self:flex-start}}
 .hashrow{display:flex;align-items:center;gap:10px;border:1px solid rgba(var(--purple-rgb),.25);border-radius:8px;padding:11px 13px;background:rgba(90,45,255,.05);margin-top:14px}
 .hashrow code{font-size:11px;color:#cbb6ff;overflow-wrap:anywhere;flex:1;font-family:var(--font-mono)}
 .filepick{display:inline-flex;align-items:center;gap:10px;margin-top:14px;border:1px dashed rgba(var(--purple-rgb),.45);border-radius:8px;padding:11px 14px;font-size:12px;color:#d9c6ff;cursor:pointer}
@@ -250,6 +253,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <label class="profile-field"><span data-i18n="profile-locale">Bahasa akun</span><select id="profileLocale" name="locale"><option value="id" data-i18n="profile-locale-id">Bahasa Indonesia</option><option value="en" data-i18n="profile-locale-en">English</option></select></label>
 <label class="profile-field"><span data-i18n="profile-timezone">Zona waktu</span><input id="profileTimezone" name="timezone" type="text" maxlength="64" autocomplete="off" placeholder="Asia/Jakarta"><small data-i18n="profile-timezone-help">Gunakan nama zona IANA, misalnya Asia/Jakarta.</small></label>
 <label class="profile-field"><span data-i18n="profile-visibility">Visibilitas profil</span><select id="profileVisibility" name="visibility"><option value="private" data-i18n="profile-visibility-private">Privat</option><option value="public" data-i18n="profile-visibility-public">Publik</option></select><small data-i18n="profile-visibility-help">Profil publik hanya dapat ditemukan jika Anda memilih username publik.</small></label>
+<div class="profile-field profile-field--wide"><span data-i18n="profile-qowner-alias">Alias QOWNER</span><input id="profileQownerAlias" name="qowner_alias" type="text" maxlength="40" autocomplete="nickname" placeholder="contoh: Penjelajah-07"><small data-i18n="profile-qowner-alias-help">Gunakan nama samaran untuk leaderboard; nama asli dan email tidak ditampilkan.</small></div>
+<div class="profile-field profile-field--wide profile-check-field"><span data-i18n="profile-qowner-optin-title">Leaderboard QOWNER</span><label class="profile-check"><input id="profileQownerOptIn" name="qowner_leaderboard_opt_in" type="checkbox"><span data-i18n="profile-qowner-optin-label">Izinkan alias ini tampil di leaderboard saat QOWNER dirilis</span></label><small data-i18n="profile-qowner-optin-help">Ini hanya menyimpan pilihan izin. Skor dan event belum aktif di website.</small></div>
 </div>
 <div class="profile-form-actions"><button class="primary" id="dashProfileSave" type="submit" data-i18n="profile-save">Simpan profil</button><p class="profile-status" id="profileStatus" role="status" aria-live="polite" data-i18n="profile-idle">Belum ada perubahan.</p></div>
 <a class="profile-public-link" id="profilePublicLink" href="#" target="_blank" rel="noopener" data-i18n="profile-view-public">Lihat profil publik</a>
@@ -264,6 +269,12 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div><dt data-i18n="dash-login-label">Nama pengguna</dt><dd><span id="dashLoginLabel">Belum tersedia</span><button class="copy" id="copyLogin" type="button" data-i18n="dash-copy">Salin</button></dd></div>
 <div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">Belum tersedia</dd></div>
 </dl>
+</article>
+<article class="panel dash-panel-connections">
+<h3 data-i18n="dash-connections-title">Akun terhubung</h3>
+<p class="note" data-i18n="dash-connections-note">Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.</p>
+<ul class="connection-list" id="dashConnectionList" aria-live="polite"><li class="connection-state" data-i18n="dash-connections-loading">Memuat koneksi akun…</li></ul>
+<p class="profile-status" id="dashConnectionsStatus" role="status" aria-live="polite"></p>
 </article>
 <article class="panel dash-panel-session">
 <h3 data-i18n="dash-session">Sesi &amp; keamanan</h3>
@@ -380,6 +391,7 @@ function renderSession(d){
   startCountdown(u.exp);
   renderDashboardOps();
   loadProfile();
+  loadConnections();
   loadSessions();
 }
 
@@ -401,9 +413,12 @@ function renderProfile(profile){
     profileBio:p.bio||'',
     profileLocale:p.locale||'id',
     profileTimezone:p.timezone||'Asia/Jakarta',
-    profileVisibility:p.visibility||'private'
+    profileVisibility:p.visibility||'private',
+    profileQownerAlias:p.qowner_alias||''
   };
   Object.keys(fields).forEach(function(id){var el=document.getElementById(id);if(el)el.value=fields[id]});
+  var qownerOptIn=document.getElementById('profileQownerOptIn');
+  if(qownerOptIn)qownerOptIn.checked=p.qowner_leaderboard_opt_in===true;
   var base=LAST_USER||{},name=p.display_name||base.name||base.login||'Akun';
   document.getElementById('dashHiName').textContent=name;
   document.getElementById('dashNameBig').textContent=name;
@@ -431,7 +446,9 @@ function saveProfile(){
     bio:(document.getElementById('profileBio')||{}).value||'',
     locale:(document.getElementById('profileLocale')||{}).value||'id',
     timezone:(document.getElementById('profileTimezone')||{}).value||'Asia/Jakarta',
-    visibility:(document.getElementById('profileVisibility')||{}).value||'private'
+    visibility:(document.getElementById('profileVisibility')||{}).value||'private',
+    qowner_alias:(document.getElementById('profileQownerAlias')||{}).value||'',
+    qowner_leaderboard_opt_in:Boolean((document.getElementById('profileQownerOptIn')||{}).checked)
   };
   if(button){button.disabled=true;button.setAttribute('aria-busy','true')}
   setProfileStatus(profileLanguage('Menyimpan profil…','Saving profile…'),'');
@@ -440,6 +457,29 @@ function saveProfile(){
     .then(function(data){if(!data)return;if(data.profile){renderProfile(data.profile);if(data.profile.locale)localStorage.setItem('vs-lang',data.profile.locale)}setProfileStatus(profileLanguage('Profil tersimpan.','Profile saved.'),'ok');notice(profileLanguage('Profil diperbarui.','Profile updated.'))})
     .catch(function(error){var code=error&&error.data&&error.data.error;var message=code==='handle_taken'?profileLanguage('Username publik sudah dipakai.','That public username is already taken.'):code==='invalid_profile'?profileLanguage('Periksa kembali kolom profil.','Check the profile fields and try again.'):profileLanguage('Profil belum dapat disimpan.','The profile could not be saved.');setProfileStatus(message,'bad')})
     .then(function(){if(button){button.disabled=false;button.removeAttribute('aria-busy')}});
+}
+
+// --- linked identity providers ------------------------------------------
+var CONNECTION_STATE=[];
+function connectionLanguage(id,en){return document.documentElement.lang==='en'?en:id}
+function connectionProviderLabel(provider){return provider==='google'?'Google':(provider==='github'?'GitHub':String(provider||connectionLanguage('Provider lain','Other provider')))}
+function renderConnections(data){
+  var list=document.getElementById('dashConnectionList');if(!list)return;
+  CONNECTION_STATE=data&&Array.isArray(data.connections)?data.connections:[];
+  list.textContent='';
+  if(!CONNECTION_STATE.length){var empty=document.createElement('li');empty.className='connection-state';empty.textContent=connectionLanguage('Belum ada provider terhubung.','No provider is connected yet.');list.appendChild(empty);return}
+  CONNECTION_STATE.forEach(function(connection){
+    var li=document.createElement('li'),info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
+    info.className='connection-info';strong.textContent=connectionProviderLabel(connection.provider);var accountName=connection.login||connection.display_name||connectionProviderLabel(connection.provider);var state=connection.email_verified?connectionLanguage('email terverifikasi','verified email'):connectionLanguage('email belum terverifikasi','unverified email');small.textContent=accountName+' · '+state+' · '+connectionLanguage('terhubung','linked')+' '+fmt(connection.linked_at);info.appendChild(strong);info.appendChild(small);li.appendChild(info);
+    if(connection.current){var current=document.createElement('span');current.className='connection-current';current.textContent=connectionLanguage('Sesi ini','This session');li.appendChild(current)}
+    list.appendChild(li);
+  });
+}
+function loadConnections(){
+  fetch('/api/account/connections',{credentials:'same-origin',cache:'no-store'})
+    .then(function(r){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error('connections-'+r.status);return r.json()})
+    .then(function(data){if(data)renderConnections(data)})
+    .catch(function(){var list=document.getElementById('dashConnectionList');if(list){list.textContent='';var error=document.createElement('li');error.className='connection-state';error.textContent=connectionLanguage('Koneksi akun belum dapat dimuat.','Account connections could not be loaded.');list.appendChild(error)}var status=document.getElementById('dashConnectionsStatus');if(status){status.className='profile-status bad';status.textContent=connectionLanguage('Pemeriksaan koneksi gagal.','Connection check failed.')}});
 }
 
 // --- active sessions ------------------------------------------------------
@@ -847,14 +887,14 @@ var dict = {
     'page-title':'Dasbor : Void Scriptor',
     'nav-produk':'Produk','nav-download':'Unduhan','nav-status':'Status rilis','nav-dash':'Dasbor','nav-perusahaan':'Perusahaan',
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
-    'profile-edit':'Edit profil','profile-kicker':'AKUN / PROFIL','profile-title':'Profil dan identitas publik','profile-lead':'Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.','profile-open':'Buka','profile-display-name':'Nama tampilan','profile-display-name-help':'Nama ini dapat dipakai website dan aplikasi Void Scriptor.','profile-handle':'Username publik','profile-handle-help':'3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.','profile-bio':'Bio singkat','profile-bio-help':'Opsional, maksimal 160 karakter.','profile-locale':'Bahasa akun','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Zona waktu','profile-timezone-help':'Gunakan nama zona IANA, misalnya Asia/Jakarta.','profile-visibility':'Visibilitas profil','profile-visibility-private':'Privat','profile-visibility-public':'Publik','profile-visibility-help':'Profil publik hanya dapat ditemukan jika Anda memilih username publik.','profile-save':'Simpan profil','profile-idle':'Belum ada perubahan.','profile-view-public':'Lihat profil publik','profile-note':'Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.',
+    'profile-edit':'Edit profil','profile-kicker':'AKUN / PROFIL','profile-title':'Profil dan identitas publik','profile-lead':'Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.','profile-open':'Buka','profile-display-name':'Nama tampilan','profile-display-name-help':'Nama ini dapat dipakai website dan aplikasi Void Scriptor.','profile-handle':'Username publik','profile-handle-help':'3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.','profile-bio':'Bio singkat','profile-bio-help':'Opsional, maksimal 160 karakter.','profile-locale':'Bahasa akun','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Zona waktu','profile-timezone-help':'Gunakan nama zona IANA, misalnya Asia/Jakarta.','profile-visibility':'Visibilitas profil','profile-visibility-private':'Privat','profile-visibility-public':'Publik','profile-visibility-help':'Profil publik hanya dapat ditemukan jika Anda memilih username publik.','profile-qowner-alias':'Alias QOWNER','profile-qowner-alias-help':'Gunakan nama samaran untuk leaderboard; nama asli dan email tidak ditampilkan.','profile-qowner-optin-title':'Leaderboard QOWNER','profile-qowner-optin-label':'Izinkan alias ini tampil di leaderboard saat QOWNER dirilis','profile-qowner-optin-help':'Ini hanya menyimpan pilihan izin. Skor dan event belum aktif di website.','profile-save':'Simpan profil','profile-idle':'Belum ada perubahan.','profile-view-public':'Lihat profil publik','profile-note':'Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola akun, unduhan, dan koneksi Byte lokal di satu tempat.',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Suara Byte','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-summary':'Diagnostik lanjutan','dash-ops-diag-kicker':'DIAGNOSTIK / LOKAL','dash-ops-diag-title':'Laporan teknis','dash-ops-diag-copy':'Salin laporan',
     'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-safe':'Mode aman','dash-settings-voice':'Balasan dengan suara','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Karakter, suara, dan mode aman disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
     'dash-local-kicker':'BYTE / PENGHUBUNG LOKAL','dash-local-title':'Ruang kerja yang siap membantu.','dash-local-lead':'Periksa koneksi Byte dan dapatkan ringkasan ruang kerja ini. Pemeriksaan hanya membaca nama, tipe, ukuran, dan waktu perubahan berkas.','dash-local-idle':'Belum diperiksa','dash-local-scan':'Periksa ruang kerja','dash-local-plan':'Buat rencana aman','dash-local-plan-title':'Rencana aman Byte','dash-local-clear':'Hapus ringkasan lokal','dash-local-byte':'Buka Byte','dash-local-files':'item terdeteksi','dash-local-root':'ruang kerja aktif','dash-local-time':'terakhir diperiksa',
     'dash-bridge-help-title':'Bridge belum terhubung?','dash-bridge-help-copy':'Buka Byte Desktop, pastikan Byte Bridge lokal aktif, lalu klik Periksa lagi. Jika Studio belum terpasang, unduh installer Windows di sini.','dash-bridge-open':'Buka Byte Desktop','dash-bridge-download':'Unduh Studio',
-    'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
+    'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk','dash-connections-title':'Akun terhubung','dash-connections-note':'Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.','dash-connections-loading':'Memuat koneksi akun…','dash-connections-empty':'Belum ada provider terhubung.','dash-connections-current':'Sesi ini','dash-connections-verified':'email terverifikasi','dash-connections-unverified':'email belum terverifikasi','dash-connections-failed':'Pemeriksaan koneksi gagal.',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu','dash-sessions-title':'Perangkat & sesi aktif','dash-sessions-note':'Kelola sesi website dan aplikasi tanpa menampilkan token rahasia.','dash-sessions-refresh':'Perbarui','dash-sessions-loading':'Memuat sesi aktif…','dash-sessions-revoke-all':'Keluar dari perangkat lain',
     'dash-note':'Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.',
     'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di','dash-hash-source':'manifest checksum','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
@@ -873,14 +913,14 @@ var dict = {
     'page-title':'Dashboard : Void Scriptor',
     'nav-produk':'Products','nav-download':'Download','nav-status':'Release status','nav-dash':'Dashboard','nav-perusahaan':'Company',
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
-    'profile-edit':'Edit profile','profile-kicker':'ACCOUNT / PROFILE','profile-title':'Profile and public identity','profile-lead':'Your provider identity stays safe; this form changes how you appear in Void Scriptor.','profile-open':'Open','profile-display-name':'Display name','profile-display-name-help':'This name can be used across the website and Void Scriptor apps.','profile-handle':'Public username','profile-handle-help':'3–24 characters: lowercase letters, numbers, underscore, or hyphen.','profile-bio':'Short bio','profile-bio-help':'Optional, up to 160 characters.','profile-locale':'Account language','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Time zone','profile-timezone-help':'Use an IANA zone name, such as Asia/Jakarta.','profile-visibility':'Profile visibility','profile-visibility-private':'Private','profile-visibility-public':'Public','profile-visibility-help':'A public profile can only be found when you choose a public username.','profile-save':'Save profile','profile-idle':'No changes yet.','profile-view-public':'View public profile','profile-note':'Your email, sign-in provider, and provider avatar are managed by Google or GitHub and cannot be changed here. This profile is the shared identity foundation for the website, Void Scriptor, and QOWNER.',
+    'profile-edit':'Edit profile','profile-kicker':'ACCOUNT / PROFILE','profile-title':'Profile and public identity','profile-lead':'Your provider identity stays safe; this form changes how you appear in Void Scriptor.','profile-open':'Open','profile-display-name':'Display name','profile-display-name-help':'This name can be used across the website and Void Scriptor apps.','profile-handle':'Public username','profile-handle-help':'3–24 characters: lowercase letters, numbers, underscore, or hyphen.','profile-bio':'Short bio','profile-bio-help':'Optional, up to 160 characters.','profile-locale':'Account language','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Time zone','profile-timezone-help':'Use an IANA zone name, such as Asia/Jakarta.','profile-visibility':'Profile visibility','profile-visibility-private':'Private','profile-visibility-public':'Public','profile-visibility-help':'A public profile can only be found when you choose a public username.','profile-qowner-alias':'QOWNER alias','profile-qowner-alias-help':'Use a pseudonym for the leaderboard; your real name and email are not shown.','profile-qowner-optin-title':'QOWNER leaderboard','profile-qowner-optin-label':'Allow this alias to appear on the leaderboard when QOWNER launches','profile-qowner-optin-help':'This only stores your consent choice. Scores and events are not active on the website yet.','profile-save':'Save profile','profile-idle':'No changes yet.','profile-view-public':'View public profile','profile-note':'Your email, sign-in provider, and provider avatar are managed by Google or GitHub and cannot be changed here. This profile is the shared identity foundation for the website, Void Scriptor, and QOWNER.',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your account, downloads, and local Byte connection in one place.',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Byte voice output','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-summary':'Advanced diagnostics','dash-ops-diag-kicker':'DIAGNOSTICS / LOCAL','dash-ops-diag-title':'Technical report','dash-ops-diag-copy':'Copy report',
     'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-safe':'Safe mode','dash-settings-voice':'Reply with voice','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Character, voice, and safe mode are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
     'dash-local-kicker':'BYTE / LOCAL CONNECTION','dash-local-title':'A workspace ready to help.','dash-local-lead':'Check Byte connectivity and get a summary of this workspace. The check reads file names, types, sizes, and modified times only.','dash-local-idle':'Not checked yet','dash-local-scan':'Check workspace','dash-local-plan':'Make a safe plan','dash-local-plan-title':'Byte safe plan','dash-local-clear':'Clear local summary','dash-local-byte':'Open Byte','dash-local-files':'items found','dash-local-root':'active workspace','dash-local-time':'last checked',
     'dash-bridge-help-title':'Bridge not connected?','dash-bridge-help-copy':'Open Byte Desktop, make sure the local Byte Bridge is active, then click Check again. If Studio is not installed, download the Windows installer here.','dash-bridge-open':'Open Byte Desktop','dash-bridge-download':'Download Studio',
-    'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
+    'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method','dash-connections-title':'Connected accounts','dash-connections-note':'These providers identify the same account across the website, Void Scriptor, and QOWNER.','dash-connections-loading':'Loading account connections…','dash-connections-empty':'No provider is connected yet.','dash-connections-current':'This session','dash-connections-verified':'verified email','dash-connections-unverified':'unverified email','dash-connections-failed':'Connection check failed.',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left','dash-sessions-title':'Devices & active sessions','dash-sessions-note':'Manage website and app sessions without exposing secret tokens.','dash-sessions-refresh':'Refresh','dash-sessions-loading':'Loading active sessions…','dash-sessions-revoke-all':'Sign out other devices',
     'dash-note':'This session uses a 24-hour HMAC cookie linked to a persistent account. Signing out revokes this server-side session and clears the cookie in this browser; sessions on other devices remain separate. To stop provider access, revoke the app with your identity provider.',
     'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is available in the','dash-hash-source':'checksum manifest','dash-hash-suffix':'; this does not replace code signing.',
