@@ -453,4 +453,17 @@ document.addEventListener('DOMContentLoaded',function(){
   render();start();
 })();
 </script>
+<script>
+/* Keep the mobile menu's accessible name in sync with its visible state. */
+(function(){
+  var nav=document.getElementById('nav'),button=document.getElementById('hamb');
+  if(!nav||!button)return;
+  function sync(){var open=nav.classList.contains('open');button.setAttribute('aria-expanded',open?'true':'false');button.setAttribute('aria-label',open?'Tutup menu navigasi':'Buka menu navigasi')}
+  button.addEventListener('click',function(){window.setTimeout(sync,0)});
+  nav.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('a'))window.setTimeout(sync,0)});
+  document.addEventListener('click',function(ev){if(nav.classList.contains('open')&&!nav.contains(ev.target)&&ev.target!==button){nav.classList.remove('open');sync()}});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){nav.classList.remove('open');sync()}});
+  sync();
+})();
+</script>
 </body></html>
