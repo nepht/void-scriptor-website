@@ -146,6 +146,39 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h1><span data-i18n="dash-hi">Halo,</span> <b id="dashHiName">…</b></h1>
 <p class="lead" data-i18n="dash-lead">Kelola akun, unduhan, dan koneksi Byte lokal di satu tempat.</p>
 </section>
+<nav class="dash-center-tabs" aria-label="Pusat akun dan cloud">
+<a class="is-active" href="#dash-center-overview" data-i18n="center-tabs-overview">Ikhtisar</a>
+<a href="#profile-editor" data-i18n="center-tabs-account">Akun &amp; profil</a>
+<a href="#dash-center-connections" data-i18n="center-tabs-connected">Akun terhubung</a>
+<a href="#dash-center-cloud" data-i18n="center-tabs-cloud">Cloud &amp; penyimpanan</a>
+<a href="#dash-center-security" data-i18n="center-tabs-security">Keamanan</a>
+<a href="#dash-center-products" data-i18n="center-tabs-products">Produk</a>
+</nav>
+<section class="dash-center" id="dash-center-overview" aria-label="Ringkasan akun dan cloud">
+<article class="dash-center-card dash-center-auth">
+<div class="dash-center-card-head"><div><span class="kicker" data-i18n="center-auth-kicker">ACCOUNT / IDENTITY</span><h2 data-i18n="center-auth-title">Akun &amp; identitas</h2></div><span class="dash-center-live" id="dashCenterSessionState"><i aria-hidden="true"></i><span data-i18n="center-session-checking">Memeriksa…</span></span></div>
+<div class="dash-center-identity"><span class="dash-center-avatar"><img id="dashCenterAvatar" alt="" hidden><i id="dashCenterInitial">V</i></span><div><h3 id="dashCenterName">…</h3><p id="dashCenterLogin">…</p><a class="dash-center-link" href="#profile-editor" data-i18n="center-manage-profile">Kelola profil →</a></div></div>
+<div class="dash-center-stats"><span><b id="dashCenterProvider">—</b><small data-i18n="center-provider">Provider masuk</small></span><span><b data-i18n="center-account">Persisten</b><small data-i18n="center-account-identity">Identitas akun</small></span><span><b data-i18n="center-connected">Web + aplikasi</b><small data-i18n="center-connected-label">Kesiapan identitas bersama</small></span></div>
+</article>
+<article class="dash-center-card dash-center-connect" id="dash-center-connections">
+<div class="dash-center-card-head"><div><span class="kicker" data-i18n="center-connect-kicker">QUICK CONNECT</span><h2 data-i18n="center-connect-title">Akun terhubung</h2></div></div>
+<p class="dash-center-copy" data-i18n="center-connect-copy">Gunakan provider yang sama untuk masuk ke website dan aplikasi saat tersedia.</p>
+<div class="dash-center-providers"><a class="dash-provider-tile" href="#dash-connections"><b class="dash-provider-mark">G</b><span><strong>Google</strong><small id="dashCenterGoogleState" data-i18n="center-provider-checking">Memeriksa…</small></span><em aria-hidden="true">›</em></a><a class="dash-provider-tile" href="#dash-connections"><b class="dash-provider-mark github">GH</b><span><strong>GitHub</strong><small id="dashCenterGithubState" data-i18n="center-provider-checking">Memeriksa…</small></span><em aria-hidden="true">›</em></a></div>
+<a class="dash-center-link" href="#dash-connections" data-i18n="center-manage-connections">Kelola semua koneksi →</a>
+</article>
+<article class="dash-center-card dash-center-cloud" id="dash-center-cloud">
+<div class="dash-center-card-head"><div><span class="kicker" data-i18n="center-cloud-kicker">CLOUD CENTER</span><h2 data-i18n="center-cloud-title">Cloud &amp; penyimpanan</h2></div><span class="dash-center-state" data-i18n="center-cloud-state">Belum aktif</span></div>
+<div class="dash-center-usage"><div><b data-i18n="center-cloud-not-connected">Belum terhubung</b><small data-i18n="center-cloud-caption">Belum ada kuota cloud yang diklaim</small></div><strong>—</strong></div>
+<div class="dash-center-meter" aria-label="Penyimpanan cloud belum terhubung"><span></span></div>
+<div class="dash-center-cloud-facts"><span><b id="dashCenterBridgeState">Memeriksa…</b><small data-i18n="center-bridge-label">Byte Bridge lokal</small></span><span><b id="dashCenterStorageState">Memeriksa…</b><small data-i18n="center-storage-label">Penyimpanan browser</small></span></div>
+<p class="dash-center-note" data-i18n="center-cloud-note">Cloud storage dan sinkronisasi lintas perangkat belum diaktifkan. Ringkasan lokal tetap berada di browser ini.</p><a class="dash-center-link" href="#dash-command-title" data-i18n="center-manage-cloud">Kelola koneksi lokal →</a>
+</article>
+<aside class="dash-center-card dash-center-summary">
+<span class="kicker" data-i18n="center-summary-kicker">ACCOUNT SUMMARY</span><h2 data-i18n="center-summary-title">Ringkasan akun</h2>
+<dl><div><dt data-i18n="center-summary-plan">Paket</dt><dd data-i18n="center-summary-plan-value">Preview · tanpa billing</dd></div><div><dt data-i18n="center-summary-status">Status</dt><dd id="dashCenterAccountStatus" data-i18n="center-session-checking">Memeriksa…</dd></div><div><dt data-i18n="center-summary-products">Produk</dt><dd data-i18n="center-summary-products-value">1 tersedia · 2 segera</dd></div><div><dt data-i18n="center-summary-billing">Billing</dt><dd data-i18n="center-summary-billing-value">Belum tersedia</dd></div></dl>
+<a class="dash-center-link" href="#dash-center-security" data-i18n="center-open-security">Buka keamanan →</a>
+</aside>
+</section>
 <section class="dash-readiness" aria-labelledby="dash-readiness-title">
 <div class="dash-readiness-head">
 <div><span class="kicker" data-i18n="dash-ready-kicker">BYTE / KESIAPAN</span><h2 id="dash-readiness-title" data-i18n="dash-ready-title">Yang siap digunakan sekarang</h2></div>
@@ -270,7 +303,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">Belum tersedia</dd></div>
 </dl>
 </article>
-<article class="panel dash-panel-connections">
+<article class="panel dash-panel-connections" id="dash-connections">
 <h3 data-i18n="dash-connections-title">Akun terhubung</h3>
 <p class="note" data-i18n="dash-connections-note">Provider ini mengenali akun yang sama untuk website, Void Scriptor, dan QOWNER.</p>
 <ul class="connection-list" id="dashConnectionList" aria-live="polite"><li class="connection-state" data-i18n="dash-connections-loading">Memuat koneksi akun…</li></ul>
@@ -287,12 +320,12 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </dl>
 <p class="note" data-i18n="dash-note">Sesi ini memakai cookie HMAC 24 jam yang merujuk ke akun persisten. Keluar mencabut sesi ini di server dan menghapus cookie di peramban ini; sesi pada perangkat lain tetap terpisah. Untuk menghentikan akses provider, cabut izin di penyedia akun.</p>
 </article>
-<article class="panel dash-session-manager">
+<article class="panel dash-session-manager" id="dash-center-security">
 <div class="session-manager-head"><div><h3 data-i18n="dash-sessions-title">Perangkat &amp; sesi aktif</h3><p class="note" data-i18n="dash-sessions-note">Kelola sesi website dan aplikasi tanpa menampilkan token rahasia.</p></div><button class="ghost" id="dashSessionsRefresh" type="button" data-i18n="dash-sessions-refresh">Perbarui</button></div>
 <ul class="session-list" id="dashSessionList" aria-live="polite"><li class="session-state" data-i18n="dash-sessions-loading">Memuat sesi aktif…</li></ul>
 <div class="session-manager-actions"><button class="danger" id="dashRevokeOtherSessions" type="button" disabled data-i18n="dash-sessions-revoke-all">Keluar dari perangkat lain</button><p class="profile-status" id="dashSessionsStatus" role="status" aria-live="polite"></p></div>
 </article>
-<article class="panel dash-panel-products">
+<article class="panel dash-panel-products" id="dash-center-products">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
 <a id="dashStudioDownload" href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
@@ -356,6 +389,24 @@ function applyUser(u){
   else{a.style.display='none';ini.style.display=''}
   ini.textContent=n.charAt(0).toUpperCase();
 }
+function applyCenterIdentity(u,name){
+  u=u||{};var n=name||u.name||u.login||'Akun';
+  var nameEl=document.getElementById('dashCenterName'),loginEl=document.getElementById('dashCenterLogin');
+  if(nameEl)nameEl.textContent=n;
+  if(loginEl)loginEl.textContent=u.login?('@'+u.login):(u.email||'');
+  var avatar=document.getElementById('dashCenterAvatar'),initial=document.getElementById('dashCenterInitial');
+  if(!avatar||!initial)return;
+  if(u.avatar){avatar.src=u.avatar;avatar.hidden=false;initial.hidden=true;avatar.onerror=function(){avatar.hidden=true;initial.hidden=false}}
+  else{avatar.hidden=true;initial.hidden=false}
+  initial.textContent=n.charAt(0).toUpperCase();
+}
+var CENTER_SESSION_STATE='checking';
+function setCenterSessionState(text,kind){
+  CENTER_SESSION_STATE=kind||'checking';
+  var wrap=document.getElementById('dashCenterSessionState');if(!wrap)return;
+  var label=wrap.querySelector('span');if(label)label.textContent=text;else wrap.textContent=text;
+  wrap.className='dash-center-live '+(kind||'');
+}
 // Sign-out lives in the outer scope on purpose: the dashboard fill below wires
 // the same handler, and keeping it inside the chip IIFE made that reference a
 // ReferenceError -- which the session .catch() then turned into a redirect,
@@ -375,6 +426,10 @@ function renderSession(d){
   var u=d.user||{},n=u.name||u.login||'Akun';
   AUTH_PROVIDERS=d.providers||{};
   applyUser(u);
+  applyCenterIdentity(u,n);
+  setCenterSessionState(sessionLanguage('Aktif','Active'),'is-ready');
+  var centerProvider=document.getElementById('dashCenterProvider');if(centerProvider)centerProvider.textContent=providerLabel(u.provider);
+  var centerAccountStatus=document.getElementById('dashCenterAccountStatus');if(centerAccountStatus)centerAccountStatus.textContent=sessionLanguage('Aktif','Active');
   document.getElementById('dashHiName').textContent=n;
   document.getElementById('dashNameBig').textContent=n;
   document.getElementById('dashLogin').textContent=u.login?('@'+u.login):(u.email||'');
@@ -428,6 +483,7 @@ function renderProfile(profile){
   document.getElementById('dashHiName').textContent=name;
   document.getElementById('dashNameBig').textContent=name;
   applyUser(Object.assign({},base,{name:name}));
+  applyCenterIdentity(Object.assign({},base,{name:name}),name);
   var link=document.getElementById('profilePublicLink');
   if(link&&p.visibility==='public'&&p.public_handle){
     link.href='/u/'+encodeURIComponent(p.public_handle);
@@ -483,14 +539,33 @@ function renderConnections(data){
   var list=document.getElementById('dashConnectionList');if(!list)return;
   CONNECTION_STATE=data&&Array.isArray(data.connections)?data.connections:[];
   list.textContent='';
-  if(!CONNECTION_STATE.length){var empty=document.createElement('li');empty.className='connection-state';empty.textContent=connectionLanguage('Belum ada provider terhubung.','No provider is connected yet.');list.appendChild(empty);renderConnectionActions();return}
+  if(!CONNECTION_STATE.length){var empty=document.createElement('li');empty.className='connection-state';empty.textContent=connectionLanguage('Belum ada provider terhubung.','No provider is connected yet.');list.appendChild(empty);renderCenterProviderStates();renderConnectionActions();return}
   CONNECTION_STATE.forEach(function(connection){
     var li=document.createElement('li'),info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');
     info.className='connection-info';strong.textContent=connectionProviderLabel(connection.provider);var accountName=connection.login||connection.display_name||connectionProviderLabel(connection.provider);var state=connection.email_verified?connectionLanguage('email terverifikasi','verified email'):connectionLanguage('email belum terverifikasi','unverified email');small.textContent=accountName+' · '+state+' · '+connectionLanguage('terhubung','linked')+' '+fmt(connection.linked_at);info.appendChild(strong);info.appendChild(small);li.appendChild(info);
     if(connection.current){var current=document.createElement('span');current.className='connection-current';current.textContent=connectionLanguage('Sesi ini','This session');li.appendChild(current)}
     list.appendChild(li);
   });
+  renderCenterProviderStates();
   renderConnectionActions();
+}
+function renderCenterProviderStates(){
+  ['google','github'].forEach(function(provider){
+    var el=document.getElementById('dashCenter'+(provider==='google'?'Google':'Github')+'State');if(!el)return;
+    var linked=CONNECTION_STATE.some(function(item){return item.provider===provider});
+    if(linked)el.textContent=connectionLanguage('Terhubung','Connected');
+    else if(AUTH_PROVIDERS[provider])el.textContent=connectionLanguage('Tersedia untuk dihubungkan','Available to connect');
+    else el.textContent=connectionLanguage('Belum dikonfigurasi','Not configured');
+  });
+}
+function syncCenterLanguage(){
+  var active=CENTER_SESSION_STATE==='is-ready';
+  var status=active?connectionLanguage('Aktif','Active'):connectionLanguage('Memeriksa…','Checking…');
+  var sessionLabel=document.querySelector('#dashCenterSessionState span');
+  if(sessionLabel)sessionLabel.textContent=status;
+  var accountStatus=document.getElementById('dashCenterAccountStatus');
+  if(accountStatus)accountStatus.textContent=status;
+  renderCenterProviderStates();
 }
 function loadConnections(){
   fetch('/api/account/connections',{credentials:'same-origin',cache:'no-store'})
@@ -684,6 +759,8 @@ function setReadiness(id,kind,text){
   if(id==='dashCheckBridge')DASH_BRIDGE_STATE=kind==='is-ready'?'ready':(kind==='is-offline'?'offline':'loading');
   if(id==='dashCheckStorage')DASH_STORAGE_STATE=kind==='is-ready'?'ready':'offline';
   if(id==='dashCheckVoice')DASH_VOICE_STATE=kind==='is-ready'?'ready':'offline';
+  if(id==='dashCheckBridge'){var bridgeCenter=document.getElementById('dashCenterBridgeState');if(bridgeCenter)bridgeCenter.textContent=kind==='is-ready'?connectionLanguage('Terhubung','Connected'):kind==='is-offline'?connectionLanguage('Belum terhubung','Not connected'):connectionLanguage('Memeriksa…','Checking…')}
+  if(id==='dashCheckStorage'){var storageCenter=document.getElementById('dashCenterStorageState');if(storageCenter)storageCenter.textContent=kind==='is-ready'?connectionLanguage('Tersedia','Available'):connectionLanguage('Dibatasi','Restricted')}
   renderDashboardOps();
 }
 function refreshDashboardReadiness(){
@@ -933,6 +1010,7 @@ var dict = {
     'menu-dashboard':'Dasbor','btn-keluar':'Keluar',
     'profile-edit':'Edit profil','profile-kicker':'AKUN / PROFIL','profile-title':'Profil dan identitas publik','profile-lead':'Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.','profile-open':'Buka','profile-display-name':'Nama tampilan','profile-display-name-help':'Nama ini dapat dipakai website dan aplikasi Void Scriptor.','profile-handle':'Username publik','profile-handle-help':'3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.','profile-bio':'Bio singkat','profile-bio-help':'Opsional, maksimal 160 karakter.','profile-locale':'Bahasa akun','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Zona waktu','profile-timezone-help':'Gunakan nama zona IANA, misalnya Asia/Jakarta.','profile-visibility':'Visibilitas profil','profile-visibility-private':'Privat','profile-visibility-public':'Publik','profile-visibility-help':'Profil publik hanya dapat ditemukan jika Anda memilih username publik.','profile-qowner-alias':'Alias QOWNER','profile-qowner-alias-help':'Gunakan nama samaran untuk leaderboard; nama asli dan email tidak ditampilkan.','profile-qowner-optin-title':'Leaderboard QOWNER','profile-qowner-optin-label':'Izinkan alias ini tampil di leaderboard saat QOWNER dirilis','profile-qowner-optin-help':'Ini hanya menyimpan pilihan izin. Skor dan event belum aktif di website.','profile-save':'Simpan profil','profile-idle':'Belum ada perubahan.','profile-view-public':'Lihat profil publik','profile-note':'Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola akun, unduhan, dan koneksi Byte lokal di satu tempat.',
+    'center-tabs-overview':'Ikhtisar','center-tabs-account':'Akun & profil','center-tabs-connected':'Akun terhubung','center-tabs-cloud':'Cloud & penyimpanan','center-tabs-security':'Keamanan','center-tabs-products':'Produk','center-auth-kicker':'ACCOUNT / IDENTITY','center-auth-title':'Akun & identitas','center-session-checking':'Memeriksa…','center-manage-profile':'Kelola profil →','center-provider':'Provider masuk','center-account':'Persisten','center-account-identity':'Identitas akun','center-connected':'Web + aplikasi','center-connected-label':'Kesiapan identitas bersama','center-connect-kicker':'QUICK CONNECT','center-connect-title':'Akun terhubung','center-connect-copy':'Gunakan provider yang sama untuk masuk ke website dan aplikasi saat tersedia.','center-provider-checking':'Memeriksa…','center-manage-connections':'Kelola semua koneksi →','center-cloud-kicker':'CLOUD CENTER','center-cloud-title':'Cloud & penyimpanan','center-cloud-state':'Belum aktif','center-cloud-not-connected':'Belum terhubung','center-cloud-caption':'Belum ada kuota cloud yang diklaim','center-bridge-label':'Byte Bridge lokal','center-storage-label':'Penyimpanan browser','center-cloud-note':'Cloud storage dan sinkronisasi lintas perangkat belum diaktifkan. Ringkasan lokal tetap berada di browser ini.','center-manage-cloud':'Kelola koneksi lokal →','center-summary-kicker':'ACCOUNT SUMMARY','center-summary-title':'Ringkasan akun','center-summary-plan':'Paket','center-summary-plan-value':'Preview · tanpa billing','center-summary-status':'Status','center-summary-products':'Produk','center-summary-products-value':'1 tersedia · 2 segera','center-summary-billing':'Billing','center-summary-billing-value':'Belum tersedia','center-open-security':'Buka keamanan →',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Suara Byte','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-summary':'Diagnostik lanjutan','dash-ops-diag-kicker':'DIAGNOSTIK / LOKAL','dash-ops-diag-title':'Laporan teknis','dash-ops-diag-copy':'Salin laporan',
     'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-safe':'Mode aman','dash-settings-voice':'Balasan dengan suara','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Karakter, suara, dan mode aman disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
@@ -959,6 +1037,7 @@ var dict = {
     'menu-dashboard':'Dashboard','btn-keluar':'Sign out',
     'profile-edit':'Edit profile','profile-kicker':'ACCOUNT / PROFILE','profile-title':'Profile and public identity','profile-lead':'Your provider identity stays safe; this form changes how you appear in Void Scriptor.','profile-open':'Open','profile-display-name':'Display name','profile-display-name-help':'This name can be used across the website and Void Scriptor apps.','profile-handle':'Public username','profile-handle-help':'3–24 characters: lowercase letters, numbers, underscore, or hyphen.','profile-bio':'Short bio','profile-bio-help':'Optional, up to 160 characters.','profile-locale':'Account language','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Time zone','profile-timezone-help':'Use an IANA zone name, such as Asia/Jakarta.','profile-visibility':'Profile visibility','profile-visibility-private':'Private','profile-visibility-public':'Public','profile-visibility-help':'A public profile can only be found when you choose a public username.','profile-qowner-alias':'QOWNER alias','profile-qowner-alias-help':'Use a pseudonym for the leaderboard; your real name and email are not shown.','profile-qowner-optin-title':'QOWNER leaderboard','profile-qowner-optin-label':'Allow this alias to appear on the leaderboard when QOWNER launches','profile-qowner-optin-help':'This only stores your consent choice. Scores and events are not active on the website yet.','profile-save':'Save profile','profile-idle':'No changes yet.','profile-view-public':'View public profile','profile-note':'Your email, sign-in provider, and provider avatar are managed by Google or GitHub and cannot be changed here. This profile is the shared identity foundation for the website, Void Scriptor, and QOWNER.',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your account, downloads, and local Byte connection in one place.',
+    'center-tabs-overview':'Overview','center-tabs-account':'Account & profile','center-tabs-connected':'Connected accounts','center-tabs-cloud':'Cloud & storage','center-tabs-security':'Security','center-tabs-products':'Products','center-auth-kicker':'ACCOUNT / IDENTITY','center-auth-title':'Account & identity','center-session-checking':'Checking…','center-manage-profile':'Manage profile →','center-provider':'Sign-in provider','center-account':'Persistent','center-account-identity':'Account identity','center-connected':'Web + apps','center-connected-label':'Shared identity readiness','center-connect-kicker':'QUICK CONNECT','center-connect-title':'Connected accounts','center-connect-copy':'Use the same provider to sign in to the website and apps when they become available.','center-provider-checking':'Checking…','center-manage-connections':'Manage all connections →','center-cloud-kicker':'CLOUD CENTER','center-cloud-title':'Cloud & storage','center-cloud-state':'Not active','center-cloud-not-connected':'Not connected','center-cloud-caption':'No cloud quota is claimed','center-bridge-label':'Local Byte Bridge','center-storage-label':'Browser storage','center-cloud-note':'Cloud storage and cross-device sync are not enabled yet. Local summaries stay in this browser.','center-manage-cloud':'Manage local connection →','center-summary-kicker':'ACCOUNT SUMMARY','center-summary-title':'Account summary','center-summary-plan':'Plan','center-summary-plan-value':'Preview · no billing','center-summary-status':'Status','center-summary-products':'Products','center-summary-products-value':'1 available · 2 coming soon','center-summary-billing':'Billing','center-summary-billing-value':'Not available yet','center-open-security':'Open security →',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Byte voice output','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-summary':'Advanced diagnostics','dash-ops-diag-kicker':'DIAGNOSTICS / LOCAL','dash-ops-diag-title':'Technical report','dash-ops-diag-copy':'Copy report',
     'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-safe':'Safe mode','dash-settings-voice':'Reply with voice','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Character, voice, and safe mode are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
@@ -984,6 +1063,7 @@ var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getIte
 if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
   document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
+  if(typeof syncCenterLanguage==='function')syncCenterLanguage();
   var i=document.getElementById('btnID'),e=document.getElementById('btnEN');
   if(i)i.style.display=(l==='en')?'inline-block':'none';if(e)e.style.display=(l==='id')?'inline-block':'none'}
 document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('btnID'),e=document.getElementById('btnEN');
