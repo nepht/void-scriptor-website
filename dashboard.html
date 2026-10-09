@@ -153,6 +153,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <a href="#dash-center-cloud" data-i18n="center-tabs-cloud">Cloud &amp; penyimpanan</a>
 <a href="#dash-center-security" data-i18n="center-tabs-security">Keamanan</a>
 <a href="#dash-center-products" data-i18n="center-tabs-products">Produk</a>
+<a href="#dash-center-backup" data-i18n="center-tabs-backup">Backup &amp; sync</a>
 </nav>
 <section class="dash-center" id="dash-center-overview" aria-label="Ringkasan akun dan cloud">
 <article class="dash-center-card dash-center-auth">
@@ -178,6 +179,11 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <dl><div><dt data-i18n="center-summary-plan">Paket</dt><dd data-i18n="center-summary-plan-value">Preview · tanpa billing</dd></div><div><dt data-i18n="center-summary-status">Status</dt><dd id="dashCenterAccountStatus" data-i18n="center-session-checking">Memeriksa…</dd></div><div><dt data-i18n="center-summary-products">Produk</dt><dd data-i18n="center-summary-products-value">1 tersedia · 2 segera</dd></div><div><dt data-i18n="center-summary-billing">Billing</dt><dd data-i18n="center-summary-billing-value">Belum tersedia</dd></div></dl>
 <a class="dash-center-link" href="#dash-center-security" data-i18n="center-open-security">Buka keamanan →</a>
 </aside>
+</section>
+<section class="dash-sync-panel" id="dash-center-backup" aria-labelledby="dash-backup-title">
+<div class="dash-sync-head"><div><span class="kicker" data-i18n="center-backup-kicker">BACKUP / SYNC</span><h2 id="dash-backup-title" data-i18n="center-backup-title">Cadangan akun</h2><p class="dash-sync-copy" data-i18n="center-backup-copy">Simpan ringkasan Byte secara manual agar dapat dipulihkan di perangkat lain.</p></div><span class="dash-sync-state" id="dashBackupState"><i aria-hidden="true"></i><span data-i18n="center-backup-checking">Memeriksa…</span></span></div>
+<div class="dash-sync-grid"><div class="dash-sync-summary"><b id="dashBackupTitle">Memeriksa cadangan…</b><small id="dashBackupMeta">—</small></div><div class="dash-sync-actions"><button class="primary" id="dashBackupSave" type="button" data-i18n="center-backup-save">Simpan snapshot</button><button class="ghost" id="dashBackupRestore" type="button" disabled data-i18n="center-backup-restore">Pulihkan snapshot</button><button class="danger" id="dashBackupDelete" type="button" disabled data-i18n="center-backup-delete">Hapus snapshot</button></div></div>
+<p class="note" data-i18n="center-backup-note">Snapshot hanya berisi preferensi Byte, checklist, rencana, dan metadata workspace. Isi berkas, cookie, token, dan API key tidak pernah dikirim.</p>
 </section>
 <section class="dash-readiness" aria-labelledby="dash-readiness-title">
 <div class="dash-readiness-head">
@@ -941,6 +947,80 @@ function clearLocalDashboardData(){
   ['vs-onboarding','vs-dashboard-workspace-v1','vs-dashboard-plan-v1','byte-settings-v1'].forEach(function(key){try{localStorage.removeItem(key)}catch(e){}});
 }
 
+// --- opt-in account backup / sync ----------------------------------------
+// The server snapshot is deliberately narrower than the full local export:
+// it contains settings and metadata only, never file contents or secrets.
+var CLOUD_BACKUP=null,CLOUD_BACKUP_LOADED=false,CLOUD_BACKUP_ERROR=false;
+function setCloudBackupState(text,kind){
+  var wrap=document.getElementById('dashBackupState');if(!wrap)return;
+  var label=wrap.querySelector('span');if(label)label.textContent=text;else wrap.textContent=text;
+  wrap.className='dash-sync-state '+(kind||'');
+}
+function cloudBackupTime(ts){try{return new Date(Number(ts)*1000).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'})}catch(e){return '—'}}
+function renderCloudBackup(backup){
+  var title=document.getElementById('dashBackupTitle'),meta=document.getElementById('dashBackupMeta'),save=document.getElementById('dashBackupSave'),restore=document.getElementById('dashBackupRestore'),del=document.getElementById('dashBackupDelete');
+  if(!CLOUD_BACKUP_LOADED){setCloudBackupState(connectionLanguage('Memeriksa…','Checking…'),'is-loading');if(title)title.textContent=connectionLanguage('Memeriksa cadangan…','Checking backup…');if(meta)meta.textContent='—';if(save)save.disabled=true;if(restore)restore.disabled=true;if(del)del.disabled=true;return}
+  if(CLOUD_BACKUP_ERROR){setCloudBackupState(connectionLanguage('Tidak tersedia','Unavailable'),'is-offline');if(title)title.textContent=connectionLanguage('Cadangan belum dapat dimuat','Backup could not be loaded');if(meta)meta.textContent=connectionLanguage('Coba simpan snapshot lagi.','Try saving a snapshot again.');if(save)save.disabled=false;if(restore)restore.disabled=true;if(del)del.disabled=true;return}
+  var exists=Boolean(backup&&backup.exists);CLOUD_BACKUP=exists?backup:null;
+  if(exists){
+    setCloudBackupState(connectionLanguage('Tersimpan','Saved'),'is-ready');
+    if(title)title.textContent=connectionLanguage('Snapshot tersedia','Snapshot available');
+    if(meta)meta.textContent=cloudBackupTime(backup.updated_at)+' · '+Math.max(1,Math.ceil(Number(backup.size_bytes||0)/1024))+' KB';
+  }else{
+    setCloudBackupState(connectionLanguage('Belum ada','Not saved'),'');
+    if(title)title.textContent=connectionLanguage('Belum ada snapshot cloud','No cloud snapshot yet');
+    if(meta)meta.textContent=connectionLanguage('Simpan manual saat ingin menyinkronkan perangkat.','Save manually when you want to sync devices.');
+  }
+  if(save)save.disabled=false;if(restore)restore.disabled=!exists;if(del)del.disabled=!exists;
+}
+function syncCloudBackupLanguage(){renderCloudBackup(CLOUD_BACKUP)}
+function loadCloudBackup(){
+  fetch('/api/account/backup',{credentials:'same-origin',cache:'no-store'})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'backup');return data})})
+    .then(function(data){if(!data)return;CLOUD_BACKUP_ERROR=false;CLOUD_BACKUP_LOADED=true;renderCloudBackup(data.backup||null)})
+    .catch(function(){CLOUD_BACKUP_ERROR=true;CLOUD_BACKUP_LOADED=true;renderCloudBackup(null)})
+}
+function collectCloudSnapshot(){
+  var plan=[];try{plan=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'[]')||[]}catch(e){}
+  var workspace=cachedWorkspace();
+  return {
+    settings:(function(){var s=readByteSettings();return {persona:s.persona,safe:s.safe,voice:s.voice}})(),
+    onboarding:getSteps(),
+    workspace:workspace?{root:workspace.root||'',entries:Array.isArray(workspace.entries)?workspace.entries.slice(0,200):[],checkedAt:workspace.checkedAt||null}:null,
+    plan:Array.isArray(plan)?plan.slice(0,5):[]
+  };
+}
+function saveCloudBackup(button){
+  if(!button||button.disabled)return;
+  button.disabled=true;button.setAttribute('aria-busy','true');setCloudBackupState(connectionLanguage('Menyimpan…','Saving…'),'is-loading');
+  fetch('/api/account/backup',{method:'PUT',credentials:'same-origin',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify({format:'voidscriptor-cloud-snapshot',snapshot:collectCloudSnapshot()})})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'backup');return data})})
+    .then(function(data){if(!data)return;CLOUD_BACKUP_ERROR=false;CLOUD_BACKUP_LOADED=true;renderCloudBackup(data.backup||null);notice(connectionLanguage('Snapshot akun tersimpan.','Account snapshot saved.'))})
+    .catch(function(){CLOUD_BACKUP_ERROR=true;CLOUD_BACKUP_LOADED=true;renderCloudBackup(null);notice(connectionLanguage('Snapshot belum dapat disimpan.','The snapshot could not be saved.'))})
+    .then(function(){button.disabled=false;button.removeAttribute('aria-busy')});
+}
+function restoreCloudBackup(button){
+  if(!button||button.disabled||!CLOUD_BACKUP||!CLOUD_BACKUP.snapshot)return;
+  if(!window.confirm(connectionLanguage('Pulihkan snapshot ini ke browser sekarang? Data lokal yang sama akan diganti.','Restore this snapshot to the current browser? The matching local data will be replaced.')))return;
+  var snapshot=CLOUD_BACKUP.snapshot||{};
+  try{
+    if(snapshot.settings){var settings=normalizeByteSettings(snapshot.settings);localStorage.setItem(BYTE_SETTINGS_KEY,JSON.stringify(settings));applyDashSettings(settings)}
+    if(snapshot.onboarding)localStorage.setItem('vs-onboarding',JSON.stringify(snapshot.onboarding));
+    if(snapshot.workspace)localStorage.setItem('vs-dashboard-workspace-v1',JSON.stringify(snapshot.workspace));else localStorage.removeItem('vs-dashboard-workspace-v1');
+    if(Array.isArray(snapshot.plan))localStorage.setItem('vs-dashboard-plan-v1',JSON.stringify(snapshot.plan));else localStorage.removeItem('vs-dashboard-plan-v1');
+    restoreWorkspaceResult();renderSteps();renderDashboardOps();notice(connectionLanguage('Snapshot dipulihkan ke browser ini.','Snapshot restored to this browser.'));
+  }catch(e){notice(connectionLanguage('Snapshot tidak dapat dipulihkan.','The snapshot could not be restored.'))}
+}
+function deleteCloudBackup(button){
+  if(!button||button.disabled||!CLOUD_BACKUP)return;
+  if(!window.confirm(connectionLanguage('Hapus snapshot cloud ini? Data lokal di browser tidak ikut terhapus.','Delete this cloud snapshot? Local browser data will not be deleted.')))return;
+  button.disabled=true;button.setAttribute('aria-busy','true');
+  fetch('/api/account/backup',{method:'DELETE',credentials:'same-origin',headers:{accept:'application/json'}})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'delete-backup');return data})})
+    .then(function(data){if(!data)return;CLOUD_BACKUP=null;CLOUD_BACKUP_ERROR=false;CLOUD_BACKUP_LOADED=true;renderCloudBackup(null);notice(connectionLanguage('Snapshot cloud dihapus.','Cloud snapshot deleted.'))})
+    .catch(function(){button.disabled=false;button.removeAttribute('aria-busy');notice(connectionLanguage('Snapshot cloud belum dapat dihapus.','The cloud snapshot could not be deleted.'))});
+}
+
 // --- wire the copy buttons, file picker, export and delete ---------------
 (function(){
   function val(id){var e=document.getElementById(id);return e?e.textContent:''}
@@ -983,6 +1063,10 @@ function clearLocalDashboardData(){
   if(exportSettingsButton)exportSettingsButton.onclick=function(){exportDashSettings()};
   var importSettingsInput=document.getElementById('dashSettingsImport');
   if(importSettingsInput)importSettingsInput.onchange=function(){importDashSettings(this.files&&this.files[0]);this.value=''};
+  var backupSave=document.getElementById('dashBackupSave'),backupRestore=document.getElementById('dashBackupRestore'),backupDelete=document.getElementById('dashBackupDelete');
+  if(backupSave)backupSave.onclick=function(){saveCloudBackup(backupSave)};
+  if(backupRestore)backupRestore.onclick=function(){restoreCloudBackup(backupRestore)};
+  if(backupDelete)backupDelete.onclick=function(){deleteCloudBackup(backupDelete)};
   var profileForm=document.getElementById('dashProfileForm');
   if(profileForm)profileForm.onsubmit=function(ev){ev.preventDefault();saveProfile()};
   var sessionsRefresh=document.getElementById('dashSessionsRefresh');
@@ -991,6 +1075,7 @@ function clearLocalDashboardData(){
   if(revokeOther)revokeOther.onclick=function(){revokeOtherSessions()};
   restoreWorkspaceResult();
   refreshDashboardReadiness();
+  loadCloudBackup();
   renderSteps();
 })();
 
@@ -1011,6 +1096,7 @@ var dict = {
     'profile-edit':'Edit profil','profile-kicker':'AKUN / PROFIL','profile-title':'Profil dan identitas publik','profile-lead':'Nama provider tetap aman; yang diubah di sini adalah identitas tampilan Anda.','profile-open':'Buka','profile-display-name':'Nama tampilan','profile-display-name-help':'Nama ini dapat dipakai website dan aplikasi Void Scriptor.','profile-handle':'Username publik','profile-handle-help':'3–24 karakter: huruf kecil, angka, garis bawah, atau tanda hubung.','profile-bio':'Bio singkat','profile-bio-help':'Opsional, maksimal 160 karakter.','profile-locale':'Bahasa akun','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Zona waktu','profile-timezone-help':'Gunakan nama zona IANA, misalnya Asia/Jakarta.','profile-visibility':'Visibilitas profil','profile-visibility-private':'Privat','profile-visibility-public':'Publik','profile-visibility-help':'Profil publik hanya dapat ditemukan jika Anda memilih username publik.','profile-qowner-alias':'Alias QOWNER','profile-qowner-alias-help':'Gunakan nama samaran untuk leaderboard; nama asli dan email tidak ditampilkan.','profile-qowner-optin-title':'Leaderboard QOWNER','profile-qowner-optin-label':'Izinkan alias ini tampil di leaderboard saat QOWNER dirilis','profile-qowner-optin-help':'Ini hanya menyimpan pilihan izin. Skor dan event belum aktif di website.','profile-save':'Simpan profil','profile-idle':'Belum ada perubahan.','profile-view-public':'Lihat profil publik','profile-note':'Email, provider login, dan avatar provider dikelola oleh Google atau GitHub sehingga tidak dapat diubah dari sini. Profil ini menjadi dasar identitas bersama website, Void Scriptor, dan QOWNER.',
     'dash-kicker':'DASBOR AKUN','dash-hi':'Halo,','dash-lead':'Kelola akun, unduhan, dan koneksi Byte lokal di satu tempat.',
     'center-tabs-overview':'Ikhtisar','center-tabs-account':'Akun & profil','center-tabs-connected':'Akun terhubung','center-tabs-cloud':'Cloud & penyimpanan','center-tabs-security':'Keamanan','center-tabs-products':'Produk','center-auth-kicker':'ACCOUNT / IDENTITY','center-auth-title':'Akun & identitas','center-session-checking':'Memeriksa…','center-manage-profile':'Kelola profil →','center-provider':'Provider masuk','center-account':'Persisten','center-account-identity':'Identitas akun','center-connected':'Web + aplikasi','center-connected-label':'Kesiapan identitas bersama','center-connect-kicker':'QUICK CONNECT','center-connect-title':'Akun terhubung','center-connect-copy':'Gunakan provider yang sama untuk masuk ke website dan aplikasi saat tersedia.','center-provider-checking':'Memeriksa…','center-manage-connections':'Kelola semua koneksi →','center-cloud-kicker':'CLOUD CENTER','center-cloud-title':'Cloud & penyimpanan','center-cloud-state':'Belum aktif','center-cloud-not-connected':'Belum terhubung','center-cloud-caption':'Belum ada kuota cloud yang diklaim','center-bridge-label':'Byte Bridge lokal','center-storage-label':'Penyimpanan browser','center-cloud-note':'Cloud storage dan sinkronisasi lintas perangkat belum diaktifkan. Ringkasan lokal tetap berada di browser ini.','center-manage-cloud':'Kelola koneksi lokal →','center-summary-kicker':'ACCOUNT SUMMARY','center-summary-title':'Ringkasan akun','center-summary-plan':'Paket','center-summary-plan-value':'Preview · tanpa billing','center-summary-status':'Status','center-summary-products':'Produk','center-summary-products-value':'1 tersedia · 2 segera','center-summary-billing':'Billing','center-summary-billing-value':'Belum tersedia','center-open-security':'Buka keamanan →',
+    'center-tabs-backup':'Backup & sync','center-backup-kicker':'BACKUP / SYNC','center-backup-title':'Cadangan akun','center-backup-copy':'Simpan ringkasan Byte secara manual agar dapat dipulihkan di perangkat lain.','center-backup-checking':'Memeriksa…','center-backup-save':'Simpan snapshot','center-backup-restore':'Pulihkan snapshot','center-backup-delete':'Hapus snapshot','center-backup-note':'Snapshot hanya berisi preferensi Byte, checklist, rencana, dan metadata workspace. Isi berkas, cookie, token, dan API key tidak pernah dikirim.',
     'dash-ready-kicker':'BYTE / KESIAPAN','dash-ready-title':'Yang siap digunakan sekarang','dash-ready-refresh':'Periksa lagi','dash-ready-bridge':'Byte Bridge lokal','dash-ready-storage':'Penyimpanan browser','dash-ready-voice':'Suara Byte','dash-ready-safety':'Mode aman',
     'dash-ops-task-kicker':'BYTE / TUGAS','dash-ops-task-title':'Pusat tugas','dash-ops-task-empty':'Tidak ada tugas aktif.','dash-ops-task-meta':'Rencana dan pemeriksaan tersimpan lokal di browser ini.','dash-ops-task-open':'Buka Byte Desktop','dash-ops-notice-kicker':'STATUS / PERHATIAN','dash-ops-notice-title':'Notifikasi','dash-ops-notice-checking':'Memeriksa status…','dash-ops-diag-summary':'Diagnostik lanjutan','dash-ops-diag-kicker':'DIAGNOSTIK / LOKAL','dash-ops-diag-title':'Laporan teknis','dash-ops-diag-copy':'Salin laporan',
     'dash-settings-kicker':'BYTE / PREFERENSI','dash-settings-title':'Karakter dan perilaku Byte','dash-settings-open':'Buka pengaturan Byte','dash-settings-persona':'Karakter','dash-settings-safe':'Mode aman','dash-settings-voice':'Balasan dengan suara','dash-settings-save':'Simpan preferensi','dash-settings-export':'Ekspor konfigurasi','dash-settings-import':'Impor konfigurasi','dash-settings-note':'Karakter, suara, dan mode aman disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.','dash-persona-balanced':'Tenang & formal','dash-persona-friend':'Teman dekat','dash-persona-guardian':'Protektif',
@@ -1038,6 +1124,7 @@ var dict = {
     'profile-edit':'Edit profile','profile-kicker':'ACCOUNT / PROFILE','profile-title':'Profile and public identity','profile-lead':'Your provider identity stays safe; this form changes how you appear in Void Scriptor.','profile-open':'Open','profile-display-name':'Display name','profile-display-name-help':'This name can be used across the website and Void Scriptor apps.','profile-handle':'Public username','profile-handle-help':'3–24 characters: lowercase letters, numbers, underscore, or hyphen.','profile-bio':'Short bio','profile-bio-help':'Optional, up to 160 characters.','profile-locale':'Account language','profile-locale-id':'Bahasa Indonesia','profile-locale-en':'English','profile-timezone':'Time zone','profile-timezone-help':'Use an IANA zone name, such as Asia/Jakarta.','profile-visibility':'Profile visibility','profile-visibility-private':'Private','profile-visibility-public':'Public','profile-visibility-help':'A public profile can only be found when you choose a public username.','profile-qowner-alias':'QOWNER alias','profile-qowner-alias-help':'Use a pseudonym for the leaderboard; your real name and email are not shown.','profile-qowner-optin-title':'QOWNER leaderboard','profile-qowner-optin-label':'Allow this alias to appear on the leaderboard when QOWNER launches','profile-qowner-optin-help':'This only stores your consent choice. Scores and events are not active on the website yet.','profile-save':'Save profile','profile-idle':'No changes yet.','profile-view-public':'View public profile','profile-note':'Your email, sign-in provider, and provider avatar are managed by Google or GitHub and cannot be changed here. This profile is the shared identity foundation for the website, Void Scriptor, and QOWNER.',
     'dash-kicker':'ACCOUNT DASHBOARD','dash-hi':'Hi,','dash-lead':'Manage your account, downloads, and local Byte connection in one place.',
     'center-tabs-overview':'Overview','center-tabs-account':'Account & profile','center-tabs-connected':'Connected accounts','center-tabs-cloud':'Cloud & storage','center-tabs-security':'Security','center-tabs-products':'Products','center-auth-kicker':'ACCOUNT / IDENTITY','center-auth-title':'Account & identity','center-session-checking':'Checking…','center-manage-profile':'Manage profile →','center-provider':'Sign-in provider','center-account':'Persistent','center-account-identity':'Account identity','center-connected':'Web + apps','center-connected-label':'Shared identity readiness','center-connect-kicker':'QUICK CONNECT','center-connect-title':'Connected accounts','center-connect-copy':'Use the same provider to sign in to the website and apps when they become available.','center-provider-checking':'Checking…','center-manage-connections':'Manage all connections →','center-cloud-kicker':'CLOUD CENTER','center-cloud-title':'Cloud & storage','center-cloud-state':'Not active','center-cloud-not-connected':'Not connected','center-cloud-caption':'No cloud quota is claimed','center-bridge-label':'Local Byte Bridge','center-storage-label':'Browser storage','center-cloud-note':'Cloud storage and cross-device sync are not enabled yet. Local summaries stay in this browser.','center-manage-cloud':'Manage local connection →','center-summary-kicker':'ACCOUNT SUMMARY','center-summary-title':'Account summary','center-summary-plan':'Plan','center-summary-plan-value':'Preview · no billing','center-summary-status':'Status','center-summary-products':'Products','center-summary-products-value':'1 available · 2 coming soon','center-summary-billing':'Billing','center-summary-billing-value':'Not available yet','center-open-security':'Open security →',
+    'center-tabs-backup':'Backup & sync','center-backup-kicker':'BACKUP / SYNC','center-backup-title':'Account backup','center-backup-copy':'Save a compact Byte snapshot manually so it can be restored on another device.','center-backup-checking':'Checking…','center-backup-save':'Save snapshot','center-backup-restore':'Restore snapshot','center-backup-delete':'Delete snapshot','center-backup-note':'The snapshot contains only Byte preferences, checklist, plans, and workspace metadata. File contents, cookies, tokens, and API keys are never sent.',
     'dash-ready-kicker':'BYTE / READINESS','dash-ready-title':'What is ready to use now','dash-ready-refresh':'Check again','dash-ready-bridge':'Local Byte Bridge','dash-ready-storage':'Browser storage','dash-ready-voice':'Byte voice output','dash-ready-safety':'Safe mode',
     'dash-ops-task-kicker':'BYTE / TASKS','dash-ops-task-title':'Task center','dash-ops-task-empty':'No active tasks.','dash-ops-task-meta':'Plans and checks are stored locally in this browser.','dash-ops-task-open':'Open Byte Desktop','dash-ops-notice-kicker':'STATUS / ATTENTION','dash-ops-notice-title':'Notifications','dash-ops-notice-checking':'Checking status…','dash-ops-diag-summary':'Advanced diagnostics','dash-ops-diag-kicker':'DIAGNOSTICS / LOCAL','dash-ops-diag-title':'Technical report','dash-ops-diag-copy':'Copy report',
     'dash-settings-kicker':'BYTE / PREFERENCES','dash-settings-title':'Byte character and behavior','dash-settings-open':'Open Byte settings','dash-settings-persona':'Character','dash-settings-safe':'Safe mode','dash-settings-voice':'Reply with voice','dash-settings-save':'Save preferences','dash-settings-export':'Export configuration','dash-settings-import':'Import configuration','dash-settings-note':'Character, voice, and safe mode are stored locally in this browser and read by Byte when it opens.','dash-persona-balanced':'Calm & formal','dash-persona-friend':'Close friend','dash-persona-guardian':'Protective',
@@ -1064,6 +1151,7 @@ if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
   document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
   if(typeof syncCenterLanguage==='function')syncCenterLanguage();
+  if(typeof syncCloudBackupLanguage==='function')syncCloudBackupLanguage();
   var i=document.getElementById('btnID'),e=document.getElementById('btnEN');
   if(i)i.style.display=(l==='en')?'inline-block':'none';if(e)e.style.display=(l==='id')?'inline-block':'none'}
 document.addEventListener('DOMContentLoaded',function(){var i=document.getElementById('btnID'),e=document.getElementById('btnEN');

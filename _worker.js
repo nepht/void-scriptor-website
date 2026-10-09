@@ -1108,6 +1108,9 @@ async function handleNativeExchange(request, env) {
 
 const PROFILE_MAX_BODY_BYTES = 12 * 1024;
 const PROFILE_HANDLE_RE = /^[a-z0-9](?:[a-z0-9_-]{1,22}[a-z0-9])?$/;
+const CLOUD_BACKUP_FORMAT = 'voidscriptor-cloud-snapshot';
+const CLOUD_BACKUP_MAX_BODY_BYTES = 128 * 1024;
+const CLOUD_BACKUP_MAX_PAYLOAD_BYTES = 96 * 1024;
 
 function profileText(value, max, collapseWhitespace = false) {
   let text = String(value ?? '')
@@ -1900,7 +1903,7 @@ async function handleAccountExport(request, env) {
   if (!session) return json(401, { ok: false, error: 'unauthenticated' });
 
   try {
-    const [user, profile, identitiesResult, sessionsResult] = await Promise.all([
+    const [user, profile, identitiesResult, sessionsResult, backupRow] = await Promise.all([
       env.ACCOUNTS_DB.prepare(`
         SELECT email, email_verified, created_at, updated_at, last_login_at
           FROM users
@@ -1921,6 +1924,12 @@ async function handleAccountExport(request, env) {
          ORDER BY created_at DESC
          LIMIT 200
       `).bind(session.uid).all(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT format_version, payload_json, size_bytes, created_at, updated_at
+          FROM account_backups
+         WHERE user_id = ?
+         LIMIT 1
+      `).bind(session.uid).first(),
     ]);
     const currentHash = await sha256B64url(session.sid);
     const identities = (identitiesResult.results || []).map((row) => ({
@@ -1940,6 +1949,21 @@ async function handleAccountExport(request, env) {
       last_seen_at: row.last_seen_at || row.created_at,
       current: row.id_hash === currentHash,
     }));
+    let cloudBackup = null;
+    if (backupRow) {
+      try {
+        cloudBackup = {
+          format: CLOUD_BACKUP_FORMAT,
+          version: Number(backupRow.format_version) || 1,
+          size_bytes: Number(backupRow.size_bytes) || 0,
+          created_at: Number(backupRow.created_at) || null,
+          updated_at: Number(backupRow.updated_at) || null,
+          snapshot: JSON.parse(backupRow.payload_json),
+        };
+      } catch {
+        cloudBackup = null;
+      }
+    }
     return json(200, {
       ok: true,
       format: 'voidscriptor-account-export',
@@ -1955,10 +1979,175 @@ async function handleAccountExport(request, env) {
       },
       identities,
       sessions,
+      cloud_backup: cloudBackup,
     });
   } catch (error) {
     console.error('account export failed', error);
     return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+function normalizeCloudSnapshot(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const settingsSource = input.settings && typeof input.settings === 'object'
+    ? input.settings
+    : {};
+  const onboardingSource = input.onboarding && typeof input.onboarding === 'object'
+    ? input.onboarding
+    : {};
+  const settings = {
+    persona: ['balanced', 'friend', 'guardian'].includes(String(settingsSource.persona))
+      ? String(settingsSource.persona)
+      : 'balanced',
+    safe: settingsSource.safe !== false,
+    voice: settingsSource.voice === true,
+  };
+  const onboarding = {};
+  ['stepDownload', 'stepVerify', 'stepRun'].forEach((key) => {
+    onboarding[key] = onboardingSource[key] === true;
+  });
+  let workspace = null;
+  if (input.workspace && typeof input.workspace === 'object' && !Array.isArray(input.workspace)) {
+    const sourceEntries = Array.isArray(input.workspace.entries) ? input.workspace.entries : [];
+    const entries = sourceEntries.slice(0, 200).map((entry) => {
+      const item = entry && typeof entry === 'object' ? entry : {};
+      const rawSize = Number(item.size);
+      return {
+        path: profileText(item.path || item.name || 'item', 512),
+        type: profileText(item.type || 'file', 32, true),
+        extension: profileText(item.extension || '', 20, true),
+        size: Number.isFinite(rawSize) && rawSize >= 0 ? Math.min(Math.floor(rawSize), 10_000_000_000) : null,
+      };
+    });
+    const checkedAt = Number(input.workspace.checkedAt);
+    workspace = {
+      root: profileText(input.workspace.root || '', 512),
+      entries,
+      checkedAt: Number.isFinite(checkedAt) && checkedAt > 0 ? Math.floor(checkedAt) : null,
+    };
+  }
+  const plan = Array.isArray(input.plan)
+    ? input.plan.slice(0, 5).map((item) => profileText(item, 240, true)).filter(Boolean)
+    : [];
+  return { settings, onboarding, workspace, plan };
+}
+
+async function handleCloudBackup(request, env) {
+  if (!['GET', 'HEAD', 'PUT', 'DELETE'].includes(request.method)) {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    const response = json(503, { ok: false, error: 'accounts_not_configured' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) {
+    const response = json(401, { ok: false, error: 'unauthenticated' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  }
+
+  try {
+    if (request.method === 'GET' || request.method === 'HEAD') {
+      const row = await env.ACCOUNTS_DB.prepare(`
+        SELECT format_version, payload_json, size_bytes, created_at, updated_at
+          FROM account_backups
+         WHERE user_id = ?
+         LIMIT 1
+      `).bind(session.uid).first();
+      if (!row) {
+        const response = json(200, { ok: true, backup: { exists: false } });
+        response.headers.set('cache-control', 'no-store');
+        return response;
+      }
+      let snapshot;
+      try {
+        snapshot = JSON.parse(row.payload_json);
+      } catch {
+        const response = json(503, { ok: false, error: 'backup_corrupt' });
+        response.headers.set('cache-control', 'no-store');
+        return response;
+      }
+      const response = json(200, {
+        ok: true,
+        backup: {
+          exists: true,
+          format: CLOUD_BACKUP_FORMAT,
+          version: Number(row.format_version) || 1,
+          size_bytes: Number(row.size_bytes) || 0,
+          created_at: Number(row.created_at) || null,
+          updated_at: Number(row.updated_at) || null,
+          snapshot,
+        },
+      });
+      response.headers.set('cache-control', 'no-store');
+      return response;
+    }
+
+    if (request.method === 'DELETE') {
+      await env.ACCOUNTS_DB.prepare('DELETE FROM account_backups WHERE user_id = ?')
+        .bind(session.uid)
+        .run();
+      const response = json(200, { ok: true, deleted: true });
+      response.headers.set('cache-control', 'no-store');
+      return response;
+    }
+
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > CLOUD_BACKUP_MAX_BODY_BYTES) {
+      return json(413, { ok: false, error: 'request_too_large' });
+    }
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return json(400, { ok: false, error: 'invalid_json' });
+    }
+    if (!body || body.format !== CLOUD_BACKUP_FORMAT) {
+      return json(400, { ok: false, error: 'invalid_backup_format' });
+    }
+    const snapshot = normalizeCloudSnapshot(body.snapshot);
+    if (!snapshot) return json(400, { ok: false, error: 'invalid_backup' });
+    const payloadJson = JSON.stringify(snapshot);
+    const sizeBytes = new TextEncoder().encode(payloadJson).byteLength;
+    if (sizeBytes > CLOUD_BACKUP_MAX_PAYLOAD_BYTES) {
+      return json(413, { ok: false, error: 'backup_too_large' });
+    }
+    const now = Math.floor(Date.now() / 1000);
+    const previous = await env.ACCOUNTS_DB.prepare(
+      'SELECT created_at FROM account_backups WHERE user_id = ? LIMIT 1',
+    ).bind(session.uid).first();
+    const createdAt = Number(previous?.created_at) || now;
+    await env.ACCOUNTS_DB.prepare(`
+      INSERT INTO account_backups (
+        user_id, format_version, payload_json, size_bytes, created_at, updated_at
+      ) VALUES (?, 1, ?, ?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET
+        format_version = excluded.format_version,
+        payload_json = excluded.payload_json,
+        size_bytes = excluded.size_bytes,
+        updated_at = excluded.updated_at
+    `).bind(session.uid, payloadJson, sizeBytes, createdAt, now).run();
+    const response = json(200, {
+      ok: true,
+      backup: {
+        exists: true,
+        format: CLOUD_BACKUP_FORMAT,
+        version: 1,
+        size_bytes: sizeBytes,
+        created_at: createdAt,
+        updated_at: now,
+        snapshot,
+      },
+    });
+    response.headers.set('cache-control', 'no-store');
+    return response;
+  } catch (error) {
+    console.error('account cloud backup failed', error);
+    const response = json(503, { ok: false, error: 'account_storage' });
+    response.headers.set('cache-control', 'no-store');
+    return response;
   }
 }
 
@@ -1986,6 +2175,9 @@ export default {
     }
     if (url.pathname === '/api/account/export') {
       return handleAccountExport(request, env);
+    }
+    if (url.pathname === '/api/account/backup') {
+      return handleCloudBackup(request, env);
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);
