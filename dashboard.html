@@ -163,7 +163,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <article class="dash-center-card dash-center-auth">
 <div class="dash-center-card-head"><div><span class="kicker" data-i18n="center-auth-kicker">ACCOUNT / IDENTITY</span><h2 data-i18n="center-auth-title">Akun &amp; identitas</h2></div><span class="dash-center-live" id="dashCenterSessionState"><i aria-hidden="true"></i><span data-i18n="center-session-checking">Memeriksa…</span></span></div>
 <div class="dash-center-identity"><span class="dash-center-avatar"><img id="dashCenterAvatar" alt="" hidden><i id="dashCenterInitial">V</i></span><div><h3 id="dashCenterName">…</h3><p id="dashCenterLogin">…</p><a class="dash-center-link" href="#profile-editor" data-i18n="center-manage-profile">Kelola profil →</a></div></div>
-<div class="dash-center-stats"><span><b id="dashCenterProvider">—</b><small data-i18n="center-provider">Provider masuk</small></span><span><b data-i18n="center-account">Persisten</b><small data-i18n="center-account-identity">Identitas akun</small></span><span><b data-i18n="center-connected">Web + aplikasi</b><small data-i18n="center-connected-label">Kesiapan identitas bersama</small></span></div>
+<div class="dash-center-stats"><span><b id="dashCenterProvider">—</b><small data-i18n="center-provider">Provider masuk</small></span><span><b data-i18n="center-account">Persisten</b><small data-i18n="center-account-identity">Identitas akun</small></span><span><b data-i18n="center-connected">Website aktif</b><small data-i18n="center-connected-label">Integrasi aplikasi belum aktif</small></span></div>
 </article>
 <article class="dash-center-card dash-center-connect" id="dash-center-connections">
 <div class="dash-center-card-head"><div><span class="kicker" data-i18n="center-connect-kicker">QUICK CONNECT</span><h2 data-i18n="center-connect-title">Akun terhubung</h2></div></div>
@@ -1224,8 +1224,16 @@ var dict = {
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor · Choirudin',
     'foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact','foot-duka':'Support'
   }
-};
-var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
+ };
+ dict.id['center-connected']='Website aktif';
+ dict.id['center-connected-label']='Integrasi aplikasi belum aktif';
+ dict.id['center-connect-copy']='Provider yang sama akan dipakai oleh aplikasi setelah adapter login native selesai. Saat ini koneksi akun aktif di website.';
+ dict.id['dash-connections-note']='Provider ini mengenali akun yang sama di website. Integrasi login Void Scriptor dan QOWNER masih menunggu adapter aplikasi.';
+ dict.en['center-connected']='Website active';
+ dict.en['center-connected-label']='App integration not active';
+ dict.en['center-connect-copy']='The same provider will be used by the apps after the native sign-in adapter is complete. Account connection is currently active on the website.';
+ dict.en['dash-connections-note']='This provider identifies the same account on the website. Void Scriptor and QOWNER app sign-in still await the native app adapter.';
+ var lang=(new URLSearchParams(location.search).get('lang'))||localStorage.getItem('vs-lang')||'id';
 if(lang!=='id'&&lang!=='en')lang='id';
 function setLang(l){lang=l;localStorage.setItem('vs-lang',l);document.documentElement.lang=l;
   document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dict[l]&&dict[l][k]!==undefined)el.textContent=dict[l][k]});
