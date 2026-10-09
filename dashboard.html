@@ -174,8 +174,8 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="dash-settings-actions"><button class="primary" id="dashSettingsSave" type="button" data-i18n="dash-settings-save">Simpan preferensi</button><button class="ghost" id="dashSettingsExport" type="button" data-i18n="dash-settings-export">Ekspor konfigurasi</button><label class="ghost dash-import"><input type="file" id="dashSettingsImport" accept="application/json,.json"><span data-i18n="dash-settings-import">Impor konfigurasi</span></label></div>
 <p class="dash-settings-note" id="dashSettingsNote" data-i18n="dash-settings-note">Preferensi disimpan lokal di browser ini dan akan dibaca Byte saat dibuka.</p>
 </section>
-<div class="dash-grid">
-<article class="panel onboard">
+<div class="dash-grid" aria-label="Ringkasan akun, produk, dan tindakan">
+<article class="panel onboard dash-panel-onboard">
 <h3 data-i18n="dash-onboard">Mulai cepat</h3>
 <ol class="steps">
 <li class="step" id="stepDownload"><span class="box" aria-hidden="true">—</span><span class="txt"><b data-i18n="dash-step1">Unduh installer</b><small data-i18n="dash-step1-note">Void Scriptor Studio untuk Windows (x64) — langkah selesai setelah tautan unduh dipilih.</small></span></li>
@@ -186,12 +186,12 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p class="onboard-note"><span data-i18n="dash-onboard-note">Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.</span> <button type="button" id="dashReset" data-i18n="dash-reset">Atur ulang</button></p>
 </article>
 
-<article class="panel profile">
+<article class="panel profile dash-panel-profile">
 <img id="dashAvatar" alt="" hidden>
 <i class="ini" id="dashInitial">V</i>
 <div class="who"><h2 id="dashNameBig">…</h2><p id="dashLogin">…</p><span class="badge" id="dashProviderBadge" hidden>Belum tersedia</span></div>
 </article>
-<article class="panel">
+<article class="panel dash-panel-account">
 <h3 data-i18n="dash-account">Akun</h3>
 <dl>
 <div><dt data-i18n="dash-email">Email</dt><dd><span id="dashEmail">Belum tersedia</span><button class="copy" id="copyEmail" type="button" data-i18n="dash-copy">Salin</button></dd></div>
@@ -199,7 +199,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div><dt data-i18n="dash-provider">Metode masuk</dt><dd id="dashProvider">Belum tersedia</dd></div>
 </dl>
 </article>
-<article class="panel">
+<article class="panel dash-panel-session">
 <h3 data-i18n="dash-session">Sesi &amp; keamanan</h3>
 <dl>
 <div><dt data-i18n="dash-since">Masuk sejak</dt><dd id="dashSince">Belum tersedia</dd></div>
@@ -208,7 +208,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </dl>
 <p class="note" data-i18n="dash-note">Sesi ini adalah cookie bertanda tangan HMAC yang tersimpan di peramban ini dan berlaku sampai kedaluwarsa. Keluar menghapus cookie dari peramban ini; sesi yang sudah tersalin di perangkat lain tidak ikut tercabut. Untuk menghentikan akses aplikasi, cabut izin di penyedia akun.</p>
 </article>
-<article class="panel">
+<article class="panel dash-panel-products">
 <h3 data-i18n="dash-products">Produk &amp; tautan</h3>
 <div class="plinks">
 <a id="dashStudioDownload" href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe" download><span data-i18n="dash-dl-studio">Unduh Void Scriptor Studio</span><small>Windows x64</small></a>
@@ -226,14 +226,14 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 </label>
 <p class="vmsg" id="dashVerify" data-i18n="dash-verify-idle">Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.</p>
 </article>
-<article class="panel">
+<article class="panel dash-panel-actions">
 <h3 data-i18n="dash-actions">Tindakan</h3>
 <div class="plinks">
 <button class="danger" id="dashSignOut" data-i18n="dash-signout">Keluar dari akun</button>
 </div>
 <p class="note" data-i18n="dash-actions-note">Keluar akan menghapus sesi di peramban ini seketika.</p>
 </article>
-<article class="panel">
+<article class="panel dash-panel-data">
 <h3 data-i18n="dash-data">Data &amp; privasi</h3>
 <div class="plinks">
 <button class="ghost" id="dashExport" type="button" data-i18n="dash-export">Unduh data saya (.json)</button>

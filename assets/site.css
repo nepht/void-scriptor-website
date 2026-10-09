@@ -688,6 +688,27 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   .page-dashboard .dash-grid dd{width:100%;margin-left:0}
 }
 
+/* Account-first hierarchy: the dashboard answers "who am I and what can I
+   use?" before exposing Byte's local workspace controls. Explicit item order
+   keeps that narrative stable on both the two-column and mobile layouts. */
+.page-dashboard .dash-panel-profile{order:0}
+.page-dashboard .dash-panel-account{order:1}
+.page-dashboard .dash-panel-session{order:2}
+.page-dashboard .dash-panel-products{order:3}
+.page-dashboard .dash-panel-actions{order:4}
+.page-dashboard .dash-panel-data{order:5}
+.page-dashboard .dash-panel-onboard{order:6}
+
+/* Touch targets: keep compact utility controls usable without making the
+   dashboard look like a field of oversized pills. */
+.page-dashboard .profile{min-height:44px}
+.page-dashboard .profile-menu button,.page-dashboard .profile-menu a{min-height:44px;display:flex;align-items:center}
+.page-dashboard .btn-lang{min-width:44px;min-height:44px}
+.page-dashboard .copy{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
+.page-dashboard .dash-readiness-head .ghost,.page-dashboard .dash-op .ghost{min-height:44px}
+.page-dashboard .dash-bridge-links .ghost,.page-dashboard .dash-workspace-tools .ghost{min-height:44px}
+.page-dashboard .dash-head h1{font-size:clamp(34px,4.4vw,58px)}
+
 /* Full-bleed continuity pass: the main page owns one visual field. Nested
    sections use transparent/matte bands so the wallpaper does not restart at
    every boundary or compete with the content rail. */
