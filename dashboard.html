@@ -127,6 +127,9 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 .hamb i{width:20px;margin:5px 0}
 .hamb::after{content:'Menu';font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 @media(max-width:1100px){.hamb{display:flex}}
+/* The account/cloud tab rail is a second nav. Keep header-menu positioning
+   rules from turning it into an absolute mobile overlay. */
+.page-dashboard .dash-center-tabs{position:static;top:auto;right:auto;bottom:auto;left:auto;flex-direction:row;z-index:auto}
 </style>
 <link rel="stylesheet" href="/assets/site.css?v=layout-20261009">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
@@ -388,7 +391,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 var backdrop=null,toast=document.getElementById('toast'),nav=document.getElementById('nav');
 function notice(t){toast.textContent=t;toast.style.display='block';setTimeout(function(){toast.style.display='none'},3000)}
 document.getElementById('hamb').onclick=function(){var o=nav.classList.toggle('open');this.setAttribute('aria-expanded',o?'true':'false')};
-document.querySelectorAll('nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open');document.getElementById('hamb').setAttribute('aria-expanded','false')}});
+document.querySelectorAll('#nav a').forEach(function(e){e.onclick=function(){nav.classList.remove('open');document.getElementById('hamb').setAttribute('aria-expanded','false')}});
 document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){nav.classList.remove('open');document.getElementById('hamb').setAttribute('aria-expanded','false')}});
 
 // --- header profile chip (mirrors the home page) --------------------------
