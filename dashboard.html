@@ -219,7 +219,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <code id="dashSha">Belum tersedia</code>
 <button class="copy" id="copySha" type="button" data-i18n="dash-copy">Salin</button>
 </div>
-<p class="note"><span data-i18n="dash-hash-note">Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai juga dicatat di</span> <a href="https://github.com/nepht/void-scriptor-website/blob/main/release-manifests/VoidScriptor-1.2.0-rc.1-windows-x64.sha256" target="_blank" rel="noopener" data-i18n="dash-hash-github">kanal GitHub terpisah</a><span data-i18n="dash-hash-suffix">; ini belum menggantikan tanda tangan kode.</span></p>
+<p class="note"><span data-i18n="dash-hash-note">Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di</span> <a href="/downloads/VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe.sha256" target="_blank" rel="noopener" data-i18n="dash-hash-source">manifest checksum</a><span data-i18n="dash-hash-suffix">; ini belum menggantikan tanda tangan kode.</span></p>
 <label class="filepick">
 <input type="file" id="dashFile" accept=".exe,application/octet-stream">
 <span data-i18n="dash-verify-pick">Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256</span>
@@ -667,7 +667,7 @@ var dict = {
     'dash-account':'Akun','dash-email':'Email','dash-login-label':'Nama pengguna','dash-provider':'Metode masuk',
     'dash-session':'Sesi & keamanan','dash-since':'Masuk sejak','dash-exp':'Berlaku sampai','dash-left':'Sisa waktu',
     'dash-note':'Sesi ini adalah cookie bertanda tangan HMAC yang tersimpan di peramban ini dan berlaku sampai kedaluwarsa. Keluar menghapus cookie dari peramban ini; sesi yang sudah tersalin di perangkat lain tidak ikut tercabut. Untuk menghentikan akses aplikasi, cabut izin di penyedia akun.',
-    'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai juga dicatat di','dash-hash-github':'kanal GitHub terpisah','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
+    'dash-products':'Produk & tautan','dash-dl-studio':'Unduh Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Belum tersedia','dash-android':'Belum tersedia','dash-hash-note':'Checksum membantu mendeteksi kerusakan atau perubahan setelah unduh. Nilai tersedia di','dash-hash-source':'manifest checksum','dash-hash-suffix':'; ini belum menggantikan tanda tangan kode.',
     'dash-copy':'Salin','dash-verify-pick':'Pilih berkas installer (.exe) yang sudah diunduh untuk memverifikasi SHA-256',
     'dash-verify-idle':'Verifikasi lokal: berkas tidak dikirim ke mana pun. Hash dihitung di peramban Anda.',
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
@@ -692,7 +692,7 @@ var dict = {
     'dash-account':'Account','dash-email':'Email','dash-login-label':'Username','dash-provider':'Sign-in method',
     'dash-session':'Session & security','dash-since':'Signed in','dash-exp':'Valid until','dash-left':'Time left',
     'dash-note':'This session is an HMAC-signed cookie stored in this browser and valid until it expires. Signing out clears the cookie in this browser; a copied session on another device is not revoked. To stop app access, revoke the app with your identity provider.',
-    'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is also recorded in a','dash-hash-github':'separate GitHub channel','dash-hash-suffix':'; this does not replace code signing.',
+    'dash-products':'Products & links','dash-dl-studio':'Download Void Scriptor Studio','dash-open-quiz-ios':'QOWNER iOS','dash-open-quiz-android':'QOWNER Android','dash-ios':'Not available yet','dash-android':'Not available yet','dash-hash-note':'A checksum helps detect corruption or changes after download. The value is available in the','dash-hash-source':'checksum manifest','dash-hash-suffix':'; this does not replace code signing.',
     'dash-copy':'Copy','dash-verify-pick':'Choose the installer (.exe) you downloaded to verify its SHA-256',
     'dash-verify-idle':'Local verification: the file is not sent anywhere. The hash is computed in your browser.',
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
