@@ -520,6 +520,23 @@ async function readSession(req, secret, db) {
   return payload;
 }
 
+// The browser only needs display data and expiry information. Keep bearer and
+// cookie material inside the worker even when the session endpoint is polled.
+function sessionView(session) {
+  if (!session) return null;
+  return {
+    id: session.uid || session.user_id || null,
+    provider: session.provider || '',
+    login: session.login || '',
+    name: session.name || '',
+    avatar: session.avatar || '',
+    email: session.email || null,
+    iat: session.iat || null,
+    exp: session.exp || null,
+    persistent: Boolean(session.persistent),
+  };
+}
+
 function json(status, obj) {
   return new Response(JSON.stringify(obj), {
     status,
@@ -1328,7 +1345,7 @@ async function handleAuth(request, url, env) {
       // one does not advertise a button that would 500 on click.
       providers: { github: ghOn, google: ggOn },
       authenticated: Boolean(session),
-      user: session || null,
+      user: sessionView(session),
     });
   }
 
@@ -1644,6 +1661,79 @@ async function handleAccount(request, env) {
   return response;
 }
 
+async function handleAccountExport(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  try {
+    const [user, profile, identitiesResult, sessionsResult] = await Promise.all([
+      env.ACCOUNTS_DB.prepare(`
+        SELECT email, email_verified, created_at, updated_at, last_login_at
+          FROM users
+         WHERE id = ?
+         LIMIT 1
+      `).bind(session.uid).first(),
+      readProfile(env.ACCOUNTS_DB, session.uid),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT provider, login, display_name, email_verified, created_at, updated_at
+          FROM identities
+         WHERE user_id = ?
+         ORDER BY provider ASC, created_at ASC
+      `).bind(session.uid).all(),
+      env.ACCOUNTS_DB.prepare(`
+        SELECT id_hash, client, provider, created_at, expires_at, revoked_at, last_seen_at
+          FROM sessions
+         WHERE user_id = ?
+         ORDER BY created_at DESC
+         LIMIT 200
+      `).bind(session.uid).all(),
+    ]);
+    const currentHash = await sha256B64url(session.sid);
+    const identities = (identitiesResult.results || []).map((row) => ({
+      provider: row.provider,
+      login: row.login || '',
+      display_name: row.display_name || '',
+      email_verified: Number(row.email_verified) === 1,
+      linked_at: row.created_at,
+      updated_at: row.updated_at,
+    }));
+    const sessions = (sessionsResult.results || []).map((row) => ({
+      client: row.client === 'desktop' ? 'desktop' : 'web',
+      provider: row.provider,
+      created_at: row.created_at,
+      expires_at: row.expires_at,
+      revoked_at: row.revoked_at || null,
+      last_seen_at: row.last_seen_at || row.created_at,
+      current: row.id_hash === currentHash,
+    }));
+    return json(200, {
+      ok: true,
+      format: 'voidscriptor-account-export',
+      generated_at: Math.floor(Date.now() / 1000),
+      account: {
+        id: session.uid,
+        email: user?.email || session.email || null,
+        email_verified: Number(user?.email_verified) === 1,
+        created_at: user?.created_at || null,
+        updated_at: user?.updated_at || null,
+        last_login_at: user?.last_login_at || null,
+        profile,
+      },
+      identities,
+      sessions,
+    });
+  } catch (error) {
+    console.error('account export failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -1665,6 +1755,9 @@ export default {
     }
     if (url.pathname === '/api/account/me') {
       return handleAccount(request, env);
+    }
+    if (url.pathname === '/api/account/export') {
+      return handleAccountExport(request, env);
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);

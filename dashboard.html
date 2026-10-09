@@ -324,6 +324,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p class="note" data-i18n="dash-data-note">Profil akun, identitas provider, dan sesi login tersimpan di basis data akun agar web dan aplikasi dapat memakai identitas yang sama. Preferensi Byte, checklist, dan ringkasan ruang kerja tetap lokal di peramban ini. Ekspor menyalin profil sesi dan data lokal ke berkas; tombol hapus di sini menghapus data lokal serta mencabut sesi peramban ini.</p>
 <div id="dashDeleteConfirm" hidden>
 <p class="note" data-i18n="dash-delete-ask">Yakin? Data Byte, checklist, dan ringkasan lokal akan dihapus, lalu sesi peramban ini dicabut. Ini belum menghapus akun persisten atau sesi pada perangkat lain; untuk permintaan penghapusan akun, hubungi kami melalui Kontak.</p>
+<p class="note"><a href="mailto:voidscriptor@gmail.com?subject=Permintaan%20penghapusan%20akun" data-i18n="dash-account-delete-request">Ajukan penghapusan akun persisten melalui email</a></p>
 <div class="plinks">
 <button class="danger" id="dashDeleteYes" type="button" data-i18n="dash-delete-yes">Ya, hapus lokal &amp; keluar</button>
 <button class="ghost" id="dashDeleteNo" type="button" data-i18n="dash-delete-no">Batal</button>
@@ -777,8 +778,8 @@ function verifyFile(file){
   },function(){msg.className='vmsg bad';msg.textContent='Gagal membaca berkas.'});
 }
 // --- export / delete my data ---------------------------------------------
-// Export includes the signed-session view plus browser-local data. The account
-// record remains server-side so the web and future apps can share one identity.
+// Export combines the sanitized server-side account view with browser-local
+// Byte data. The raw cookie/bearer material never reaches this script.
 var LAST_USER=null;
 // --- onboarding checklist (client-side only, no server state) -------------
 // Honest by construction: "download" only ticks once the visitor actually
@@ -798,23 +799,29 @@ function renderSteps(){
 function markStep(id){var s=getSteps();if(!s[id]){s[id]=true;saveSteps(s);renderSteps()}}
 
 function exportData(){
-  var localData={onboarding:getSteps(),byte_settings:readByteSettings(),workspace_summary:cachedWorkspace(),plan:[]};
-  try{localData.plan=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'[]')||[]}catch(e){}
-  var payload={
-    note:'This export contains the signed-session profile visible in the dashboard and local browser data used by Byte. The persistent account record is not exported as raw server storage.',
-    exported_at:new Date().toISOString(),
-    session:LAST_USER||{},
-    local_browser_data:localData
-  };
-  try{
-    var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='voidscriptor-my-data.json';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    notice('Data diunduh.');
-  }catch(e){notice('Gagal membuat berkas.')}
+  var button=document.getElementById('dashExport');
+  if(button){button.disabled=true;button.setAttribute('aria-busy','true')}
+  fetch('/api/account/export',{credentials:'same-origin',cache:'no-store'})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(data){if(r.status===401){location.href='/?auth=required';return null}if(!r.ok)throw new Error(data.error||'export');return data})})
+    .then(function(serverData){
+      if(!serverData)return;
+      var localData={onboarding:getSteps(),byte_settings:readByteSettings(),workspace_summary:cachedWorkspace(),plan:[]};
+      try{localData.plan=JSON.parse(localStorage.getItem('vs-dashboard-plan-v1')||'[]')||[]}catch(e){}
+      var payload={
+        format:'voidscriptor-my-data',
+        note:'Ekspor ini berisi data akun yang aman untuk dibaca pengguna serta data lokal Byte. Cookie, bearer token, hash sesi, dan subject provider tidak disertakan.',
+        exported_at:new Date().toISOString(),
+        account:serverData.account||{},
+        identities:Array.isArray(serverData.identities)?serverData.identities:[],
+        sessions:Array.isArray(serverData.sessions)?serverData.sessions:[],
+        local_browser_data:localData
+      };
+      var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download='voidscriptor-my-data.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+      notice(profileLanguage('Data akun dan data lokal diunduh.','Account and local data downloaded.'));
+    })
+    .catch(function(){notice(profileLanguage('Data belum dapat diekspor. Coba lagi.','Data could not be exported. Try again.'))})
+    .then(function(){if(button){button.disabled=false;button.removeAttribute('aria-busy')}});
 }
 function clearLocalDashboardData(){
   ['vs-onboarding','vs-dashboard-workspace-v1','vs-dashboard-plan-v1','byte-settings-v1'].forEach(function(key){try{localStorage.removeItem(key)}catch(e){}});
@@ -903,9 +910,9 @@ var dict = {
     'dash-actions':'Tindakan','dash-signout':'Keluar dari akun','dash-actions-note':'Keluar akan menghapus sesi di peramban ini seketika.',
     'dash-onboard':'Mulai cepat','dash-step1':'Unduh installer','dash-step1-note':'Void Scriptor Studio untuk Windows (x64) — langkah selesai setelah tautan unduh dipilih.','dash-step2':'Verifikasi SHA-256','dash-step2-note':'Pilih berkas di panel Produk & tautan; langkah selesai hanya jika hash cocok.','dash-step3':'Buka Byte Desktop','dash-step3-note':'Buka mode desktop Byte dari dashboard; langkah dicatat saat tautannya dipilih.','dash-step4':'QOWNER Quiz Maker','dash-step4-note':'Status: belum tersedia. Aplikasi iOS dan Android belum dapat diunduh, jadi langkah ini tidak dihitung.','dash-onboard-note':'Kemajuan tersimpan hanya di peramban ini. Kami tidak mengirim atau menyimpannya di server.','dash-reset':'Atur ulang',
     'dash-data':'Data & privasi','dash-export':'Unduh data saya (.json)','dash-delete':'Hapus data lokal & keluar',
-    'dash-data-note':'Profil akun, identitas provider, dan sesi login tersimpan di basis data akun agar web dan aplikasi dapat memakai identitas yang sama. Preferensi Byte, checklist, dan ringkasan ruang kerja tetap lokal di peramban ini. Ekspor menyalin profil sesi dan data lokal ke berkas; tombol hapus di sini menghapus data lokal serta mencabut sesi peramban ini.',
+    'dash-data-note':'Profil akun, identitas provider, dan sesi login tersimpan di basis data akun agar web dan aplikasi dapat memakai identitas yang sama. Preferensi Byte, checklist, dan ringkasan ruang kerja tetap lokal di peramban ini. Ekspor menyalin data akun yang aman serta data lokal ke berkas; token rahasia tidak pernah disertakan. Tombol hapus di sini menghapus data lokal serta mencabut sesi peramban ini.',
     'dash-delete-ask':'Yakin? Data Byte, checklist, dan ringkasan lokal akan dihapus, lalu sesi peramban ini dicabut. Ini belum menghapus akun persisten atau sesi pada perangkat lain; untuk permintaan penghapusan akun, hubungi kami melalui Kontak.',
-    'dash-delete-yes':'Ya, hapus lokal & keluar','dash-delete-no':'Batal','dash-revoke':'Cabut izin di penyedia',
+    'dash-delete-yes':'Ya, hapus lokal & keluar','dash-delete-no':'Batal','dash-account-delete-request':'Ajukan penghapusan akun persisten melalui email','dash-revoke':'Cabut izin di penyedia',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor · Choirudin',
     'foot-privacy':'Privasi','foot-terms':'Syarat','foot-contact':'Kontak','foot-duka':'Dukungan'
   },
@@ -929,9 +936,9 @@ var dict = {
     'dash-actions':'Actions','dash-signout':'Sign out of account','dash-actions-note':'Signing out clears this browser session immediately.',
     'dash-onboard':'Quick start','dash-step1':'Download the installer','dash-step1-note':'Void Scriptor Studio for Windows (x64) — this step completes when you choose the download link.','dash-step2':'Verify SHA-256','dash-step2-note':'Choose the file in Products & links; this step completes only when the hash matches.','dash-step3':'Open Byte Desktop','dash-step3-note':'Open Byte desktop mode from the dashboard; this step is recorded when you choose its link.','dash-step4':'QOWNER Quiz Maker','dash-step4-note':'Status: not available. The iOS and Android apps cannot be downloaded yet, so this is not counted.','dash-onboard-note':'Progress is saved only in this browser. We never send or store it on a server.','dash-reset':'Reset',
     'dash-data':'Data & privacy','dash-export':'Download my data (.json)','dash-delete':'Remove local data & sign out',
-    'dash-data-note':'The account profile, provider identity, and login sessions are stored in the account database so the web and future apps can share one identity. Byte preferences, the checklist, and the workspace summary stay local to this browser. Export copies the session view and local data to a file; the delete action removes local data and revokes this browser session.',
+    'dash-data-note':'The account profile, provider identity, and login sessions are stored in the account database so the web and future apps can share one identity. Byte preferences, the checklist, and the workspace summary stay local to this browser. Export copies a safe account view and local data to a file; secret tokens are never included. The delete action removes local data and revokes this browser session.',
     'dash-delete-ask':'Are you sure? Local Byte data, checklist progress, and the workspace summary will be removed, then this browser session will be revoked. This does not delete the persistent account or sessions on other devices; contact us for an account deletion request.',
-    'dash-delete-yes':'Delete local data & sign out','dash-delete-no':'Cancel','dash-revoke':'Revoke at provider',
+    'dash-delete-yes':'Delete local data & sign out','dash-delete-no':'Cancel','dash-account-delete-request':'Request persistent account deletion by email','dash-revoke':'Revoke at provider',
     'foot-brand':'VOID SCRIPTOR','foot-tagline':'Build beyond the known.','foot-copy':'© 2026 Void Scriptor · Choirudin',
     'foot-privacy':'Privacy','foot-terms':'Terms','foot-contact':'Contact','foot-duka':'Support'
   }
