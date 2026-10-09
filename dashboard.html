@@ -783,15 +783,15 @@ function renderDiagnostics(){
 }
 var BYTE_SETTINGS_KEY='byte-settings-v1';
 function normalizeByteSettings(value){
-  var source=value||{},persona=['balanced','friend','guardian'].indexOf(source.persona)>=0?source.persona:'balanced',model=['free','My_Tier'].indexOf(source.model)>=0?source.model:'free';
-  return {persona:persona,model:model,safe:source.safe!==false,voice:source.voice===true};
+  var source=value||{},persona=['balanced','friend','guardian'].indexOf(source.persona)>=0?source.persona:'balanced';
+  return {persona:persona,safe:source.safe!==false,voice:source.voice===true};
 }
 function readByteSettings(){try{return normalizeByteSettings(JSON.parse(localStorage.getItem(BYTE_SETTINGS_KEY)||'{}'))}catch(e){return normalizeByteSettings({})}}
 function applyDashSettings(value){
-  var settings=normalizeByteSettings(value),p=document.getElementById('dashPersona'),m=document.getElementById('dashModel'),s=document.getElementById('dashSafe'),v=document.getElementById('dashVoice');
-  if(p)p.value=settings.persona;if(m)m.value=settings.model;if(s)s.checked=settings.safe;if(v)v.checked=settings.voice;
+  var settings=normalizeByteSettings(value),p=document.getElementById('dashPersona'),s=document.getElementById('dashSafe'),v=document.getElementById('dashVoice');
+  if(p)p.value=settings.persona;if(s)s.checked=settings.safe;if(v)v.checked=settings.voice;
 }
-function collectDashSettings(){return normalizeByteSettings({persona:(document.getElementById('dashPersona')||{}).value,model:(document.getElementById('dashModel')||{}).value,safe:(document.getElementById('dashSafe')||{}).checked,voice:(document.getElementById('dashVoice')||{}).checked})}
+function collectDashSettings(){return normalizeByteSettings({persona:(document.getElementById('dashPersona')||{}).value,safe:(document.getElementById('dashSafe')||{}).checked,voice:(document.getElementById('dashVoice')||{}).checked})}
 function saveDashSettings(showNotice){
   var settings=collectDashSettings(),note=document.getElementById('dashSettingsNote');
   try{localStorage.setItem(BYTE_SETTINGS_KEY,JSON.stringify(settings));if(note)note.textContent='Preferensi tersimpan lokal. Byte akan membacanya saat dibuka berikutnya.';if(showNotice)notice('Preferensi Byte disimpan.')}catch(e){if(note)note.textContent='Browser ini tidak mengizinkan penyimpanan preferensi lokal.'}

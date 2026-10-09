@@ -475,13 +475,14 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-launcher-copy{display:grid;justify-items:start;gap:3px;text-align:left;line-height:1.1}
 .byte-launcher-copy b{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;color:#a8f2ff}
 .byte-launcher-copy small{font-size:12px;color:var(--ash)}
-.byte-pulse{width:8px;height:8px;flex:none;border-radius:50%;background:#63e6ff;box-shadow:0 0 0 5px rgba(99,230,255,.11),0 0 14px rgba(99,230,255,.8);animation:bytePulse 2.4s ease-in-out infinite}
+.byte-pulse{width:8px;height:8px;flex:none;border-radius:50%;background:#63e6ff;box-shadow:0 0 0 5px rgba(99,230,255,.11),0 0 14px rgba(99,230,255,.8)}
+.byte-assistant.is-thinking .byte-pulse,.byte-assistant.is-listening .byte-pulse,.byte-assistant.is-speaking .byte-pulse{animation:bytePulse 1.2s ease-in-out infinite}
 .byte-assistant.is-thinking .byte-launcher-orb,.byte-assistant.is-listening .byte-launcher-orb,.byte-assistant.is-speaking .byte-launcher-orb{border-color:#a8f2ff;box-shadow:0 0 0 5px rgba(0,179,221,.08),0 0 26px rgba(0,179,221,.35)}
 .byte-assistant.is-thinking .byte-panel-id>img{animation:byteThink 1.2s ease-in-out infinite}
 .byte-assistant.is-listening .byte-panel-id>img{animation:byteListen .8s ease-in-out infinite}
 .byte-assistant.is-speaking .byte-panel-id>img{animation:byteSpeak .48s ease-in-out infinite alternate}
 .byte-assistant.is-offline .byte-pulse{background:#ffad7d;box-shadow:0 0 0 5px rgba(255,173,125,.1),0 0 14px rgba(255,173,125,.7)}
-.byte-panel{pointer-events:auto;width:100%;height:min(540px,calc(100dvh - 112px));min-height:330px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(201,166,255,.34);border-radius:var(--radius-feature);background:linear-gradient(145deg,rgba(14,15,23,.98),rgba(24,18,45,.97));box-shadow:0 24px 70px rgba(0,0,0,.56),0 0 40px rgba(124,92,255,.12);backdrop-filter:blur(18px)}
+.byte-panel{pointer-events:auto;width:100%;height:min(540px,calc(100svh - 112px));max-height:calc(100dvh - 112px);min-height:330px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid rgba(201,166,255,.34);border-radius:var(--radius-feature);background:linear-gradient(145deg,rgba(14,15,23,.98),rgba(24,18,45,.97));box-shadow:0 24px 70px rgba(0,0,0,.56),0 0 40px rgba(124,92,255,.12);backdrop-filter:blur(18px)}
 .byte-panel[hidden]{display:none}
 .byte-panel-head{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(124,92,255,.18),transparent)}
 .byte-panel-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
@@ -535,9 +536,9 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 @keyframes byteListen{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
 @keyframes byteSpeak{from{transform:scale(1)}to{transform:scale(1.07)}}
 @media(max-width:760px){
-  .byte-assistant{right:12px;bottom:12px;width:calc(100vw - 24px)}
+  .byte-assistant{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));width:min(380px,calc(100vw - 24px - env(safe-area-inset-right)))}
   .byte-launcher{min-height:62px;padding-right:14px}
-  .byte-panel{height:min(520px,calc(100dvh - 92px));min-height:300px;border-radius:22px}
+  .byte-panel{height:min(520px,calc(100svh - 92px));max-height:calc(100dvh - 92px);min-height:300px;border-radius:22px}
 }
 @media(prefers-reduced-motion:reduce){.byte-launcher-orb img,.byte-pulse,.byte-typing{animation:none}}
 
@@ -562,6 +563,26 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   .profile b{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hero{min-height:calc(100svh - 64px);min-height:calc(100dvh - 64px)}
   .page-quiz .lockwrap{min-height:calc(100svh - 64px);min-height:calc(100dvh - 64px);padding-block:24px}
+}
+
+/* Short landscape screens need a smaller assistant dock. Without this guard,
+   the desktop-sized 330px minimum can occupy most of a phone's viewport and
+   hide the page behind the open conversation. */
+@media (max-width:900px) and (orientation:landscape) and (max-height:600px){
+  .byte-assistant{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));width:min(360px,calc(100vw - 24px - env(safe-area-inset-right)))}
+  .byte-launcher{min-height:56px;padding:6px 12px 6px 6px;gap:9px}
+  .byte-launcher-orb{width:42px;height:42px}
+  .byte-launcher-orb img{width:36px;height:39px}
+  .byte-launcher-copy small{font-size:11px}
+  .byte-panel{height:min(300px,calc(100svh - 80px));max-height:calc(100dvh - 80px);min-height:0;border-radius:18px}
+  .byte-panel-head{min-height:58px;padding:7px 10px}
+  .byte-panel-id{gap:8px}
+  .byte-panel-id>img{width:36px;height:39px}
+  .byte-panel-id span{font-size:9px}
+  .byte-settings{top:62px;right:10px}
+  .byte-messages{padding:10px;gap:8px}
+  .byte-message{font-size:12px;padding:9px 11px}
+  .byte-form{padding:8px;gap:6px}
 }
 
 /* Desktop mode is intentionally still the same site component: it opens as a
@@ -884,6 +905,9 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home .caro-nav .caro-dot{width:38px;height:44px}
 .page-home .caro-nav .caro-dot::before{width:9px;height:9px}
 .page-home .caro-nav .caro-dot.on::before{transform:scale(1.2)}
+.page-home .caro-nav .caro-toggle{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(217,207,255,.42);border-radius:50%;background:rgba(255,255,255,.04);color:var(--cloud);font-size:14px;line-height:1;cursor:pointer}
+.page-home .caro-nav .caro-toggle:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.16)}
+.page-home .caro-nav .caro-toggle:focus-visible{outline:2px solid var(--primary-pale);outline-offset:2px}
 .page-home .caro-slide{padding-bottom:clamp(92px,9vw,122px)}
 
 @media(max-width:760px){
