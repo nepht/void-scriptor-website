@@ -129,6 +129,8 @@ async function handleAppPreview(request, url, env) {
 //                                       server-side, read profile, 302 back to /
 //   3. GET  /api/auth/session        -> JSON identity for the header badge
 //   4. POST /api/auth/logout         -> clear the session cookie
+//   5. POST /api/auth/exchange       -> exchange a one-time PKCE code for a
+//                                       bearer session used by native clients
 //
 // The access token is used once to read the profile and then discarded. Nothing
 // token-shaped is stored or sent to the client. Production sessions carry an
@@ -138,9 +140,12 @@ async function handleAppPreview(request, url, env) {
 // ---------------------------------------------------------------------------
 
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
+const OAUTH_FLOW_COOKIE = 'vs_oauth_flow';
 const SESSION_COOKIE = 'vs_session';
 const SESSION_TTL = 24 * 60 * 60; // 24 hours, in seconds
 const STATE_TTL = 600; // 10 minutes to finish the round trip
+const NATIVE_AUTH_CODE_TTL = 120; // seconds; one-time code after provider login
+const NATIVE_REDIRECT_URI = 'vscriptor://oauth/callback';
 const GITHUB_AUTHORIZE = 'https://github.com/login/oauth/authorize';
 const GITHUB_TOKEN = 'https://github.com/login/oauth/access_token';
 const GITHUB_API = 'https://api.github.com';
@@ -167,6 +172,12 @@ function parseCookies(req) {
     out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
   }
   return out;
+}
+
+function bearerToken(req) {
+  const value = req.headers.get('authorization') || '';
+  const match = /^Bearer\s+([^\s]+)$/i.exec(value.trim());
+  return match ? match[1] : null;
 }
 
 function cookie(name, value, { maxAge, clear = false } = {}) {
@@ -222,6 +233,95 @@ async function signSession(payload, secret) {
     new TextEncoder().encode(body),
   );
   return `${body}.${b64url(new Uint8Array(sig))}`;
+}
+
+async function verifySignedPayload(raw, secret) {
+  if (!raw || !secret) return null;
+  const dot = raw.lastIndexOf('.');
+  if (dot < 1) return null;
+  const body = raw.slice(0, dot);
+  const sig = raw.slice(dot + 1);
+  let ok = false;
+  try {
+    ok = await crypto.subtle.verify(
+      'HMAC',
+      await hmacKey(secret),
+      b64urlDecode(sig),
+      new TextEncoder().encode(body),
+    );
+  } catch {
+    return null;
+  }
+  if (!ok) return null;
+  try {
+    return JSON.parse(new TextDecoder().decode(b64urlDecode(body)));
+  } catch {
+    return null;
+  }
+}
+
+function nativeFlowRequest(url, provider) {
+  if (url.searchParams.get('client') !== 'desktop') {
+    return { requested: false, flow: null };
+  }
+  const redirectUri = url.searchParams.get('redirect_uri') || '';
+  const state = url.searchParams.get('state') || '';
+  const codeChallenge = url.searchParams.get('code_challenge') || '';
+  const codeChallengeMethod = url.searchParams.get('code_challenge_method') || '';
+  const valid =
+    redirectUri === NATIVE_REDIRECT_URI &&
+    /^[A-Za-z0-9_-]{16,128}$/.test(state) &&
+    /^[A-Za-z0-9_-]{43}$/.test(codeChallenge) &&
+    codeChallengeMethod === 'S256';
+  if (!valid) return { requested: true, flow: null };
+  return {
+    requested: true,
+    flow: {
+      kind: 'native',
+      client: 'desktop',
+      provider,
+      state,
+      redirect_uri: redirectUri,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+    },
+  };
+}
+
+async function readNativeFlow(req, secret, provider) {
+  const payload = await verifySignedPayload(
+    parseCookies(req)[OAUTH_FLOW_COOKIE],
+    secret,
+  );
+  if (!payload || payload.kind !== 'native' || payload.provider !== provider) return null;
+  if (typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) return null;
+  if (
+    payload.redirect_uri !== NATIVE_REDIRECT_URI ||
+    typeof payload.state !== 'string' ||
+    !/^[A-Za-z0-9_-]{16,128}$/.test(payload.state) ||
+    typeof payload.code_challenge !== 'string' ||
+    !/^[A-Za-z0-9_-]{43}$/.test(payload.code_challenge) ||
+    payload.code_challenge_method !== 'S256'
+  ) return null;
+  return payload;
+}
+
+function clearOAuthCookies() {
+  return [
+    cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
+    cookie(OAUTH_FLOW_COOKIE, '', { clear: true }),
+  ];
+}
+
+function nativeCallbackUrl(flow, params = {}) {
+  const target = new URL(flow.redirect_uri);
+  target.searchParams.set('state', flow.state);
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') {
+      target.searchParams.set(key, String(value));
+    }
+  }
+  return target.toString();
 }
 
 async function sha256B64url(value) {
@@ -327,33 +427,38 @@ async function createPersistentSession(db, { userId, provider, subject, now, exp
   return sid;
 }
 
+async function createNativeAuthorizationCode(db, flow, { userId, provider, subject, now }) {
+  const code = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  const codeHash = await sha256B64url(code);
+  const expiresAt = now + NATIVE_AUTH_CODE_TTL;
+  await db.prepare(
+    'DELETE FROM oauth_codes WHERE expires_at <= ? OR used_at IS NOT NULL',
+  ).bind(now).run();
+  await db.prepare(`
+    INSERT INTO oauth_codes (
+      code_hash, user_id, provider, subject, redirect_uri,
+      code_challenge, code_challenge_method, created_at, expires_at, used_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)
+  `).bind(
+    codeHash,
+    userId,
+    provider,
+    subject,
+    flow.redirect_uri,
+    flow.code_challenge,
+    flow.code_challenge_method,
+    now,
+    expiresAt,
+  ).run();
+  return code;
+}
+
 // The identity, or null for anything that is not a valid, unexpired,
 // correctly-signed session cookie.
 async function readSession(req, secret, db) {
-  const raw = parseCookies(req)[SESSION_COOKIE];
-  if (!raw) return null;
-  const dot = raw.lastIndexOf('.');
-  if (dot < 1) return null;
-  const body = raw.slice(0, dot);
-  const sig = raw.slice(dot + 1);
-  let ok = false;
-  try {
-    ok = await crypto.subtle.verify(
-      'HMAC',
-      await hmacKey(secret),
-      b64urlDecode(sig),
-      new TextEncoder().encode(body),
-    );
-  } catch {
-    return null;
-  }
-  if (!ok) return null;
-  let payload;
-  try {
-    payload = JSON.parse(new TextDecoder().decode(b64urlDecode(body)));
-  } catch {
-    return null;
-  }
+  const raw = parseCookies(req)[SESSION_COOKIE] || bearerToken(req);
+  const payload = await verifySignedPayload(raw, secret);
+  if (!payload || typeof payload !== 'object') return null;
   if (!payload || typeof payload.exp !== 'number' || payload.exp * 1000 < Date.now()) {
     return null;
   }
@@ -569,11 +674,14 @@ function callbackUrl(url, provider = 'github') {
 // One session shape for every provider. `provider` and `sub` together are the
 // account key; `email` is the cross-provider identity, so signing in with
 // GitHub and Google on the same address lands on the same account.
-async function finishSignIn(env, url, { sub, login, name, avatar, email, emailVerified = false, provider }) {
+async function finishSignIn(
+  env,
+  url,
+  { sub, login, name, avatar, email, emailVerified = false, provider },
+  nativeFlow = null,
+) {
   const now = Math.floor(Date.now() / 1000);
-  const exp = now + SESSION_TTL;
   let userId = null;
-  let sid = null;
 
   if (env.ACCOUNTS_DB) {
     try {
@@ -587,21 +695,73 @@ async function finishSignIn(env, url, { sub, login, name, avatar, email, emailVe
         emailVerified,
       });
       userId = account.userId;
-      sid = await createPersistentSession(env.ACCOUNTS_DB, {
+      if (nativeFlow) {
+        const code = await createNativeAuthorizationCode(env.ACCOUNTS_DB, nativeFlow, {
+          userId,
+          provider,
+          subject: account.subject,
+          now,
+        });
+        return redirect(
+          nativeCallbackUrl(nativeFlow, { code }),
+          { 'set-cookie': clearOAuthCookies() },
+        );
+      }
+      const exp = now + SESSION_TTL;
+      const sid = await createPersistentSession(env.ACCOUNTS_DB, {
         userId,
         provider,
         subject: account.subject,
         now,
         exp,
       });
+      const payload = {
+        sub: String(sub),
+        provider,
+        login: login || '',
+        name: name || login || '',
+        avatar: avatar || '',
+        email: email || null,
+        iat: now,
+        exp,
+        uid: userId,
+        sid,
+      };
+      const session = await signSession(payload, env.SESSION_SECRET);
+      return redirect('/?auth=ok', {
+        'set-cookie': [
+          cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL }),
+          ...clearOAuthCookies(),
+        ],
+      });
     } catch (error) {
       console.error('account persistence failed', error);
+      if (nativeFlow) {
+        return redirect(
+          nativeCallbackUrl(nativeFlow, {
+            error: 'server_error',
+            error_description: 'account_storage',
+          }),
+          { 'set-cookie': clearOAuthCookies() },
+        );
+      }
       return redirect('/?auth=failed&reason=account_storage', {
-        'set-cookie': cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
+        'set-cookie': clearOAuthCookies(),
       });
     }
   }
 
+  if (nativeFlow) {
+    return redirect(
+      nativeCallbackUrl(nativeFlow, {
+        error: 'server_error',
+        error_description: 'accounts_not_configured',
+      }),
+      { 'set-cookie': clearOAuthCookies() },
+    );
+  }
+
+  const exp = now + SESSION_TTL;
   const payload = {
     sub: String(sub),
     provider,
@@ -623,9 +783,137 @@ async function finishSignIn(env, url, { sub, login, name, avatar, email, emailVe
   return redirect('/?auth=ok', {
     'set-cookie': [
       cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL }),
-      cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
+      ...clearOAuthCookies(),
     ],
   });
+}
+
+async function handleNativeExchange(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > 4096) {
+    return json(413, { ok: false, error: 'request_too_large' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  const code = typeof body?.code === 'string' ? body.code.trim() : '';
+  const codeVerifier = typeof body?.code_verifier === 'string'
+    ? body.code_verifier.trim()
+    : '';
+  const redirectUri = typeof body?.redirect_uri === 'string'
+    ? body.redirect_uri.trim()
+    : '';
+  if (
+    !code ||
+    !/^[A-Za-z0-9_-]{32,128}$/.test(code) ||
+    !/^[A-Za-z0-9._~-]{43,128}$/.test(codeVerifier) ||
+    redirectUri !== NATIVE_REDIRECT_URI
+  ) {
+    return json(400, { ok: false, error: 'invalid_request' });
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const codeHash = await sha256B64url(code);
+  let row;
+  try {
+    row = await env.ACCOUNTS_DB.prepare(`
+      SELECT
+        c.user_id, c.provider, c.subject, c.redirect_uri,
+        c.code_challenge, c.code_challenge_method,
+        c.expires_at, c.used_at,
+        u.email AS user_email, u.display_name AS user_name, u.avatar_url AS user_avatar,
+        i.login AS identity_login, i.display_name AS identity_name, i.avatar_url AS identity_avatar,
+        i.email AS identity_email
+      FROM oauth_codes c
+      JOIN users u ON u.id = c.user_id
+      LEFT JOIN identities i
+        ON i.user_id = c.user_id
+       AND i.provider = c.provider
+       AND i.subject = c.subject
+      WHERE c.code_hash = ?
+      LIMIT 1
+    `).bind(codeHash).first();
+  } catch (error) {
+    console.error('native auth exchange lookup failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+
+  // Keep all grant failures deliberately indistinguishable. A native client
+  // must never learn whether a code existed, expired, was already used, or
+  // failed its redirect/PKCE binding.
+  const invalidGrant = () => json(400, { ok: false, error: 'invalid_grant' });
+  if (!row || row.redirect_uri !== redirectUri || row.used_at !== null || row.expires_at <= now) {
+    return invalidGrant();
+  }
+  if (
+    row.code_challenge_method !== 'S256' ||
+    !timingSafeEqual(row.code_challenge, await sha256B64url(codeVerifier))
+  ) {
+    return invalidGrant();
+  }
+
+  let consumed;
+  try {
+    consumed = await env.ACCOUNTS_DB.prepare(`
+      UPDATE oauth_codes
+      SET used_at = ?
+      WHERE code_hash = ? AND used_at IS NULL AND expires_at > ?
+    `).bind(now, codeHash, now).run();
+  } catch (error) {
+    console.error('native auth exchange consume failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+  if (!consumed?.meta || Number(consumed.meta.changes) !== 1) return invalidGrant();
+
+  try {
+    const exp = now + SESSION_TTL;
+    const sid = await createPersistentSession(env.ACCOUNTS_DB, {
+      userId: row.user_id,
+      provider: row.provider,
+      subject: row.subject,
+      now,
+      exp,
+    });
+    const session = await signSession({
+      uid: row.user_id,
+      sid,
+      sub: row.subject,
+      provider: row.provider,
+      login: row.identity_login || '',
+      name: row.user_name || row.identity_name || row.identity_login || '',
+      avatar: row.user_avatar || row.identity_avatar || '',
+      email: row.user_email || row.identity_email || null,
+      iat: now,
+      exp,
+    }, env.SESSION_SECRET);
+    return json(200, {
+      ok: true,
+      token_type: 'Bearer',
+      session_token: session,
+      expires_at: exp,
+      user: {
+        id: row.user_id,
+        provider: row.provider,
+        login: row.identity_login || '',
+        name: row.user_name || row.identity_name || row.identity_login || '',
+        avatar: row.user_avatar || row.identity_avatar || '',
+        email: row.user_email || row.identity_email || null,
+      },
+    });
+  } catch (error) {
+    console.error('native auth session creation failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
 }
 
 async function handleAuth(request, url, env) {
@@ -633,6 +921,10 @@ async function handleAuth(request, url, env) {
   const ghOn = authConfigured(env);
   const ggOn = googleConfigured(env);
   const configured = ghOn || ggOn;
+
+  if (path === '/api/auth/exchange') {
+    return handleNativeExchange(request, env);
+  }
 
   // The header badge polls this on every page load, so an unconfigured
   // deployment must answer cleanly ("nobody is signed in, sign-in is off")
@@ -661,6 +953,7 @@ async function handleAuth(request, url, env) {
     if (request.method !== 'POST') {
       return json(405, { ok: false, error: 'method_not_allowed' });
     }
+    const usesBearer = Boolean(bearerToken(request));
     if (env.ACCOUNTS_DB && env.SESSION_SECRET) {
       const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
       if (session && session.sid) {
@@ -674,7 +967,13 @@ async function handleAuth(request, url, env) {
         }
       }
     }
-    return redirect('/', { 'set-cookie': cookie(SESSION_COOKIE, '', { clear: true }) });
+    if (usesBearer) return json(200, { ok: true });
+    return redirect('/', {
+      'set-cookie': [
+        cookie(SESSION_COOKIE, '', { clear: true }),
+        ...clearOAuthCookies(),
+      ],
+    });
   }
 
   if (!configured) {
@@ -693,6 +992,10 @@ async function handleAuth(request, url, env) {
     if (!ghOn) {
       return json(500, { ok: false, error: 'provider_not_configured', provider: 'github' });
     }
+    const nativeRequest = nativeFlowRequest(url, 'github');
+    if (nativeRequest.requested && !nativeRequest.flow) {
+      return json(400, { ok: false, error: 'invalid_native_oauth_request' });
+    }
     const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
     const q = new URLSearchParams({
       client_id: env.GITHUB_CLIENT_ID,
@@ -701,14 +1004,28 @@ async function handleAuth(request, url, env) {
       state,
       allow_signup: 'true',
     });
+    const flowCookie = nativeRequest.flow
+      ? await signSession({
+        ...nativeRequest.flow,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + STATE_TTL,
+      }, env.SESSION_SECRET)
+      : null;
     return redirect(`${GITHUB_AUTHORIZE}?${q}`, {
-      'set-cookie': cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+      'set-cookie': [
+        cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+        ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
+      ],
     });
   }
 
   if (path === '/api/auth/google') {
     if (!ggOn) {
       return json(500, { ok: false, error: 'provider_not_configured', provider: 'google' });
+    }
+    const nativeRequest = nativeFlowRequest(url, 'google');
+    if (nativeRequest.requested && !nativeRequest.flow) {
+      return json(400, { ok: false, error: 'invalid_native_oauth_request' });
     }
     const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
     const q = new URLSearchParams({
@@ -721,8 +1038,18 @@ async function handleAuth(request, url, env) {
       // so someone with several Google accounts can pick the right one.
       prompt: 'select_account',
     });
+    const flowCookie = nativeRequest.flow
+      ? await signSession({
+        ...nativeRequest.flow,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + STATE_TTL,
+      }, env.SESSION_SECRET)
+      : null;
     return redirect(`${GOOGLE_AUTHORIZE}?${q}`, {
-      'set-cookie': cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+      'set-cookie': [
+        cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+        ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
+      ],
     });
   }
 
@@ -731,14 +1058,19 @@ async function handleAuth(request, url, env) {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
-    // Always drop the state cookie, either way, so it cannot be replayed.
-    const clearState = cookie(OAUTH_STATE_COOKIE, '', { clear: true });
+    const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'github');
+    // Always drop both flow cookies, either way, so they cannot be replayed.
+    const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
-      return redirect('/?auth=cancelled', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     // Exchange the code server-side. The token stays on this side.
@@ -755,7 +1087,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     const ghHeaders = {
@@ -769,7 +1103,9 @@ async function handleAuth(request, url, env) {
     ).json().catch(() => null);
 
     if (!profile || !profile.id) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     // GitHub keeps the address private unless the person made it public, so
@@ -798,7 +1134,7 @@ async function handleAuth(request, url, env) {
       avatar: profile.avatar_url || '',
       email,
       emailVerified,
-    });
+    }, nativeFlow);
   }
 
   // --- finish the round trip (Google) ---------------------------------------
@@ -806,14 +1142,19 @@ async function handleAuth(request, url, env) {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
-    // Always drop the state cookie, either way, so it cannot be replayed.
-    const clearState = cookie(OAUTH_STATE_COOKIE, '', { clear: true });
+    const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'google');
+    // Always drop both flow cookies, either way, so they cannot be replayed.
+    const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
-      return redirect('/?auth=cancelled', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     // Exchange the code server-side, as a form post (Google's documented
@@ -832,7 +1173,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     const info = await (
@@ -843,7 +1186,9 @@ async function handleAuth(request, url, env) {
     // unverified address: it is the identity key we merge accounts on, so an
     // unverified one could let someone claim another person's account.
     if (!info || !info.sub || !info.email || info.email_verified === false) {
-      return redirect('/?auth=failed', { 'set-cookie': clearState });
+      return nativeFlow
+        ? redirect(nativeCallbackUrl(nativeFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies })
+        : redirect('/?auth=failed', { 'set-cookie': clearCookies });
     }
 
     return finishSignIn(env, url, {
@@ -854,7 +1199,7 @@ async function handleAuth(request, url, env) {
       avatar: info.picture || '',
       email: info.email,
       emailVerified: info.email_verified === true,
-    });
+    }, nativeFlow);
   }
 
   // --- sign out -------------------------------------------------------------
