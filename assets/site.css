@@ -1123,3 +1123,20 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
   .page-home .proof-frame figcaption small{min-height:0}
 }
 @media(prefers-reduced-motion:reduce){.page-home .proof-frame{transition:none}.page-home .proof-frame:hover{transform:none}}
+
+/* Product status ledger: replace ambiguous headline numbers with the three
+   states users need to decide what to open next. */
+.page-home .status-rail{display:grid;grid-template-columns:minmax(220px,.72fr) minmax(0,1.6fr);align-items:start;gap:34px;margin-top:clamp(44px,6vw,88px);padding:clamp(38px,5vw,64px) max(32px,calc((100vw - 1200px)/2));border-top:1px solid rgba(217,207,255,.12);border-bottom:1px solid rgba(217,207,255,.12);background:rgba(5,6,12,.34)}
+.page-home .status-heading h2{max-width:10ch;margin:10px 0 12px;font-size:clamp(30px,3.8vw,52px);line-height:.98;letter-spacing:-.035em}
+.page-home .status-heading p{max-width:38ch;margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.page-home .status-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;min-width:0}
+.page-home .status-item{min-width:0;display:flex;flex-direction:column;align-items:flex-start;min-height:206px;padding:20px;border:1px solid rgba(217,207,255,.16);border-left:2px solid rgba(217,207,255,.26);border-radius:0 10px 10px 0;background:linear-gradient(150deg,rgba(17,14,31,.78),rgba(8,8,15,.9))}
+.page-home .status-item--live{border-left-color:var(--cyan)}
+.page-home .status-state{color:var(--faint);font:800 10px var(--font-mono);letter-spacing:.14em}
+.page-home .status-item--live .status-state{color:var(--cyan)}
+.page-home .status-item h3{margin:16px 0 8px;font-size:19px;line-height:1.12;letter-spacing:-.015em}
+.page-home .status-item p{min-height:4.6em;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.page-home .status-item a{display:inline-flex;align-items:center;min-height:44px;margin-top:auto;color:var(--primary-pale);font-size:12px;font-weight:800}
+.page-home .status-item a:hover{color:#fff}
+@media(max-width:1020px){.page-home .status-rail{grid-template-columns:1fr;gap:24px}.page-home .status-heading h2{max-width:16ch}}
+@media(max-width:760px){.page-home .status-rail{display:block;margin-top:36px;padding:36px 16px 42px}.page-home .status-heading{margin-bottom:22px}.page-home .status-list{grid-template-columns:1fr;gap:10px}.page-home .status-item{min-height:0;padding:18px}.page-home .status-item p{min-height:0;margin-bottom:8px}}
