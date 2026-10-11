@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Panduan resmi untuk mengunduh, memverifikasi, memasang, dan menghapus Void Scriptor Studio RC.2 di Windows.">
+<title>Mulai dengan Void Scriptor Studio : Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=layout-20261010-navflow">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/docs/getting-started">
+<meta property="og:site_name" content="Void Scriptor">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://voidscriptor.com/docs/getting-started">
+<meta property="og:title" content="Mulai dengan Void Scriptor Studio">
+<meta property="og:description" content="Panduan unduh, verifikasi checksum, pemasangan, uninstall, dan Byte Bridge lokal.">
+<meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mulai dengan Void Scriptor Studio">
+<meta name="twitter:description" content="Panduan resmi Void Scriptor Studio RC.2 untuk Windows.">
+<meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+</head>
+<body class="page-legal page-docs">
+<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+<header><div class="shell navrow"><a class="brand" href="/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/">← Kembali ke beranda</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">DOKUMENTASI · WINDOWS</div>
+<h1>Mulai tanpa menebak.</h1>
+<p class="lede">Panduan ini hanya memuat langkah yang dapat didukung oleh artefak dan pengujian yang tersedia. Rilis saat ini adalah <strong>Void Scriptor Studio 1.2.0-rc.2</strong>, release candidate untuk Windows x64, bukan rilis stabil.</p>
+<nav class="docnav" aria-label="Navigasi dokumentasi"><a href="/docs/getting-started" aria-current="page">Mulai</a><a href="/status">Status</a><a href="/report-bug">Laporkan bug</a><a href="/changelog">Catatan rilis</a></nav>
+
+<section class="docs-section" aria-labelledby="download-title">
+<span class="eyebrow">01 · UNDUH &amp; VERIFIKASI</span>
+<h2 id="download-title">Gunakan installer yang jelas sumbernya.</h2>
+<p>Unduh hanya dari domain kanonik <code>voidscriptor.com</code>. Checksum SHA-256 mendeteksi file yang berubah atau rusak; checksum saja tidak membuktikan provenance atau tanda tangan penerbit.</p>
+<div class="docs-grid">
+<article class="docs-card docs-card--accent"><div class="docs-card-head"><span class="status-tag">PREVIEW</span><code>Windows x64</code></div><h3>Installer .exe</h3><p>Installer Windows x64 yang dipublikasikan untuk release candidate ini.</p><dl class="docs-facts"><div><dt>Versi</dt><dd>1.2.0-rc.2</dd></div><div><dt>Ukuran</dt><dd>32.746.152 byte · 32,75 MB</dd></div><div><dt>Rilis stabil</dt><dd>Belum</dd></div></dl><a class="status-primary" href="/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe" download>Unduh installer Windows</a></article>
+<article class="docs-card"><div class="docs-card-head"><span class="status-tag">SHA-256</span><code>VERIFIKASI LOKAL</code></div><h3>Sidik jari yang dipublikasikan</h3><p class="hash">f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</p><p class="docs-muted">Fallback teks yang dapat dibaca tanpa JavaScript:</p><a href="/release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256">Buka manifest checksum</a></article>
+</div>
+<div class="docs-command"><p><strong>PowerShell:</strong> jalankan dari folder tempat installer disimpan.</p><pre><code>Get-FileHash .\VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -Algorithm SHA256</code></pre><p>Nilai <code>Hash</code> harus sama persis dengan manifest. Jika berbeda, jangan jalankan installer; simpan bukti dan gunakan <a href="/report-bug">form laporan bug</a>.</p></div>
+</section>
+
+<section class="docs-section" aria-labelledby="install-title">
+<span class="eyebrow">02 · PEMASANGAN</span>
+<h2 id="install-title">Pasang dan hapus dengan jalur Windows.</h2>
+<div class="docs-steps"><article><span>01</span><div><h3>Jalankan installer</h3><p>Buka file <code>VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe</code> setelah checksum cocok. Installer menggunakan lokasi default Windows dan menyediakan shortcut opsional.</p></div></article><article><span>02</span><div><h3>Jika SmartScreen muncul</h3><p>RC.2 memiliki tanda tangan Authenticode bertimestamp yang valid pada audit lokal, tetapi sertifikatnya self-issued dan belum menjadi identitas publisher yang dipercaya SmartScreen. SmartScreen tetap mungkin menampilkan peringatan. Verifikasi sumber serta checksum sebelum mengambil keputusan di dialog Windows.</p></div></article><article><span>03</span><div><h3>Uninstall</h3><p>Buka <strong>Settings → Apps → Installed apps → Void Scriptor → Uninstall</strong>, atau jalankan <em>Uninstall Void Scriptor</em> dari Start Menu. Dokumen proyek dan data pengguna tidak boleh dihapus tanpa pemeriksaan manual.</p></div></article></div>
+</section>
+
+<section class="docs-section" aria-labelledby="portable-title">
+<span class="eyebrow">03 · PORTABLE / ZIP</span>
+<h2 id="portable-title">Jangan campur dua bentuk distribusi.</h2>
+<div class="docs-note"><strong>Portable ZIP tersedia sebagai artefak publik yang sudah diaudit.</strong><p>ZIP berukuran 34.496.233 byte dengan SHA-256 <code>1a13bbeaf1e2af1401690004cc4a34ad8f4a9e3e2b8377a0587fe79805ac071f</code>. Isinya memiliki 497 member: 494 payload cocok dengan CHECKSUMS.txt, ditambah BACA-SAYA.txt, CHECKSUMS.txt, dan codesign.pub sebagai metadata paket.</p><p>Artefak portable ini masih bertanda RC.1; RC.2 saat ini hanya tersedia sebagai installer Windows.</p><div class="status-actions"><a class="status-primary" href="/downloads/voidscriptor-1.2.0-rc.1-windows-x64.zip" download>Unduh portable ZIP</a><a href="/release-manifests/voidscriptor-1.2.0-rc.1-windows-x64.zip.sha256">Lihat manifest ZIP</a></div></div>
+<p>Verifikasi hash sibling <code>.zip.sha256</code>, ekstrak seluruh folder, lalu jalankan <code>Release\\void_scriptor.exe</code>. Jangan menjalankan executable dari dalam ZIP atau memisahkan DLL/data. Dokumentasi portable dipisahkan dari dokumentasi installer karena alur distribusinya berbeda.</p>
+</section>
+
+<section class="docs-section" aria-labelledby="requirements-title">
+<span class="eyebrow">04 · PERSYARATAN</span>
+<h2 id="requirements-title">Batas yang diketahui, bukan angka karangan.</h2>
+<div class="docs-note"><strong>Minimum resmi belum dipublikasikan.</strong><p>Konfigurasi berikut adalah konfigurasi uji nyata yang berhasil diukur untuk evidence lokal; ini bukan persyaratan minimum resmi dan bukan janji kompatibilitas semua perangkat.</p></div>
+<dl class="docs-facts docs-facts--wide"><div><dt>OS uji</dt><dd>Windows 11 Pro 64-bit</dd></div><div><dt>CPU uji</dt><dd>Intel Core i5-4570 · 4 logical/physical cores</dd></div><div><dt>RAM uji</dt><dd>32 GiB terpasang</dd></div><div><dt>GPU uji</dt><dd>AMD Radeon RX590 GME</dd></div><div><dt>Minimum resmi</dt><dd>Belum ditetapkan</dd></div><div><dt>Ruang disk</dt><dd>Belum ditetapkan sebagai requirement</dd></div></dl>
+</section>
+
+<section class="docs-section" aria-labelledby="data-title">
+<span class="eyebrow">05 · DATA &amp; KONEKSI</span>
+<h2 id="data-title">Ketahui apa yang tetap lokal.</h2>
+<div class="docs-grid"><article class="docs-card"><h3>Data aplikasi</h3><p>State autentikasi dan artefak diagnostik menggunakan direktori application-support Windows yang diberikan oleh <code>path_provider</code>, di bawah subfolder <code>VoidScriptor\state</code> dan <code>VoidScriptor\diagnostics\crash</code>. Lokasi fisik dapat berbeda menurut konfigurasi Windows.</p></article><article class="docs-card"><h3>Proyek</h3><p>Tanpa lokasi custom, root proyek default berada di direktori Documents platform di bawah <code>VoidScriptor\Projects</code>. Lokasi custom yang sehat menjadi sumber kebenaran; jika drive hilang, aplikasi memberi status fallback.</p></article><article class="docs-card"><h3>OAuth &amp; Byte Bridge</h3><p>Website memakai GitHub/Google OAuth dan cookie sesi HttpOnly; kata sandi tidak diterima. Byte Bridge opsional berjalan lokal pada <code>127.0.0.1:8766</code> dan hanya menerima origin yang diizinkan. Jangan menyalin token, cookie, atau secret ke laporan.</p></article></div>
+</section>
+
+<section class="docs-section docs-next" aria-labelledby="next-title"><span class="eyebrow">LANGKAH BERIKUTNYA</span><h2 id="next-title">Butuh bantuan?</h2><p>Periksa <a href="/status">status dan batas rilis</a>, baca <a href="/changelog">catatan rilis</a>, atau kirim <a href="/report-bug">laporan bug terstruktur</a>. Untuk masalah keamanan, gunakan <a href="/.well-known/security.txt">security.txt</a>.</p></section>
+</div></main>
+<footer><div class="shell foot"><a href="/">Beranda</a><a href="/status">Kesehatan layanan</a><a href="/changelog">Catatan rilis</a><a href="/report-bug">Laporkan bug</a><a href="/privacy">Privasi</a><a href="/terms">Syarat</a><a href="/contact">Kontak</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+</body>
+</html>
