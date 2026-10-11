@@ -32,7 +32,9 @@ if (-not (Test-ByteBridgeHealth)) {
   }
   $logDir = Join-Path ([IO.Path]::GetTempPath()) 'voidscriptor-byte-bridge'
   New-Item -ItemType Directory -Path $logDir -Force | Out-Null
-  Start-Process -FilePath $node -ArgumentList @($bridgeScript) -WorkingDirectory $siteRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $logDir 'stdout.log') -RedirectStandardError (Join-Path $logDir 'stderr.log') | Out-Null
+  # Start-Process passes ArgumentList as a single command line. Quote the
+  # script path so a workspace path containing spaces stays one Node argument.
+  Start-Process -FilePath $node -ArgumentList @('"' + $bridgeScript + '"') -WorkingDirectory $siteRoot -WindowStyle Hidden -RedirectStandardOutput (Join-Path $logDir 'stdout.log') -RedirectStandardError (Join-Path $logDir 'stderr.log') | Out-Null
   Start-Sleep -Milliseconds 600
   if (Test-ByteBridgeHealth) {
     Write-Host 'Byte bridge started and passed the production-origin health check on http://127.0.0.1:8766'
