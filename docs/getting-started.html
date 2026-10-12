@@ -39,6 +39,7 @@
 <article class="docs-card"><div class="docs-card-head"><span class="status-tag">SHA-256</span><code>VERIFIKASI LOKAL</code></div><h3>Sidik jari yang dipublikasikan</h3><p class="hash">f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</p><p class="docs-muted">Fallback teks yang dapat dibaca tanpa JavaScript:</p><a href="/release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256">Buka manifest checksum</a></article>
 </div>
 <div class="docs-command"><p><strong>PowerShell:</strong> jalankan dari folder tempat installer disimpan.</p><pre><code>Get-FileHash .\VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -Algorithm SHA256</code></pre><p>Nilai <code>Hash</code> harus sama persis dengan manifest. Jika berbeda, jangan jalankan installer; simpan bukti dan gunakan <a href="/report-bug">form laporan bug</a>.</p></div>
+<div class="docs-command"><p><strong>Verifikasi maintainer:</strong> repository menyediakan pemeriksaan checksum dan Authenticode dalam satu langkah.</p><pre><code>pwsh -File tools/verify-release.ps1 -InstallerPath ./VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -ManifestPath ./release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256</code></pre><p>Hasil <code>SignatureStatus: Valid</code> hanya berarti signature dapat diverifikasi. RC.2 masih memakai sertifikat self-issued, sehingga publisher belum tepercaya oleh SmartScreen.</p></div>
 </section>
 
 <section class="docs-section" aria-labelledby="install-title">
