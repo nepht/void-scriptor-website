@@ -21,6 +21,10 @@ const INTERNAL = [
   /^\/_prod_artifact_.*\.zip$/i,
   /^\/\.wrangler\//i,
   /^\/\.git\//i,
+  // CI workflow files are repository tooling, not site content. `.assetsignore`
+  // is not consulted by `wrangler pages deploy`, so the worker is the only
+  // layer that can keep `/.github/workflows/*.yml` out of the served bundle.
+  /^\/\.github(?:\/|$)/i,
   /^\/tools\//i,
   /^\/crawl\.pkl$/i,
   /^\/github_app_connector\.js$/i,
