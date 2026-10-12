@@ -4,11 +4,13 @@ import fs from 'node:fs';
 
 const worker = fs.readFileSync('_worker.js', 'utf8');
 
-test('download worker allows only versioned signed Windows handoff bundles', () => {
+test('download worker allows only versioned signed Windows installer executables', () => {
   assert.match(
     worker,
-    /releases\\\/windows\\\/v\\d\+\\\.\\d\+\\\.\\d\+-rc\\\.\\d\+\\\/VoidScriptor-v\\d\+\\\.\\d\+\\\.\\d\+-rc\\\.\\d\+-windows-x64-signed\\\.zip/i,
+    /releases\\\/windows\\\/v\\d\+\\\.\\d\+\\\.\\d\+-rc\\\.\\d\+\\\/VoidScriptor-v\\d\+\\\.\\d\+\\\.\\d\+-rc\\\.\\d\+-windows-x64-signed\\\.exe/i,
   );
+  assert.doesNotMatch(worker, /windows-x64-signed\\\.zip/i);
+  assert.doesNotMatch(worker, /voidscriptor-1\\\.2\\\.0-rc\\\.1-windows-x64\\\.zip/i);
   assert.match(worker, /function isPublicDownloadKey\(key\)/);
   assert.match(worker, /isPublicDownloadKey\(key\)/);
   assert.doesNotMatch(worker, /DOWNLOADS\.get\(key\)\s*;[\s\S]{0,120}PUBLIC_DOWNLOAD_KEYS/);
