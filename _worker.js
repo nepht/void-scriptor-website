@@ -213,6 +213,14 @@ const PUBLIC_DOWNLOAD_KEYS = new Set([
   'VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe',
   'voidscriptor-1.2.0-rc.1-windows-x64.zip',
 ]);
+// Signed Windows bundles are published by the Void Scriptor Studio release
+// train to the same R2 bucket. Keep the route constrained to release-candidate
+// names and the exact package shape; this is still an allowlist, not an
+// arbitrary R2 proxy.
+const SIGNED_WINDOWS_BUNDLE = /^releases\/windows\/v\d+\.\d+\.\d+-rc\.\d+\/VoidScriptor-v\d+\.\d+\.\d+-rc\.\d+-windows-x64-signed\.zip$/i;
+function isPublicDownloadKey(key) {
+  return PUBLIC_DOWNLOAD_KEYS.has(key) || SIGNED_WINDOWS_BUNDLE.test(key);
+}
 const NATIVE_AUTH_CODE_TTL = 120; // seconds; one-time code after provider login
 const NATIVE_REDIRECT_URI = 'vscriptor://oauth/callback';
 const GITHUB_AUTHORIZE = 'https://github.com/login/oauth/authorize';
@@ -3635,7 +3643,7 @@ export default {
           headers: downloadErrorHeaders(),
         });
       }
-      if (!PUBLIC_DOWNLOAD_KEYS.has(key)) {
+      if (!isPublicDownloadKey(key)) {
         return new Response('Download not found', {
           status: 404,
           headers: downloadErrorHeaders(),
