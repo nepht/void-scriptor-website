@@ -39,7 +39,7 @@ footer{border-top:1px solid rgba(155,115,230,.14);padding:30px 0}.foot{display:f
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
 </style>
-<link rel="stylesheet" href="/assets/site.css?v=layout-20261009">
+<link rel="stylesheet" href="/assets/site.css?v=dashboard-responsive-20261012">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-180x180.png">
@@ -52,9 +52,9 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <meta property="og:url" content="https://voidscriptor.com/privacy">
 <meta property="og:title" content="Kebijakan Privasi : Void Scriptor">
 <meta property="og:description" content="Data apa yang kami proses, mengapa, dan hak Anda.">
-<meta property="og:image" content="https://voidscriptor.com/assets/og-image.png">
+<meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.png">
+<meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","name":"Kebijakan Privasi : Void Scriptor","url":"https://voidscriptor.com/privacy","description":"Data apa yang kami proses, mengapa, dan hak Anda.","inLanguage":["id"],"isPartOf":{"@type":"WebSite","name":"Void Scriptor","url":"https://voidscriptor.com/"},"publisher":{"@type":"Organization","name":"Void Scriptor","url":"https://voidscriptor.com/"}}
 </script>
@@ -66,9 +66,9 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <div class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Legal · Kebijakan Privasi</div>
 <h1>Kebijakan Privasi</h1>
 <div class="rule"></div>
-<p class="upd">Berlaku sejak: 9 Oktober 2026 · Terakhir diperbarui: 9 Oktober 2026 (cakupan produk, transfer, retensi, dan insiden)</p>
+<p class="upd">Berlaku sejak: 9 Oktober 2026 · Terakhir diperbarui: 12 Oktober 2026 (pembaruan sesi web)</p>
 
-<div class="note"><b>Ringkas:</b> Kami tidak menjalankan pelacakan iklan, tidak menjual data Anda, dan tidak memakai cookie pihak ketiga. Untuk masuk, kami memakai <b>GitHub atau Google</b>: penyedia itu membagikan nama, email, dan foto profil kepada kami. Profil akun dan identitas provider disimpan di <b>Cloudflare D1</b> agar website dan aplikasi dapat memakai identitas yang sama. Website memakai cookie HMAC 24 jam; aplikasi native memakai token sesi opaque 24 jam yang disimpan di penyimpanan aman perangkat. Keluar mencabut sesi ini di server. Kami tidak menyimpan kata sandi atau token akses GitHub/Google. Dokumen ini adalah draf operasional, bukan nasihat hukum.</div>
+<div class="note"><b>Ringkas:</b> Kami tidak menjalankan pelacakan iklan, tidak menjual data Anda, dan tidak memakai cookie pihak ketiga. Untuk masuk, kami memakai <b>GitHub atau Google</b>: layanan login itu membagikan nama, email, dan foto profil kepada kami. Profil akun dan data layanan login disimpan di <b>basis data akun Cloudflare D1</b> agar identitas website tetap tersambung. Form minat rilis QOWNER bersifat opsional: jika Anda mencentang persetujuan dan mengirim email, alamat itu disimpan di basis data yang sama untuk menindaklanjuti kabar rilis; email otomatis belum dikirim. Google Drive bersifat opsional: jika Anda menghubungkannya, token pembaruan Google Drive disimpan dalam bentuk yang dienkripsi; snapshot akun yang dikirim hanya berisi preferensi dan metadata aman. Koneksi aplikasi belum aktif. Website memakai cookie sesi yang ditandatangani di server supaya tidak bisa diubah diam-diam; sesi web diperbarui otomatis saat Anda tetap aktif dan mendekati kedaluwarsa, dengan masa berlaku hingga 24 jam setiap kali diperbarui. Sesi aplikasi memiliki token paling lama 24 jam dan mekanismenya akan diperbarui sebelum koneksi antar aplikasi digunakan. Keluar mencabut sesi ini di server. Kami tidak menyimpan kata sandi atau token akses GitHub/Google. Dokumen ini adalah draf operasional, bukan nasihat hukum.</div>
 
 <h2><span class="n">00</span>Pengelola, cakupan, dan bahasa</h2>
 <p><b>Pengelola operasional:</b> Void Scriptor, studio independen yang dikelola oleh Choirudin. Kontak untuk pertanyaan privasi, permintaan data, dan korespondensi hukum: <a href="mailto:voidscriptor@gmail.com">voidscriptor@gmail.com</a>. Kami tidak mengklaim nama ini sebagai badan hukum terpisah dari pemilik/pengelolanya.</p>
@@ -79,15 +79,17 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <h2><span class="n">01</span>Data yang kami proses</h2>
 <p>Kami berupaya memproses data sesedikit mungkin (data minimization):</p>
 <ul>
-<li><b>Data akun (masuk dengan GitHub/Google):</b> saat Anda masuk, penyedia identitas membagikan <b>ID akun, nama tampilan, nama pengguna, alamat email, dan URL foto profil</b> Anda kepada kami. Kami memakainya untuk mengenali akun, menampilkan identitas, dan menghubungkan website dengan aplikasi yang memakai layanan akun yang sama. Profil akun, identitas provider, kode OAuth sekali pakai, dan sesi aktif disimpan di <b>Cloudflare D1</b>. Kami <b>tidak pernah</b> menerima atau menyimpan kata sandi, dan <b>tidak menyimpan token akses</b> GitHub/Google: token provider hanya dipakai sekali di server untuk membaca profil lalu dibuang. Aplikasi native menerima token sesi Void Scriptor yang opaque, berumur 24 jam, dan dapat dicabut di server.</li>
+<li><b>Data akun (masuk dengan GitHub/Google):</b> saat Anda masuk, layanan login membagikan <b>ID akun, nama tampilan, nama pengguna, alamat email, dan URL foto profil</b> Anda kepada kami. Kami memakainya untuk mengenali akun, menampilkan identitas, dan menghubungkan website dengan aplikasi yang memakai layanan akun yang sama. Profil akun, data login, kode masuk sekali pakai, dan sesi aktif disimpan di <b>Cloudflare D1</b>. Kami <b>tidak pernah</b> menerima atau menyimpan kata sandi, dan <b>tidak menyimpan token akses</b> GitHub/Google: token layanan login hanya dipakai sekali di server untuk membaca profil lalu dibuang. Aplikasi menerima token sesi Void Scriptor yang acak, berumur 24 jam, dan dapat dicabut di server.</li>
+<li><b>Google Drive (opsional):</b> bila Anda memilih Hubungkan Google Drive, server menerima refresh token Google Drive untuk membuat access token sementara saat mengunggah snapshot. Refresh token disimpan dalam bentuk yang <b>dienkripsi</b> menggunakan secret Worker dan tidak pernah dikirim ke browser atau ditampilkan di API. Kami menyimpan referensi file backup yang dibuat aplikasi, bukan isi ruang kerja; file remote bernama <code>voidscriptor-account-backup.json</code> dan hanya berisi snapshot akun yang sudah Anda simpan. Memutuskan koneksi menghapus kredensial lokal dari D1, tetapi tidak menghapus file remote.</li>
 <li><b>Profil yang Anda isi sendiri:</b> dasbor dapat menyimpan nama tampilan, username publik, bio singkat, bahasa akun, zona waktu, pilihan visibilitas profil, alias QOWNER, dan pilihan ikut leaderboard. Username dan profil hanya ditampilkan di halaman publik jika Anda memilih visibilitas <b>Publik</b>; email dan provider login tidak pernah ditampilkan di sana. Alias QOWNER hanya dapat ditampilkan untuk leaderboard jika Anda memilih izin tersebut.</li>
+<li><b>Minat rilis QOWNER (opsional):</b> jika Anda mengisi email dan mencentang persetujuan di halaman QOWNER, kami menyimpan alamat email yang sudah dinormalisasi, sumber formulir, waktu persetujuan, serta waktu pembaruan di Cloudflare D1. Data ini hanya untuk menindaklanjuti kabar rilis QOWNER; belum ada email otomatis yang dikirim dan alamat tersebut tidak ditampilkan secara publik.</li>
 <li><b>Preferensi bahasa:</b> pilihan ID/EN disimpan di peramban Anda.</li>
 <li><b>Log server:</b> penyedia hosting (Cloudflare) secara otomatis mencatat data teknis standar seperti alamat IP, jenis peramban, dan waktu akses untuk keamanan dan pencegahan penyalahgunaan.</li>
 <li><b>Byte dan ruang kerja lokal:</b> pesan yang Anda kirim ke Byte, pilihan karakter/suara, serta ringkasan metadata yang Anda minta untuk dibaca (nama, tipe, ukuran, ekstensi, dan waktu perubahan berkas). Bridge lokal tidak mengirim isi berkas untuk pemindaian; ringkasan dapat diteruskan ke model AI lokal atau penyedia model yang Anda konfigurasi untuk menyusun jawaban.</li>
 <li><b>Suara:</b> keluaran suara Byte dibuat oleh kemampuan suara di peramban. Jika Anda menyalakan mikrofon, pengenalan suara mengikuti pemrosesan yang disediakan oleh peramban/perangkat Anda; kami tidak menyimpan rekaman suara melalui situs ini.</li>
 <li><b>Produk mendatang:</b> jika Studio atau QOWNER mengaktifkan analitik, telemetri, crash report, leaderboard, atau data progres tersimpan di server, jenis data dan tujuannya akan dijelaskan sebelum fitur tersebut aktif.</li>
 </ul>
-<p class="en">In short: no ad trackers, no third-party cookies, no data selling. Sign-in uses GitHub or Google, which shares your name, email, avatar, and provider ID with us. We store the account identity in Cloudflare D1 so the website and apps can share it; the website uses a signed 24-hour cookie and native apps use an opaque 24-hour Void Scriptor session token. Signing out revokes the current server-side session. We never store your password or GitHub/Google access token.</p>
+<p class="en">In short: no ad trackers, no third-party cookies, no data selling. Sign-in uses GitHub or Google, which shares your name, email, avatar, and provider ID with us. We store the account identity in Cloudflare D1 for the website. Google Drive is optional; if you connect it, we store an encrypted Drive refresh token and upload only the account snapshot you explicitly save. App connection is not active yet. The website uses a signed session cookie; an active web session is renewed automatically near expiry and carries up to 24 hours from each renewal. Native app tokens last at most 24 hours and will receive a separate renewal mechanism before shared app connections are enabled. Signing out revokes the current server-side session. We never store your password or GitHub/Google access token.</p>
 
 <h2><span class="n">02</span>Cara kami menggunakan data</h2>
 <ul>
@@ -95,18 +97,21 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <li>Mengenali Anda saat sudah masuk (sesi akun) dan mengingat preferensi bahasa Anda.</li>
 <li>Menyimpan perubahan profil yang Anda minta dan menampilkan profil publik hanya sesuai pilihan visibilitas Anda.</li>
 <li>Menyimpan pilihan alias dan persetujuan leaderboard QOWNER agar aplikasi mendatang dapat memakai identitas publik yang Anda pilih. Skor dan event belum aktif di website.</li>
+<li>Menindaklanjuti minat rilis QOWNER setelah Anda memberi persetujuan eksplisit melalui formulir; daftar ini tidak membuat akun website.</li>
 <li>Menjawab pertanyaan yang Anda kirim melalui email dukungan.</li>
 <li>Membaca metadata ruang kerja hanya ketika Anda meminta Byte melakukannya, dan menyusun rencana tanpa melakukan penghapusan, pemindahan, atau perubahan berkas secara otomatis.</li>
+<li>Mengunggah snapshot akun ke Google Drive hanya setelah Anda menghubungkan Drive dan menekan tombol backup; integrasi ini memakai scope Drive yang terbatas untuk file yang dibuat oleh aplikasi.</li>
 </ul>
 
 <h2><span class="n">03</span>Cookie &amp; penyimpanan lokal</h2>
 <p>Kami <b>tidak</b> memakai cookie untuk periklanan atau pelacakan lintas situs, dan tidak ada cookie pihak ketiga.</p>
 <ul>
-<li><b>Cookie sesi (<code>vs_session</code>):</b> diisi hanya setelah Anda masuk. Isinya adalah rujukan sesi acak, ID akun, provider, dan waktu kedaluwarsa yang ditandatangani secara kriptografis (HMAC-SHA256); token OAuth tidak pernah dimasukkan. Rujukan sesi disimpan sebagai hash di D1, sehingga dapat dicabut di server. Cookie bersifat <code>HttpOnly</code>, <code>Secure</code>, dan <code>SameSite=Lax</code>, serta <b>berlaku 24 jam</b>.</li>
+<li><b>Cookie sesi (<code>vs_session</code>):</b> diisi hanya setelah Anda masuk. Isinya adalah rujukan sesi acak, ID akun, provider, dan waktu kedaluwarsa yang ditandatangani di server supaya tidak bisa diubah diam-diam; token OAuth tidak pernah dimasukkan. Rujukan sesi disimpan sebagai hash di D1, sehingga dapat dicabut di server. Cookie bersifat <code>HttpOnly</code>, <code>Secure</code>, dan <code>SameSite=Lax</code>, serta <b>berlaku hingga 24 jam setiap kali diterbitkan atau diperbarui</b>. Sesi browser diperbarui otomatis saat tetap digunakan dan mendekati kedaluwarsa.</li>
 <li><b>Cookie state OAuth (<code>vs_oauth_state</code>):</b> berumur pendek (10 menit) dan hanya dipakai untuk mencegah serangan CSRF selama proses masuk. Cookie ini dihapus begitu proses selesai.</li>
 <li><b>Cookie penghubungan provider (<code>vs_oauth_link</code>):</b> hanya muncul ketika Anda meminta menghubungkan Google atau GitHub kedua ke akun yang sedang aktif. Cookie ini ditandatangani, berlaku paling lama 10 menit, dan terikat pada hash sesi aktif; token provider tetap diproses sekali di server lalu dibuang.</li>
-<li><b>Cookie alur aplikasi (<code>vs_oauth_flow</code>):</b> hanya muncul saat aplikasi native memulai login, berumur paling lama 10 menit, ditandatangani, dan mengikat callback ke redirect URI aplikasi serta PKCE. Kode yang diterbitkan setelah login berlaku 2 menit dan hanya dapat dipakai sekali; nilai mentahnya tidak disimpan.</li>
-<li><b>Sesi aplikasi native:</b> aplikasi menyimpan token sesi Void Scriptor yang opaque di penyimpanan aman perangkat. Token berlaku paling lama 24 jam, dikirim sebagai Bearer ke endpoint akun, dan dapat dicabut melalui Keluar.</li>
+<li><b>Cookie alur aplikasi (<code>vs_oauth_flow</code>):</b> hanya muncul saat aplikasi memulai login, berumur paling lama 10 menit, ditandatangani, dan mengikat balasan login ke aplikasi serta pemeriksaan keamanan. Kode yang diterbitkan setelah login berlaku 2 menit dan hanya dapat dipakai sekali; nilai mentahnya tidak disimpan.</li>
+<li><b>Cookie alur Google Drive (<code>vs_google_drive_state</code>):</b> berumur paling lama 10 menit, ditandatangani, dan terikat pada akun serta sesi yang sedang masuk. Cookie ini hanya mengamankan callback persetujuan Drive dan dihapus setelah alur selesai; refresh token tidak disimpan di cookie.</li>
+<li><b>Sesi aplikasi:</b> aplikasi menyimpan token sesi Void Scriptor yang acak di penyimpanan aman perangkat. Token berlaku paling lama 24 jam, dikirim ke endpoint akun, dan dapat dicabut melalui Keluar.</li>
 <li><b><code>localStorage</code>:</b> menyimpan preferensi bahasa (ID/EN), preferensi Byte, kemajuan checklist, dan ringkasan metadata ruang kerja bila Anda menggunakannya. Data ini tetap di peramban Anda dan tidak menjadi basis data akun.</li>
 </ul>
 <p>Menekan <b>Keluar</b> mencabut sesi ini di server dan menghapus cookie dari peramban ini. Sesi pada perangkat lain tetap terpisah; keluar dari perangkat tersebut atau cabut izin aplikasi di pengaturan GitHub/Google bila diperlukan. Anda juga dapat menghapus seluruh cookie dan data situs ini kapan saja melalui pengaturan peramban.</p>
@@ -117,6 +122,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <ul>
 <li><b>GitHub</b> : bila Anda memilih masuk dengan GitHub, profil Anda diproses sesuai <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">kebijakan privasi GitHub</a>.</li>
 <li><b>Google</b> : bila Anda memilih masuk dengan Google, profil Anda diproses sesuai <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">kebijakan privasi Google</a>.</li>
+<li><b>Google Drive API</b> : bila Anda mengaktifkan backup Drive, permintaan unggah diproses oleh Google sesuai <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">kebijakan privasi Google</a>. Scope yang diminta dibatasi pada file yang dibuat oleh aplikasi.</li>
 </ul>
 <p>Kami tidak mengintegrasikan jaringan iklan, analitik pihak ketiga, atau pixel pelacakan.</p>
 
@@ -124,21 +130,24 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <p>Dasar pemrosesan dapat mencakup: persetujuan Anda saat memilih login atau mengirim permintaan dukungan; pelaksanaan layanan saat kami membuat sesi akun; kepentingan yang sah untuk keamanan, pencegahan penyalahgunaan, dan keandalan; serta kewajiban hukum jika diwajibkan. Jika GDPR berlaku, dasar dan hak yang relevan akan dinilai berdasarkan konteks pemrosesan, bukan diasumsikan otomatis.</p>
 <p>Cloudflare Pages/D1/R2, GitHub, Google, dan penyedia email dapat memproses data dari atau di luar Indonesia. D1 akun Void Scriptor dibuat di region APAC; pemrosesan lain tunduk pada peran, kebijakan, dan mekanisme transfer yang mereka gunakan.</p>
 <ul>
-<li><b>Sesi:</b> sampai 24 jam atau sampai dicabut; OAuth state dan alur aplikasi sampai 10 menit; kode pertukaran aplikasi sampai 2 menit atau satu kali pemakaian. Catatan yang sudah kedaluwarsa dibersihkan sebagai bagian dari operasional database.</li>
+<li><b>Sesi web:</b> diperbarui otomatis selama Anda tetap aktif; tanpa pembaruan, masa berlaku paling lama 24 jam sejak penerbitan atau pembaruan terakhir, atau sampai dicabut. Sesi aplikasi tetap berlaku paling lama 24 jam. OAuth state dan alur aplikasi sampai 10 menit; kode pertukaran aplikasi sampai 2 menit atau satu kali pemakaian. Catatan yang sudah kedaluwarsa dibersihkan sebagai bagian dari operasional database.</li>
 <li><b>Profil akun dan identitas provider:</b> selama akun aktif atau sampai Anda mengajukan penghapusan melalui Kontak, dengan pengecualian yang diperlukan untuk keamanan, sengketa, atau kewajiban hukum. Alias QOWNER dan pilihan leaderboard mengikuti masa penyimpanan profil dan dapat Anda ubah dari dasbor.</li>
 <li><b>Preferensi dan ringkasan Byte:</b> tetap di peramban sampai Anda menghapusnya atau memakai Hapus data saya.</li>
+<li><b>Koneksi Google Drive:</b> refresh token terenkripsi dan referensi file disimpan selama koneksi aktif. Memutuskan koneksi menghapus kredensial dari D1; file backup yang sudah dibuat tetap berada di Google Drive sampai Anda menghapusnya di sana.</li>
 <li><b>Email dukungan:</b> ditinjau dan disimpan selama diperlukan untuk menjawab, menjaga riwayat dukungan, atau memenuhi kewajiban; target operasionalnya paling lama 24 bulan setelah interaksi terakhir kecuali diperlukan lebih lama.</li>
+<li><b>Minat rilis QOWNER:</b> disimpan selama daftar rilis masih relevan atau sampai Anda meminta penghapusan. Kami dapat meninjau daftar tersebut secara berkala; permintaan penghapusan dapat diajukan melalui Kontak.</li>
 <li><b>Log Cloudflare:</b> kami tidak mengendalikan retensi teknis yang dikelola Cloudflare. Log yang tersedia bagi kami dipakai untuk keamanan dan operasional selama diperlukan; retensi aktual dapat mengikuti produk, paket, dan kebijakan Cloudflare.</li>
 </ul>
 <p>Jika terjadi insiden keamanan yang berdampak pada data pribadi, kami akan menyelidiki, mengambil langkah pengamanan, dan memberikan pemberitahuan kepada pihak yang terdampak atau otoritas jika diwajibkan oleh hukum yang berlaku.</p>
 
 <h2><span class="n">06</span>Hak Anda</h2>
-<p>Kami menyimpan profil akun, identitas provider, dan catatan sesi minimum di Cloudflare D1 agar website dan aplikasi dapat memakai identitas yang sama. Preferensi dan ringkasan Byte tetap berada di penyimpanan lokal peramban. Anda dapat meminta akses, koreksi, atau penghapusan akun melalui Kontak:</p>
+<p>Kami menyimpan profil akun, data layanan login, dan catatan sesi minimum di Cloudflare D1 agar identitas website tetap tersambung. Jika Google Drive terhubung, Anda dapat memutuskan koneksi dari dasbor untuk menghapus token pembaruan terenkripsi dan referensi file dari D1; file yang sudah ada tetap perlu dihapus dari Google Drive. Koneksi aplikasi belum aktif; penggunaan identitas ini oleh aplikasi mendatang akan dijelaskan dan diverifikasi sebelum peluncuran. Preferensi dan ringkasan Byte tetap berada di penyimpanan lokal peramban. Anda dapat meminta akses, koreksi, atau penghapusan akun melalui Kontak:</p>
 <ul>
 <li><b>Melihat &amp; mengunduh data Anda:</b> tombol <b>Unduh data saya</b> meminta ekspor terautentikasi yang berisi profil akun, provider terhubung, dan metadata sesi tanpa token rahasia, lalu menggabungkannya dengan data lokal Byte yang tersimpan di browser ke sebuah berkas JSON di perangkat Anda. Isi data lokal tidak dikirim ke server.</li>
-<li><b>Menghapus data akun:</b> tombol <b>Hapus data lokal &amp; keluar</b> di dasbor menghapus data lokal dan mencabut sesi pada peramban ini. Untuk penghapusan profil akun, identitas provider, dan sesi lain, kirim permintaan melalui Kontak setelah verifikasi kepemilikan akun.</li>
+<li><b>Menghapus data akun:</b> tombol <b>Hapus data lokal &amp; keluar</b> di dasbor hanya menghapus data lokal dan mencabut sesi pada peramban ini. Tombol <b>Hapus akun dan data server</b> menghapus profil akun, identitas provider, seluruh sesi, snapshot cloud, serta token Google Drive yang tersimpan setelah Anda mengetik konfirmasi eksplisit. File yang sudah dibuat di Google Drive tidak ikut dihapus; hapus file remote dari Google Drive jika itu juga Anda inginkan.</li>
 <li><b>Mencabut akses aplikasi:</b> Anda dapat mencabut izin Void Scriptor kapan saja dari pengaturan akun GitHub atau Google Anda (dasbor menyediakan tautan langsung), sehingga kami tidak lagi dapat membaca profil Anda.</li>
 <li><b>Menarik persetujuan leaderboard:</b> Anda dapat mengosongkan alias atau mematikan pilihan leaderboard QOWNER dari dasbor kapan saja. Fitur leaderboard akan memakai pilihan terbaru saat tersedia.</li>
+<li><b>Menarik minat rilis QOWNER:</b> kirim permintaan penghapusan ke <a href="mailto:voidscriptor@gmail.com?subject=Hapus%20minat%20rilis%20QOWNER">voidscriptor@gmail.com</a>. Sertakan alamat yang digunakan pada formulir; kami dapat meminta verifikasi yang wajar sebelum menghapusnya.</li>
 <li><b>Preferensi bahasa:</b> dapat Anda ubah atau hapus melalui pengaturan peramban.</li>
 </ul>
 <p>Untuk pertanyaan tentang privasi atau permintaan terkait data, hubungi kami di <a href="mailto:voidscriptor@gmail.com">voidscriptor@gmail.com</a>.</p>
@@ -156,5 +165,5 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 <a href="/contact">Kontak</a>
 </nav>
 </div></main>
-<footer><div class="shell"><div class="foot"><a href="/">Beranda</a><a href="/privacy">Privasi</a><a href="/terms">Syarat</a><a href="/contact">Kontak</a><a href="/changelog">Status rilis</a></div><div class="copyline">© 2026 Void Scriptor · Choirudin</div></div></footer>
+<footer><div class="shell"><div class="foot"><a href="/">Beranda</a><a href="/docs/getting-started">Mulai</a><a href="/report-bug">Laporkan bug</a><a href="/status">Kesehatan layanan</a><a href="/privacy">Privasi</a><a href="/terms">Syarat</a><a href="/contact">Kontak</a><a href="/changelog">Catatan rilis</a></div><div class="copyline">© 2026 Void Scriptor Studio · Choirudin</div></div></footer>
 </body></html>

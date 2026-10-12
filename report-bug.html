@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Form laporan bug Void Scriptor yang menyusun email lokal tanpa mengunggah data ke server.">
+<title>Laporkan bug : Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=dashboard-responsive-20261012">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/report-bug">
+<meta property="og:site_name" content="Void Scriptor"><meta property="og:type" content="website"><meta property="og:url" content="https://voidscriptor.com/report-bug"><meta property="og:title" content="Laporkan bug : Void Scriptor"><meta property="og:description" content="Laporan bug yang disusun di perangkat Anda dan dibuka melalui aplikasi email."><meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Laporkan bug : Void Scriptor"><meta name="twitter:description" content="Form laporan bug lokal untuk Void Scriptor."><meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+</head>
+<body class="page-legal page-report">
+<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+<header><div class="shell navrow"><a class="brand" href="/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/">← Kembali ke beranda</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">DUKUNGAN · LAPORAN BUG</div>
+<h1>Bantu kami menemukan retaknya.</h1>
+<p class="lede">Form ini hanya menyusun draft email di perangkat Anda. Tidak ada <code>fetch</code>, upload, atau endpoint pihak ketiga. Isi langkah reproduksi sedetail mungkin dan jangan sertakan rahasia.</p>
+<nav class="docnav" aria-label="Navigasi dukungan"><a href="/docs/getting-started">Mulai</a><a href="/status">Status</a><a href="/report-bug" aria-current="page">Laporkan bug</a><a href="/contact">Kontak</a></nav>
+<div class="docs-note docs-note--warning"><strong>Sebelum mengirim</strong><p>Hapus password, token, API key, cookie, kode verifikasi, alamat pribadi yang tidak diperlukan, dan isi file sensitif. Ganti dengan <code>[REDACTED]</code>. Untuk laporan keamanan, gunakan kanal di <a href="/.well-known/security.txt">security.txt</a>, bukan formulir umum ini.</p></div>
+<form class="report-form" id="bugReportForm" novalidate>
+<div class="form-row"><div class="fld"><label for="bug-name">Nama atau handle</label><input id="bug-name" name="name" type="text" autocomplete="name" required></div><div class="fld"><label for="bug-email">Email untuk balasan</label><input id="bug-email" name="email" type="email" autocomplete="email" required></div></div>
+<div class="form-row"><div class="fld"><label for="bug-version">Versi produk</label><select id="bug-version" name="version"><option value="Void Scriptor Studio 1.2.0-rc.2">Void Scriptor Studio 1.2.0-rc.2</option><option value="QOWNER web archive">QOWNER web archive</option><option value="Byte Assistant web preview">Byte Assistant web preview</option><option value="Tidak diketahui">Tidak diketahui</option></select></div><div class="fld"><label for="bug-platform">OS / browser</label><input id="bug-platform" name="platform" type="text" placeholder="Contoh: Windows 11 64-bit · Chrome" required></div></div>
+<div class="fld"><label for="bug-steps">Langkah reproduksi</label><textarea id="bug-steps" name="steps" required placeholder="1. Buka…&#10;2. Klik…&#10;3. Amati…"></textarea></div>
+<div class="form-row"><div class="fld"><label for="bug-expected">Hasil yang diharapkan</label><textarea id="bug-expected" name="expected" required></textarea></div><div class="fld"><label for="bug-actual">Hasil yang terjadi</label><textarea id="bug-actual" name="actual" required></textarea></div></div>
+<div class="fld"><label for="bug-logs">Log atau konteks tambahan (opsional)</label><textarea id="bug-logs" name="logs" placeholder="Tempel potongan log setelah meredaksi secret. Jangan lampirkan credential."></textarea></div>
+<button type="submit">Buka draft email</button><p class="form-status" id="bugStatus" role="status" aria-live="polite"></p><p class="form-note">Penerima: <a href="mailto:voidscriptor@gmail.com">voidscriptor@gmail.com</a>. Tombol hanya membuka aplikasi email lokal; Anda tetap meninjau dan mengirimnya sendiri.</p>
+</form>
+<section class="docs-section docs-next" aria-labelledby="bug-next-title"><span class="eyebrow">BUKTI YANG MEMBANTU</span><h2 id="bug-next-title">Sertakan hal yang bisa diverifikasi.</h2><ul class="docs-list"><li>URL/fitur dan waktu kejadian.</li><li>Versi yang terlihat di halaman atau installer.</li><li>Langkah reproduksi minimal dan apakah masalah selalu terjadi.</li><li>Checksum installer bila masalah muncul setelah unduh.</li><li>Screenshot yang sudah dibersihkan dari data pribadi.</li></ul></section>
+</div></main>
+<footer><div class="shell foot"><a href="/">Beranda</a><a href="/docs/getting-started">Mulai</a><a href="/status">Kesehatan layanan</a><a href="/changelog">Catatan rilis</a><a href="/privacy">Privasi</a><a href="/terms">Syarat</a><a href="/contact">Kontak</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+<script>
+(function(){var form=document.getElementById('bugReportForm'),status=document.getElementById('bugStatus');if(!form)return;function value(id){return document.getElementById(id).value.trim()}form.addEventListener('submit',function(event){event.preventDefault();var name=value('bug-name'),email=value('bug-email'),version=value('bug-version'),platform=value('bug-platform'),steps=value('bug-steps'),expected=value('bug-expected'),actual=value('bug-actual'),logs=value('bug-logs');if(!name){document.getElementById('bug-name').focus();status.textContent='Nama atau handle diperlukan.';return}if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){document.getElementById('bug-email').focus();status.textContent='Masukkan email yang valid.';return}if(!platform||!steps||!expected||!actual){status.textContent='Lengkapi OS/browser, langkah, hasil yang diharapkan, dan hasil aktual.';return}var subject='[Bug report] '+version+' · '+platform;var body=['Nama/handle: '+name,'Email: '+email,'Versi: '+version,'OS/browser: '+platform,'','Langkah reproduksi:',steps,'','Hasil yang diharapkan:',expected,'','Hasil aktual:',actual,'','Log/konteks tambahan:',logs||'(tidak ada)','', 'Catatan: saya sudah menghapus secret atau menggantinya dengan [REDACTED].'].join('\n');status.textContent='Membuka aplikasi email…';window.location.href='mailto:voidscriptor@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body)})})();
+</script>
+</body>
+</html>

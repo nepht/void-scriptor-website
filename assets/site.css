@@ -230,7 +230,7 @@ p,li{color:var(--ash)}
 }
 
 @media(max-width:760px){
-  .page-quiz{background-attachment:scroll;background-size:auto 100%;background-position:center top}
+  .page-quiz{background-attachment:scroll;background-size:auto 100%;background-position:18% top}
   .page-quiz .shell{width:calc(100% - 32px)}
   .page-quiz .hero{min-height:0;padding:68px 0 58px;background:linear-gradient(180deg,rgba(5,5,7,.77),rgba(5,5,7,.9))}
   .page-quiz h1{font-size:clamp(44px,12vw,68px)}
@@ -558,6 +558,13 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 }
 @media(prefers-reduced-motion:reduce){.byte-launcher-orb img,.byte-pulse,.byte-typing{animation:none}}
 
+/* Keep the homepage launcher compact while closed so it never covers the
+   current content. The conversation panel keeps its full width when opened. */
+.page-home .byte-assistant:not(.is-open){width:62px}
+.page-home .byte-assistant:not(.is-open) .byte-launcher{width:62px;min-height:62px;padding:5px;justify-content:center}
+.page-home .byte-assistant:not(.is-open) .byte-launcher-copy,
+.page-home .byte-assistant:not(.is-open) .byte-launcher .byte-pulse{display:none}
+
 /* Landscape phones have very little vertical room. Keep the mobile navigation
    in the header as a compact, horizontally scrollable rail instead of letting
    a tall column cover the page below it. */
@@ -720,6 +727,14 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-dashboard .step.is-unavailable .box{border-color:rgba(217,207,255,.28);color:var(--faint)}
 .page-dashboard .step.is-unavailable .txt b{color:var(--fog)}
 .page-dashboard .panel :is(button,a):focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+@media(max-width:900px){
+  .page-dashboard .dash-command{grid-template-columns:1fr;gap:20px;padding:22px 24px}
+  .dash-command-actions{justify-content:flex-start}
+  .dash-readiness-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dash-readiness-head{align-items:flex-start}
+  .dash-settings-head{display:grid;gap:12px}
+  .dash-settings-head .ghost{justify-self:start}
+}
 @media(max-width:760px){
   .page-dashboard main.dash{width:100%;margin-left:0;padding:42px max(16px,env(safe-area-inset-right)) calc(76px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background-attachment:scroll}
   .page-dashboard .dash-head{margin-bottom:22px}
@@ -1243,7 +1258,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
    intentionally asymmetric so the account identity remains the focal area;
    unavailable cloud and billing capabilities never get fake metrics. */
 .page-dashboard .dash-center-tabs{order:1;width:min(1200px,100%);display:flex;align-items:center;gap:4px;margin:0 auto 22px;padding:5px;border:1px solid rgba(201,166,255,.18);border-radius:var(--radius-feature);background:rgba(8,10,17,.72);overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(201,166,255,.45) transparent}
-.page-dashboard [data-dashboard-panel][hidden],.page-dashboard [data-dashboard-card-view][hidden],.page-dashboard [data-dashboard-shell][hidden],.page-dashboard [data-dashboard-grid-shell][hidden]{display:none!important}
+.page-dashboard [data-dashboard-panel][hidden],.page-dashboard [data-dashboard-card-view][hidden],.page-dashboard [data-dashboard-shell][hidden],.page-dashboard [data-dashboard-grid-shell][hidden],.page-dashboard:not(.dashboard-ready) [data-dashboard-panel]:not([data-dashboard-panel=overview]),.page-dashboard:not(.dashboard-ready) [data-dashboard-card-view]:not([data-dashboard-card-view=overview]){display:none!important}
 .page-dashboard .dash-center-tabs a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;flex:0 0 auto;padding:0 14px;border:1px solid transparent;border-radius:var(--radius-control);color:var(--fog);font-size:11px;font-weight:750;white-space:nowrap}
 .page-dashboard .dash-center-tabs a:hover,.page-dashboard .dash-center-tabs a:focus-visible{color:var(--cloud);border-color:rgba(201,166,255,.24);background:rgba(201,166,255,.07)}
 .page-dashboard .dash-center-tabs a.is-active{color:var(--cloud);border-color:rgba(0,179,221,.38);background:rgba(0,179,221,.09)}
@@ -1612,4 +1627,64 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 @media(prefers-reduced-motion:reduce){
   .page-home .carousel .caro-slide,
   .page-home .carousel .caro-art img{transition:none!important}
+}
+
+/* Homepage cinematic stage: the art owns the viewport; the copy stays in a readable rail. */
+.page-home::before,.page-home::after{opacity:0;background-image:none}
+.page-home header{position:absolute;inset:0 0 auto;height:76px;background:linear-gradient(180deg,rgba(5,5,7,.76),rgba(5,5,7,.18) 80%,transparent);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.page-home .hero{min-height:100dvh;border-bottom:1px solid rgba(255,255,255,.1);background:#050507;isolation:isolate}
+.page-home .hero-inner{min-height:100dvh;width:min(1200px,calc(100% - 64px));padding-top:clamp(118px,15vh,164px);padding-bottom:calc(clamp(52px,8vh,96px) + env(safe-area-inset-bottom));align-items:flex-start;justify-content:center;text-align:left}
+.page-home .hero .scene{background-image:url('/assets/slides/void-studio.webp');background-position:68% 50%;transform:scale(1.035);filter:saturate(.82) contrast(1.05)}
+.page-home .hero .veil{background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.74) 34%,rgba(5,5,7,.24) 70%,rgba(5,5,7,.44) 100%),linear-gradient(0deg,rgba(5,5,7,.9) 0%,rgba(5,5,7,.08) 56%,rgba(5,5,7,.48) 100%)}
+.page-home .hero .copy{max-width:680px;align-items:flex-start;text-align:left;font-family:var(--font-body)}
+.page-home .hero .hero-logo{width:clamp(54px,6vw,78px);margin-bottom:20px}
+.page-home .hero .eyebrow{margin-bottom:18px;padding:0;border:0;border-radius:0;background:none;letter-spacing:.18em}
+.page-home .hero .eyebrow::before{display:none}
+.page-home .hero h1{max-width:12ch;font-size:clamp(52px,6.2vw,90px);line-height:.93}
+.page-home .hero .lead{max-width:30ch;margin-top:26px}
+.page-home .hero .desc{max-width:54ch}
+.page-home .hero .actions{justify-content:flex-start}
+.page-home .hero .platforms{justify-content:flex-start}
+.page-home .hero .note{align-self:flex-start;border-radius:0;border-inline:0;padding-inline:0;background:none}
+.page-home .carousel{margin-top:0;padding-top:clamp(56px,8vw,112px);background:var(--abyss)}
+.page-home .product-intro{width:min(1200px,calc(100% - 64px));margin-inline:auto;padding-inline:0}
+.page-home .caro-viewport{width:100%;min-height:clamp(620px,calc(100dvh - 76px),860px);border-inline:0;border-radius:0;background:#050507}
+.page-home .caro-slide{min-height:clamp(560px,68vw,100dvh)}
+.page-home .caro-copy{min-height:clamp(560px,68vw,100dvh);max-width:620px;padding:clamp(48px,8vw,120px) clamp(24px,7vw,112px);justify-content:center}
+.page-home .caro-copy h2{font-size:clamp(38px,5vw,76px);line-height:.98;max-width:10ch}
+.page-home .caro-copy p{max-width:42ch}
+.page-home .caro-art{mask-image:radial-gradient(ellipse at 62% 50%,#000 42%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse at 62% 50%,#000 42%,transparent 78%)}
+.page-home .caro-art::before{background:linear-gradient(90deg,rgba(5,5,7,.96) 0%,rgba(5,5,7,.72) 29%,rgba(5,5,7,.08) 72%,rgba(5,5,7,.22) 100%),linear-gradient(0deg,rgba(5,5,7,.72),transparent 46%,rgba(5,5,7,.18))}
+.page-home .caro-art img{object-position:50% 50%;filter:saturate(.86) contrast(1.06)}
+.page-home .caro-slide[data-product=studio] .caro-art img{object-position:62% 50%}
+.page-home .caro-slide[data-product=qowner] .caro-art img{object-position:62% 50%}
+.page-home .caro-slide[data-product=byte] .caro-art img{object-position:61% 50%}
+.page-home .caro-nav{max-width:1200px;margin-inline:auto}
+@media(max-width:720px){
+  .page-home .hero-inner{width:calc(100% - 40px);min-height:100dvh;padding-top:112px;padding-bottom:44px}
+  .page-home .hero .scene{background-position:62% center}
+  .page-home .hero .veil{background:linear-gradient(180deg,rgba(5,5,7,.62),rgba(5,5,7,.36) 38%,rgba(5,5,7,.92) 82%),linear-gradient(90deg,rgba(5,5,7,.62),rgba(5,5,7,.12))}
+  .page-home .hero h1{font-size:clamp(52px,15vw,76px)}
+  .page-home .product-intro{width:calc(100% - 40px)}
+  .page-home .caro-viewport,.page-home .caro-slide,.page-home .caro-copy{min-height:clamp(560px,calc(100dvh - 72px),760px)}
+  .page-home .caro-copy{padding:34px 24px 42px;justify-content:flex-end}
+  .page-home .caro-art{mask-image:linear-gradient(180deg,#000 34%,transparent 100%);-webkit-mask-image:linear-gradient(180deg,#000 34%,transparent 100%)}
+  .page-home .caro-art::before{background:linear-gradient(0deg,rgba(5,5,7,.96) 0%,rgba(5,5,7,.55) 47%,rgba(5,5,7,.08) 86%),linear-gradient(90deg,rgba(5,5,7,.3),transparent)}
+  .page-home .caro-nav{padding-inline:20px}
+}
+
+/* Product surfaces keep the same cinematic opening while app surfaces remain bounded and scannable. */
+.page-quiz .hero{min-height:max(620px,100dvh);display:grid;align-items:center;padding-bottom:calc(clamp(72px,8vw,108px) + env(safe-area-inset-bottom))}
+.page-dashboard main.dash{max-width:1200px;margin-inline:auto}
+@media(max-width:720px){
+  .page-home .hero-inner{padding-bottom:calc(44px + env(safe-area-inset-bottom))}
+  .page-home .caro-copy{padding-bottom:calc(42px + env(safe-area-inset-bottom))}
+  .page-quiz .hero{min-height:calc(100dvh - 68px);padding-top:68px}
+}
+
+/* On narrow screens Byte stays in document flow so its closed launcher cannot
+   cover a hero CTA, carousel controls, or the last form field. */
+@media(max-width:760px){
+  .page-home .byte-assistant{position:relative;right:auto;bottom:auto;width:62px;margin:16px 16px 24px auto;pointer-events:auto}
+  .page-home .byte-assistant.is-open{width:min(380px,calc(100% - 32px));margin:16px auto 24px}
 }

@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+
+test('English homepage has English static navigation before JavaScript runs', () => {
+  const source = fs.readFileSync('en/index.html', 'utf8');
+
+  assert.match(source, /<html lang="en">/);
+  assert.match(source, />Skip to content<\/a>/);
+  assert.match(source, /aria-label="Open navigation"/);
+  assert.match(source, /aria-label="Sign in to your account"/);
+  assert.match(source, /aria-label="Profile menu"/);
+  assert.match(source, /data-i18n="nav-produk">Products<\/a>/);
+  assert.match(source, /data-i18n="nav-download">Downloads<\/a>/);
+  assert.match(source, /data-i18n="nav-solusi">Product status<\/a>/);
+  assert.match(source, /data-i18n="nav-status">Release notes<\/a>/);
+  assert.match(source, /data-i18n="nav-perusahaan">Company<\/a>/);
+  assert.match(source, /data-i18n="nav-duka">Support<\/a>/);
+  assert.match(source, /data-i18n="btn-masuk">Sign in<\/button>/);
+  assert.match(source, /data-i18n="btn-daftar">Create account<\/button>/);
+  assert.match(source, /data-i18n="menu-dashboard">Dashboard<\/a>/);
+  assert.match(source, /data-i18n="btn-keluar">Sign out<\/button>/);
+  assert.match(source, /data-i18n="hero-h1a">Build beyond<\/span>/);
+  assert.match(source, /data-i18n="hero-h1b">the known\.<\/span>/);
+  assert.match(source, /data-i18n="hero-lead">Creative tools and a local companion/);
+  assert.match(source, /data-i18n="hero-desc">Start with a real Windows project:/);
+  assert.match(source, /data-i18n="hero-cta"[^>]*>⊞&nbsp; Download preview \(RC\)<\/button>/);
+  assert.match(source, /data-i18n="hero-products-link">Explore Studio, QOWNER &amp; Byte<\/a>/);
+  assert.match(source, /data-i18n="prod-kicker">THREE PRODUCTS<\/span>/);
+  assert.match(source, /data-i18n="prod-h2">One creative flow, from structure to the next step\.<\/h2>/);
+  assert.match(source, /aria-label="Product highlights"/);
+  assert.match(source, /data-i18n="modal-title">Welcome back\.<\/h2>/);
+  assert.match(source, /data-i18n="modal-desc">Sign in to access your profile/);
+  assert.match(source, /aria-label="Close dialog"/);
+  assert.match(source, /data-i18n="modal-gh">Continue with GitHub<\/span>/);
+  assert.match(source, /data-i18n="modal-google">Continue with Google<\/span>/);
+  assert.match(source, /alt="Live screenshot of the QOWNER web archive with a public preview"/);
+  assert.match(source, /alt="Live screenshot of Byte Assistant open on the Void Scriptor homepage"/);
+  assert.match(source, /<a href="#products" data-i18n="nav-produk">Products<\/a>/g);
+  assert.match(source, /<a href="#release" data-i18n="nav-download">Downloads<\/a>/g);
+  assert.match(source, />Report a bug<\/a>/);
+});

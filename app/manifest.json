@@ -1,11 +1,11 @@
 {
-    "name": "void_scriptor",
-    "short_name": "void_scriptor",
+    "name": "QOWNER Demo Preview",
+    "short_name": "QOWNER",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#050507",
+    "theme_color": "#050507",
+    "description": "QOWNER Quiz Maker public demo preview from Void Scriptor.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

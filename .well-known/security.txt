@@ -1,0 +1,5 @@
+Contact: mailto:voidscriptor@gmail.com
+Expires: 2027-10-09T00:00:00.000Z
+Canonical: https://voidscriptor.com/.well-known/security.txt
+Preferred-Languages: id, en
+Policy: https://voidscriptor.com/contact
