@@ -8,18 +8,54 @@
 // Security headers are applied here (not via a `_headers` file) because a
 // Pages Advanced Mode worker owns every response and `_headers` is not
 // consulted for routes the worker returns directly.
+import { handleGitHubAppIntegration } from './github_app_connector.js';
+
 const INTERNAL = [
-  /^\/wrangler\.toml$/,
-  /^\/\.assetsignore$/,
-  /^\/\.gitignore$/,
-  /^\/_worker\.js$/,
-  /^\/_prod_deployment_meta_.*\.json$/,
-  /^\/_prod_artifact_.*\.zip$/,
-  /^\/\.wrangler\//,
-  /^\/\.git\//,
-  /^\/tools\//,
+  /^\/wrangler\.toml$/i,
+  /^\/\.assetsignore$/i,
+  /^\/\.gitignore$/i,
+  /^\/_worker\.js$/i,
+  /^\/_prod_deployment_meta_.*\.json$/i,
+  /^\/_prod_artifact_.*\.zip$/i,
+  /^\/\.wrangler\//i,
+  /^\/\.git\//i,
+  /^\/tools\//i,
+  /^\/crawl\.pkl$/i,
+  /^\/github_app_connector\.js$/i,
+  /^\/preview-entry\.txt$/i,
+  /^\/test(?:\/|$)/i,
+  /^\/migrations(?:\/|$)/i,
 ];
 const APP_PREVIEW_PREFIX = '/preview';
+
+// Decode only for the internal-file guard. Pages may receive an encoded path
+// and still resolve it to the same asset; checking the raw pathname alone
+// would let `/%77rangler.toml` or `/%6digrations/...` bypass the denylist.
+function canonicalInternalPath(pathname) {
+  let candidate = pathname;
+  for (let i = 0; i < 3; i += 1) {
+    let decoded;
+    try {
+      decoded = decodeURIComponent(candidate);
+    } catch {
+      return null;
+    }
+    if (decoded === candidate) break;
+    candidate = decoded;
+  }
+  const segments = candidate.replaceAll('\\', '/').split('/');
+  const normalized = [];
+  for (const segment of segments) {
+    if (!segment || segment === '.') continue;
+    if (segment === '..') {
+      normalized.pop();
+    } else {
+      normalized.push(segment);
+    }
+  }
+  return '/' + normalized.join('/');
+}
+
 const LEGACY_HOSTS = new Set(['voidscriptor.pages.dev']);
 const WWW_HOST = 'www.voidscriptor.com';
 const CANONICAL_HOST = 'voidscriptor.com';
@@ -63,17 +99,23 @@ const CSP_SITE = [
 // stale-while-revalidate: repeat visits stop waiting on the network, while a
 // deploy still propagates (stale is served at most once, then replaced).
 //
-// Only heavy binary art and fonts are cached. CSS/JS are deliberately left on
-// Pages' revalidate-every-time default: they are small, and a stale stylesheet
-// is the one thing that makes a deploy look visibly broken. robots.txt and
-// sitemap.xml stay fresh too, so adding a page is not delayed by a day.
+// Public pages and static assets are safe to cache: visitor identity is fetched
+// from no-store API endpoints, never rendered into the HTML response itself.
+// Keep a short browser window, a longer edge window, and stale-while-revalidate
+// so a deploy propagates without making every repeat visit wait for the origin.
+// Private dashboard/profile responses and the gated Flutter bundle stay no-store.
 const CACHE_ART = /\.(?:webp|png|jpe?g|svg|gif|ico|avif|woff2?|ttf|otf)$/i;
+const CACHE_STATIC = /\.(?:css|js|json|txt|xml|webmanifest|sha256)$/i;
+const RELEASE_MANIFEST = /^\/release-manifests\/.*\.sha256$/i;
+const PRIVATE_HTML = /^\/(?:dashboard(?:\.html)?|profile(?:\.html)?)(?:\/)?$/;
 function cachePolicy(pathname, isHtml, status) {
   // Never cache anything but a real success: a cached 404 would outlive the fix.
   if (status !== 200) return null;
-  // HTML is the entry point; /app/ owns its own cache via the Flutter SW.
-  if (isHtml || pathname.startsWith('/app/')) return null;
+  if (pathname.startsWith('/app/') || PRIVATE_HTML.test(pathname)) return null;
+  if (RELEASE_MANIFEST.test(pathname)) return 'no-store';
+  if (isHtml) return 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
   if (CACHE_ART.test(pathname)) return 'public, max-age=86400, stale-while-revalidate=604800';
+  if (CACHE_STATIC.test(pathname)) return 'public, max-age=86400, stale-while-revalidate=604800';
   return null;
 }
 
@@ -83,11 +125,23 @@ function harden(res, pathname, isHtml) {
   if (isHtml && !pathname.startsWith('/app/')) {
     headers.set('content-security-policy', CSP_SITE);
   }
+  // Pages may classify extensionless checksum/text assets as
+  // application/octet-stream. Normalize the public text contracts here so a
+  // fresh deployment does not expose a binary content type for a human-readable
+  // manifest or security disclosure file.
+  if (res.status === 200 && (pathname.endsWith('.sha256') || pathname === '/.well-known/security.txt')) {
+    headers.set('content-type', 'text/plain; charset=utf-8');
+  }
+  const existingCacheControl = headers.get('cache-control') || '';
+  const preservesNoStore = /(?:^|,\s*)no-store(?:\s*,|$)/i.test(existingCacheControl);
   const cc = cachePolicy(pathname, isHtml, res.status);
-  if (cc) headers.set('cache-control', cc);
-  // Entry HTML and UI code must reflect the current deployment immediately;
-  // immutable art is the only content allowed to use the long cache above.
-  if (res.status === 200 && (isHtml || /\.(?:css|js|json|txt|xml|webmanifest)$/i.test(pathname))) {
+  // A route that explicitly marked its response private must stay private. This
+  // matters for the dashboard/profile branches, which pass through harden()
+  // after setting no-store themselves.
+  if (cc && !preservesNoStore) headers.set('cache-control', cc);
+  // Keep unknown/error responses conservative. Successful public HTML and
+  // versioned/static UI files keep the cache policy selected above.
+  if (res.status === 200 && !cc && !preservesNoStore && (isHtml || /\.(?:css|js|json|txt|xml|webmanifest)$/i.test(pathname))) {
     headers.set('cache-control', 'no-store');
   }
   return new Response(res.body, {
@@ -143,9 +197,20 @@ async function handleAppPreview(request, url, env) {
 const OAUTH_STATE_COOKIE = 'vs_oauth_state';
 const OAUTH_FLOW_COOKIE = 'vs_oauth_flow';
 const OAUTH_LINK_COOKIE = 'vs_oauth_link';
+const GOOGLE_DRIVE_STATE_COOKIE = 'vs_google_drive_state';
 const SESSION_COOKIE = 'vs_session';
 const SESSION_TTL = 24 * 60 * 60; // 24 hours, in seconds
+const SESSION_RENEW_WINDOW = 2 * 60 * 60; // renew while two hours remain
 const STATE_TTL = 600; // 10 minutes to finish the round trip
+
+// Downloads are an explicit public surface, not an arbitrary proxy into R2.
+// Keep this allowlist in lockstep with the release manifest and published links
+// so an encoded path cannot select an unexpected object or filename.
+const PUBLIC_DOWNLOAD_KEYS = new Set([
+  'VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe',
+  'VoidScriptor-1.2.0-rc.1-windows-x64-setup.exe',
+  'voidscriptor-1.2.0-rc.1-windows-x64.zip',
+]);
 const NATIVE_AUTH_CODE_TTL = 120; // seconds; one-time code after provider login
 const NATIVE_REDIRECT_URI = 'vscriptor://oauth/callback';
 const GITHUB_AUTHORIZE = 'https://github.com/login/oauth/authorize';
@@ -163,6 +228,11 @@ const GOOGLE_AUTHORIZE = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO = 'https://openidconnect.googleapis.com/v1/userinfo';
 const GOOGLE_SCOPE = 'openid email profile';
+const GOOGLE_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const GOOGLE_DRIVE_API = 'https://www.googleapis.com/drive/v3';
+const GOOGLE_DRIVE_UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3/files';
+const GOOGLE_DRIVE_BACKUP_NAME = 'voidscriptor-account-backup.json';
+const GOOGLE_DRIVE_FILE_ID_RE = /^[A-Za-z0-9_-]{1,256}$/;
 
 function parseCookies(req) {
   const out = {};
@@ -171,7 +241,14 @@ function parseCookies(req) {
   for (const part of raw.split(';')) {
     const i = part.indexOf('=');
     if (i < 0) continue;
-    out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+    const value = part.slice(i + 1).trim();
+    try {
+      out[part.slice(0, i).trim()] = decodeURIComponent(value);
+    } catch {
+      // A malformed cookie is untrusted input. Ignore only that cookie and
+      // continue parsing the rest so auth treats it as anonymous instead of
+      // turning the request into a worker exception.
+    }
   }
   return out;
 }
@@ -308,6 +385,52 @@ async function readNativeFlow(req, secret, provider) {
   return payload;
 }
 
+async function readNativeLinkTicket(url, secret, provider) {
+  const payload = await verifySignedPayload(
+    url.searchParams.get('link_ticket'),
+    secret,
+  );
+  const native = nativeFlowRequest(url, provider).flow;
+  if (
+    !payload ||
+    payload.kind !== 'native_link_ticket' ||
+    payload.provider !== provider ||
+    typeof payload.uid !== 'string' ||
+    typeof payload.session_hash !== 'string' ||
+    typeof payload.exp !== 'number' ||
+    payload.exp * 1000 < Date.now() ||
+    !native ||
+    payload.state !== native.state ||
+    payload.redirect_uri !== native.redirect_uri ||
+    payload.code_challenge !== native.code_challenge ||
+    payload.code_challenge_method !== native.code_challenge_method
+  ) return null;
+  return payload;
+}
+
+async function readNativeLinkFlow(req, secret, provider) {
+  const payload = await verifySignedPayload(
+    parseCookies(req)[OAUTH_FLOW_COOKIE],
+    secret,
+  );
+  if (
+    !payload ||
+    payload.kind !== 'native_link' ||
+    payload.provider !== provider ||
+    typeof payload.uid !== 'string' ||
+    typeof payload.session_hash !== 'string' ||
+    typeof payload.exp !== 'number' ||
+    payload.exp * 1000 < Date.now() ||
+    payload.redirect_uri !== NATIVE_REDIRECT_URI ||
+    typeof payload.state !== 'string' ||
+    !/^[A-Za-z0-9_-]{16,128}$/.test(payload.state) ||
+    typeof payload.code_challenge !== 'string' ||
+    !/^[A-Za-z0-9_-]{43}$/.test(payload.code_challenge) ||
+    payload.code_challenge_method !== 'S256'
+  ) return null;
+  return payload;
+}
+
 // A provider-link flow is separate from sign-in. It is bound to the current
 // persistent session by user id and a one-way hash of the session id, so a
 // callback cannot silently attach an identity to whichever account happens to
@@ -337,11 +460,39 @@ async function readLinkFlow(req, secret, db, provider) {
   return { present: true, flow: payload };
 }
 
+async function readGoogleDriveFlow(req, secret, db) {
+  const raw = parseCookies(req)[GOOGLE_DRIVE_STATE_COOKIE] || '';
+  if (!raw) return { present: false, flow: null };
+  if (!secret || !db) return { present: true, flow: null };
+  const payload = await verifySignedPayload(raw, secret);
+  if (
+    !payload ||
+    payload.kind !== 'google_drive' ||
+    typeof payload.uid !== 'string' ||
+    typeof payload.session_hash !== 'string' ||
+    typeof payload.state !== 'string' ||
+    !/^[A-Za-z0-9_-]{16,128}$/.test(payload.state) ||
+    typeof payload.exp !== 'number' ||
+    payload.exp * 1000 < Date.now()
+  ) return { present: true, flow: null };
+
+  const session = await readSession(req, secret, db);
+  if (!session || session.uid !== payload.uid || !session.sid) {
+    return { present: true, flow: null };
+  }
+  const currentHash = await sha256B64url(session.sid);
+  if (!timingSafeEqual(payload.session_hash, currentHash)) {
+    return { present: true, flow: null };
+  }
+  return { present: true, flow: payload };
+}
+
 function clearOAuthCookies() {
   return [
     cookie(OAUTH_STATE_COOKIE, '', { clear: true }),
     cookie(OAUTH_FLOW_COOKIE, '', { clear: true }),
     cookie(OAUTH_LINK_COOKIE, '', { clear: true }),
+    cookie(GOOGLE_DRIVE_STATE_COOKIE, '', { clear: true }),
   ];
 }
 
@@ -362,6 +513,50 @@ async function sha256B64url(value) {
     new TextEncoder().encode(String(value)),
   );
   return b64url(new Uint8Array(digest));
+}
+
+// Google refresh tokens are long-lived credentials. Keep only an authenticated
+// ciphertext in D1; short-lived access tokens are used in memory for one Drive
+// request and are never written to storage or returned to the browser.
+async function driveCryptoKey(secret) {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(`voidscriptor-google-drive-v1:${String(secret)}`),
+  );
+  return crypto.subtle.importKey(
+    'raw',
+    digest,
+    { name: 'AES-GCM' },
+    false,
+    ['encrypt', 'decrypt'],
+  );
+}
+
+async function encryptDriveSecret(value, secret) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    await driveCryptoKey(secret),
+    new TextEncoder().encode(String(value)),
+  );
+  return `v1.${b64url(iv)}.${b64url(new Uint8Array(ciphertext))}`;
+}
+
+async function decryptDriveSecret(value, secret) {
+  if (typeof value !== 'string' || !value.startsWith('v1.')) return null;
+  const parts = value.split('.');
+  if (parts.length !== 3) return null;
+  try {
+    const plaintext = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: b64urlDecode(parts[1]) },
+      await driveCryptoKey(secret),
+      b64urlDecode(parts[2]),
+    );
+    const decoded = new TextDecoder().decode(plaintext);
+    return decoded || null;
+  } catch {
+    return null;
+  }
 }
 
 function normalizeEmail(email) {
@@ -568,6 +763,59 @@ function sessionView(session) {
   };
 }
 
+// Web sessions are sliding: an active browser receives a fresh 24-hour
+// HttpOnly cookie when the current window is close to expiry. Native bearer
+// sessions are deliberately left alone because a renewed bearer must be
+// returned explicitly by a native refresh contract, not hidden in a cookie.
+async function renewPersistentSession(request, env, session) {
+  if (
+    !session ||
+    !session.persistent ||
+    !session.sid ||
+    bearerToken(request) ||
+    !env.ACCOUNTS_DB ||
+    !env.SESSION_SECRET
+  ) {
+    return { session, cookie: null, renewed: false };
+  }
+  const now = Math.floor(Date.now() / 1000);
+  const remaining = Number(session.exp) - now;
+  if (!Number.isFinite(remaining) || remaining > SESSION_RENEW_WINDOW) {
+    return { session, cookie: null, renewed: false };
+  }
+  const nextExp = now + SESSION_TTL;
+  try {
+    const idHash = await sha256B64url(session.sid);
+    const result = await env.ACCOUNTS_DB.prepare(
+      'UPDATE sessions SET expires_at = ?, last_seen_at = ? WHERE id_hash = ? AND user_id = ? AND revoked_at IS NULL AND expires_at = ?',
+    ).bind(nextExp, now, idHash, session.uid, session.exp).run();
+    if (Number(result?.meta?.changes || 0) !== 1) {
+      return { session, cookie: null, renewed: false };
+    }
+    const payload = {
+      sub: session.sub || '',
+      provider: session.provider || '',
+      login: session.login || '',
+      name: session.name || '',
+      avatar: session.avatar || '',
+      email: session.email || null,
+      iat: session.iat || now,
+      exp: nextExp,
+      uid: session.uid,
+      sid: session.sid,
+    };
+    const signed = await signSession(payload, env.SESSION_SECRET);
+    return {
+      session: { ...session, exp: nextExp, lastSeenAt: now },
+      cookie: cookie(SESSION_COOKIE, signed, { maxAge: SESSION_TTL }),
+      renewed: true,
+    };
+  } catch (error) {
+    console.error('session renewal failed', error?.code || 'session_storage');
+    return { session, cookie: null, renewed: false };
+  }
+}
+
 function json(status, obj) {
   return new Response(JSON.stringify(obj), {
     status,
@@ -576,6 +824,31 @@ function json(status, obj) {
       'cache-control': 'no-store',
       ...BASE_HEADERS,
     },
+  });
+}
+
+// Request-level health probe. It verifies that this Worker is running and that
+// the primary public asset can be read, but it intentionally makes no claim
+// about historical uptime or third-party provider health.
+async function handleHealth(request, env, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    const response = json(405, { ok: false, error: 'method_not_allowed' });
+    response.headers.set('allow', 'GET, HEAD');
+    return response;
+  }
+  let assetCheck = 'ok';
+  try {
+    const asset = await env.ASSETS.fetch(new URL('/index.html', url).toString());
+    if (!asset.ok) assetCheck = 'unavailable';
+  } catch {
+    assetCheck = 'unavailable';
+  }
+  const ok = assetCheck === 'ok';
+  return json(ok ? 200 : 503, {
+    ok,
+    service: 'voidscriptor-website',
+    checks: { worker: 'ok', assets: assetCheck },
+    checkedAt: new Date().toISOString(),
   });
 }
 
@@ -681,7 +954,11 @@ async function handleByte(request, env) {
   try {
     upstream = await fetch(`${base}/chat/completions`, {
       method: 'POST',
-      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      headers: {
+        authorization: `Bearer ${key}`,
+        'content-type': 'application/json',
+        origin: 'https://voidscriptor.com',
+      },
       body: JSON.stringify(body),
     });
   } catch {
@@ -692,6 +969,185 @@ async function handleByte(request, env) {
     status: upstream.status,
     headers: { ...BASE_HEADERS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
+}
+
+function publicLeaderboardRows(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((row) => row && typeof row === 'object')
+    .map((row) => ({
+      displayName: typeof row.displayName === 'string' ? row.displayName.trim().slice(0, 80) : '',
+      score: Number.isSafeInteger(row.score) && row.score >= 0 ? row.score : null,
+    }))
+    .filter((row) => row.displayName && row.score !== null)
+    .slice(0, 20);
+}
+
+function qownerLeaderboardResponse(payload, source, live) {
+  const response = json(200, {
+    ok: true,
+    source,
+    live,
+    updatedAt: typeof payload?.updatedAt === 'string' ? payload.updatedAt.slice(0, 32) : null,
+    active: publicLeaderboardRows(payload?.active),
+    winners: publicLeaderboardRows(payload?.winners),
+  });
+  response.headers.set('cache-control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=300');
+  return response;
+}
+
+async function handleQownerLeaderboard(request, env) {
+  if (request.method !== 'GET') return json(405, { ok: false, error: 'method_not_allowed' });
+  const endpoint = String(env.QOWNER_LEADERBOARD_URL || '').trim();
+  if (!endpoint) {
+    let snapshot;
+    try {
+      const asset = await env.ASSETS.fetch(new URL('/assets/qowner-leaderboard.json', request.url).toString());
+      if (!asset.ok) return json(503, { ok: false, error: 'qowner_snapshot_unavailable' });
+      snapshot = await asset.json();
+    } catch {
+      return json(503, { ok: false, error: 'qowner_snapshot_unavailable' });
+    }
+    return qownerLeaderboardResponse(snapshot, 'demo_snapshot', false);
+  }
+  if (!/^https:\/\//i.test(endpoint)) return json(503, { ok: false, error: 'qowner_provider_not_configured' });
+
+  let upstream;
+  try {
+    upstream = await fetch(endpoint, { headers: { accept: 'application/json' } });
+  } catch {
+    return json(503, { ok: false, error: 'qowner_provider_unreachable' });
+  }
+  if (!upstream.ok) return json(503, { ok: false, error: 'qowner_provider_unavailable' });
+
+  let payload;
+  try {
+    payload = await upstream.json();
+  } catch {
+    return json(503, { ok: false, error: 'qowner_provider_invalid_response' });
+  }
+  if (!payload || payload.ok !== true) return json(503, { ok: false, error: 'qowner_provider_invalid_response' });
+
+  return qownerLeaderboardResponse(payload, 'live', true);
+}
+
+// QOWNER release interest is a small, explicit opt-in surface. It stores only
+// a normalized email and the consent/source timestamps; the endpoint never
+// echoes the submitted address, so repeated submissions do not become an
+// email-enumeration oracle.
+const QOWNER_WAITLIST_RATE_WINDOW_MS = 60 * 60 * 1000;
+const QOWNER_WAITLIST_RATE_LIMIT = 8;
+const QOWNER_WAITLIST_RATE_BUCKETS = new Map();
+
+function qownerWaitlistClientKey(request) {
+  return request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    'anonymous';
+}
+
+function qownerWaitlistRateCheck(request) {
+  const now = Date.now();
+  const key = qownerWaitlistClientKey(request);
+  const recent = (QOWNER_WAITLIST_RATE_BUCKETS.get(key) || [])
+    .filter((time) => now - time < QOWNER_WAITLIST_RATE_WINDOW_MS);
+  if (recent.length >= QOWNER_WAITLIST_RATE_LIMIT) {
+    QOWNER_WAITLIST_RATE_BUCKETS.set(key, recent);
+    return {
+      allowed: false,
+      retryAfter: Math.max(1, Math.ceil((recent[0] + QOWNER_WAITLIST_RATE_WINDOW_MS - now) / 1000)),
+    };
+  }
+  recent.push(now);
+  QOWNER_WAITLIST_RATE_BUCKETS.set(key, recent);
+  if (QOWNER_WAITLIST_RATE_BUCKETS.size > 2048) {
+    for (const [bucketKey, times] of QOWNER_WAITLIST_RATE_BUCKETS) {
+      if (!times.length || now - times[times.length - 1] >= QOWNER_WAITLIST_RATE_WINDOW_MS) {
+        QOWNER_WAITLIST_RATE_BUCKETS.delete(bucketKey);
+      }
+    }
+  }
+  return { allowed: true, retryAfter: 0 };
+}
+
+function normalizeQownerWaitlistEmail(value) {
+  if (typeof value !== 'string') return null;
+  const email = value.trim().toLowerCase();
+  if (
+    email.length < 3 ||
+    email.length > 254 ||
+    /[^\x21-\x7e]/.test(email) ||
+    !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
+  ) return null;
+  const at = email.lastIndexOf('@');
+  if (at < 1 || at > 64 || email.length - at - 1 < 1) return null;
+  return email;
+}
+
+async function handleQownerWaitlist(request, env) {
+  if (request.method !== 'POST') {
+    const response = json(405, { ok: false, error: 'method_not_allowed' });
+    response.headers.set('allow', 'POST');
+    return response;
+  }
+  if (!sameOriginMutation(request)) {
+    return json(403, { ok: false, error: 'cross_origin_request' });
+  }
+  if (!env.ACCOUNTS_DB || typeof env.ACCOUNTS_DB.prepare !== 'function') {
+    return json(503, { ok: false, error: 'waitlist_not_configured' });
+  }
+
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (Number.isFinite(contentLength) && contentLength > 4096) {
+    return json(413, { ok: false, error: 'request_too_large' });
+  }
+  if (!String(request.headers.get('content-type') || '').toLowerCase().includes('application/json')) {
+    return json(415, { ok: false, error: 'json_required' });
+  }
+
+  const rate = qownerWaitlistRateCheck(request);
+  if (!rate.allowed) {
+    const response = json(429, { ok: false, error: 'waitlist_rate_limited', retry_after_seconds: rate.retryAfter });
+    response.headers.set('retry-after', String(rate.retryAfter));
+    return response;
+  }
+
+  let body;
+  try {
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > 4096) {
+      return json(413, { ok: false, error: 'request_too_large' });
+    }
+    body = JSON.parse(raw);
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return json(400, { ok: false, error: 'invalid_payload' });
+  }
+  const email = normalizeQownerWaitlistEmail(body.email);
+  if (!email) return json(400, { ok: false, error: 'invalid_email' });
+  if (body.consent !== true) return json(400, { ok: false, error: 'consent_required' });
+  const source = body.source === undefined ? 'quiz' : body.source;
+  if (!['quiz', 'homepage'].includes(source)) {
+    return json(400, { ok: false, error: 'invalid_source' });
+  }
+
+  const now = Date.now();
+  try {
+    await env.ACCOUNTS_DB.prepare(`
+      INSERT INTO qowner_waitlist (
+        email, source, consented_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(email) DO UPDATE SET
+        source = excluded.source,
+        consented_at = excluded.consented_at,
+        updated_at = excluded.updated_at
+    `).bind(email, source, now, now, now).run();
+    return json(200, { ok: true, joined: true });
+  } catch (error) {
+    console.error('qowner waitlist storage failed', error?.code || 'waitlist_storage');
+    return json(503, { ok: false, error: 'waitlist_storage' });
+  }
 }
 
 // `set-cookie` is the one header that must never be comma-joined. A browser
@@ -748,6 +1204,123 @@ async function beginProviderLink(request, env, provider) {
   } catch (error) {
     console.error('provider link start failed', error);
     return { error: 'account_storage' };
+  }
+}
+
+async function beginGoogleDriveLink(request, env) {
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) return { error: 'not_configured' };
+  if (!googleConfigured(env)) return { error: 'provider_not_configured' };
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session || !session.sid) return { error: 'unauthenticated' };
+  try {
+    const existing = await env.ACCOUNTS_DB.prepare(`
+      SELECT 1 FROM google_drive_connections WHERE user_id = ? LIMIT 1
+    `).bind(session.uid).first();
+    if (existing) return { error: 'already_connected' };
+    const state = b64url(crypto.getRandomValues(new Uint8Array(24)));
+    const now = Math.floor(Date.now() / 1000);
+    const flowCookie = await signSession({
+      kind: 'google_drive',
+      uid: session.uid,
+      session_hash: await sha256B64url(session.sid),
+      state,
+      iat: now,
+      exp: now + STATE_TTL,
+    }, env.SESSION_SECRET);
+    return { state, flowCookie };
+  } catch (error) {
+    console.error('google drive link start failed', error?.code || 'account_storage');
+    return { error: 'account_storage' };
+  }
+}
+
+async function handleNativeLinkStart(request, url, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > 4096) {
+    return json(413, { ok: false, error: 'request_too_large' });
+  }
+
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session || !session.uid || !session.sid) {
+    return json(401, { ok: false, error: 'unauthenticated' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  const provider = typeof body?.provider === 'string'
+    ? body.provider.trim().toLowerCase()
+    : '';
+  const redirectUri = typeof body?.redirect_uri === 'string'
+    ? body.redirect_uri.trim()
+    : '';
+  const state = typeof body?.state === 'string' ? body.state.trim() : '';
+  const codeChallenge = typeof body?.code_challenge === 'string'
+    ? body.code_challenge.trim()
+    : '';
+  const codeChallengeMethod = typeof body?.code_challenge_method === 'string'
+    ? body.code_challenge_method.trim()
+    : '';
+  if (
+    !['google', 'github'].includes(provider) ||
+    redirectUri !== NATIVE_REDIRECT_URI ||
+    !/^[A-Za-z0-9_-]{16,128}$/.test(state) ||
+    !/^[A-Za-z0-9_-]{43}$/.test(codeChallenge) ||
+    codeChallengeMethod !== 'S256'
+  ) {
+    return json(400, { ok: false, error: 'invalid_request' });
+  }
+  if ((provider === 'github' && !authConfigured(env)) ||
+      (provider === 'google' && !googleConfigured(env))) {
+    return json(503, { ok: false, error: 'provider_not_configured', provider });
+  }
+
+  try {
+    const existing = await env.ACCOUNTS_DB.prepare(`
+      SELECT 1 FROM identities WHERE user_id = ? AND provider = ? LIMIT 1
+    `).bind(session.uid, provider).first();
+    if (existing) return json(409, { ok: false, error: 'already_linked', provider });
+
+    const now = Math.floor(Date.now() / 1000);
+    const ticket = await signSession({
+      kind: 'native_link_ticket',
+      uid: session.uid,
+      provider,
+      session_hash: await sha256B64url(session.sid),
+      state,
+      redirect_uri: redirectUri,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+      iat: now,
+      exp: now + STATE_TTL,
+    }, env.SESSION_SECRET);
+    const authorizationUrl = new URL(`/api/auth/${provider}`, url.origin);
+    authorizationUrl.search = new URLSearchParams({
+      client: 'desktop',
+      mode: 'native_link',
+      link_ticket: ticket,
+      redirect_uri: redirectUri,
+      state,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+    }).toString();
+    return json(200, {
+      ok: true,
+      provider,
+      authorization_url: authorizationUrl.toString(),
+    });
+  } catch (error) {
+    console.error('native provider link start failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
   }
 }
 
@@ -848,6 +1421,123 @@ async function finishProviderLink(env, profile, flow) {
       ? error.code
       : 'account_storage';
     return redirect(linkResultRedirect(reason), { 'set-cookie': clearOAuthCookies() });
+  }
+}
+
+async function finishNativeProviderLink(env, profile, flow) {
+  try {
+    const active = await env.ACCOUNTS_DB.prepare(`
+      SELECT 1 FROM sessions
+       WHERE user_id = ?
+         AND id_hash = ?
+         AND expires_at > ?
+         AND revoked_at IS NULL
+       LIMIT 1
+    `).bind(
+      flow.uid,
+      flow.session_hash,
+      Math.floor(Date.now() / 1000),
+    ).first();
+    if (!active) {
+      const error = new Error('session_expired');
+      error.code = 'session_expired';
+      throw error;
+    }
+    await linkProviderIdentity(env.ACCOUNTS_DB, flow.uid, profile);
+    return redirect(
+      nativeCallbackUrl(flow, { linked: profile.provider }),
+      { 'set-cookie': clearOAuthCookies() },
+    );
+  } catch (error) {
+    console.error('native provider link failed', error);
+    const reason = [
+      'provider_already_linked',
+      'email_already_used',
+      'session_expired',
+    ].includes(error?.code)
+      ? error.code
+      : 'account_storage';
+    return redirect(
+      nativeCallbackUrl(flow, { error: reason }),
+      { 'set-cookie': clearOAuthCookies() },
+    );
+  }
+}
+
+async function handleGoogleDriveCallback(request, url, env, driveFlow, clearCookies) {
+  const finish = (reason) => redirect(
+    `/dashboard?drive=${encodeURIComponent(reason)}`,
+    { 'set-cookie': clearCookies },
+  );
+  const flow = driveFlow?.flow;
+  if (!flow) return finish('invalid_request');
+  if (url.searchParams.get('error')) {
+    return finish(url.searchParams.get('error') === 'access_denied' ? 'cancelled' : 'provider_error');
+  }
+
+  const code = url.searchParams.get('code') || '';
+  const state = url.searchParams.get('state') || '';
+  const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
+  if (!code || !expected || !timingSafeEqual(state, expected) || !timingSafeEqual(state, flow.state)) {
+    return finish('invalid_request');
+  }
+  if (!googleConfigured(env)) return finish('provider_not_configured');
+
+  let tokenRes;
+  try {
+    tokenRes = await fetch(GOOGLE_TOKEN, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: callbackUrl(url, 'google'),
+      }).toString(),
+    });
+  } catch {
+    return finish('provider_error');
+  }
+  const tokenJson = await tokenRes.json().catch(() => null);
+  const refreshToken = typeof tokenJson?.refresh_token === 'string'
+    ? tokenJson.refresh_token.trim()
+    : '';
+  if (!tokenRes.ok || !refreshToken) return finish('refresh_token_missing');
+
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const ciphertext = await encryptDriveSecret(refreshToken, env.SESSION_SECRET);
+    const scope = typeof tokenJson.scope === 'string'
+      ? tokenJson.scope.slice(0, 512)
+      : GOOGLE_DRIVE_SCOPE;
+    const accessToken = typeof tokenJson.access_token === 'string'
+      ? tokenJson.access_token.trim()
+      : '';
+    const discovery = accessToken
+      ? await findGoogleDriveBackup(accessToken)
+      : { ok: true, fileId: null, lastBackupAt: null };
+    if (!discovery.ok) {
+      console.warn('google drive backup discovery skipped', discovery.error || 'drive_unavailable');
+    }
+    const driveFileId = discovery.ok ? discovery.fileId : null;
+    const lastBackupAt = discovery.ok ? discovery.lastBackupAt : null;
+    await env.ACCOUNTS_DB.prepare(`
+      INSERT INTO google_drive_connections (
+        user_id, refresh_token_ciphertext, scope, drive_file_id,
+        connected_at, updated_at, last_backup_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET
+        refresh_token_ciphertext = excluded.refresh_token_ciphertext,
+        scope = excluded.scope,
+        drive_file_id = COALESCE(excluded.drive_file_id, google_drive_connections.drive_file_id),
+        last_backup_at = COALESCE(excluded.last_backup_at, google_drive_connections.last_backup_at),
+        updated_at = excluded.updated_at
+    `).bind(flow.uid, ciphertext, scope, driveFileId, now, now, lastBackupAt).run();
+    return finish('connected');
+  } catch (error) {
+    console.error('google drive connection storage failed', error?.code || 'account_storage');
+    return finish('account_storage');
   }
 }
 
@@ -1338,6 +2028,9 @@ async function handleProfile(request, env) {
       next.qowner_leaderboard_opt_in = body.qowner_leaderboard_opt_in;
     }
   }
+  if (next.visibility === 'public' && !next.public_handle) {
+    errors.public_handle = 'required_for_public_visibility';
+  }
   if (Object.keys(errors).length) {
     return json(400, { ok: false, error: 'invalid_profile', fields: errors });
   }
@@ -1496,16 +2189,20 @@ async function handleAuth(request, url, env) {
   // rather than 500. The sign-in endpoints themselves fail loudly.
   if (path === '/api/auth/session') {
     const session = configured ? await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB) : null;
-    return json(200, {
+    const renewal = await renewPersistentSession(request, env, session);
+    const response = json(200, {
       ok: true,
       configured,
       persistent_accounts: Boolean(env.ACCOUNTS_DB),
       // Which buttons the UI may show. Reported per provider so enabling only
       // one does not advertise a button that would 500 on click.
       providers: { github: ghOn, google: ggOn },
-      authenticated: Boolean(session),
-      user: sessionView(session),
+      authenticated: Boolean(renewal.session),
+      session_renewed: renewal.renewed,
+      user: sessionView(renewal.session),
     });
+    if (renewal.cookie) response.headers.append('set-cookie', renewal.cookie);
+    return response;
   }
 
   // Sign-out needs no GitHub credentials — it only clears a cookie — so it must
@@ -1541,6 +2238,14 @@ async function handleAuth(request, url, env) {
     });
   }
 
+  // Drive linking is deliberately a separate OAuth mode. It binds the Google
+  // refresh token to the already-authenticated Void Scriptor account instead
+  // of replacing the account's existing sign-in identity.
+  if (path === '/api/auth/google' && url.searchParams.get('mode') === 'drive' &&
+      (!env.ACCOUNTS_DB || !env.SESSION_SECRET)) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+
   if (!configured) {
     return json(500, {
       ok: false,
@@ -1562,6 +2267,13 @@ async function handleAuth(request, url, env) {
       return json(400, { ok: false, error: 'invalid_native_oauth_request' });
     }
     const linkMode = url.searchParams.get('mode') === 'link';
+    const nativeLinkRequested = url.searchParams.get('mode') === 'native_link';
+    const nativeLinkTicket = nativeLinkRequested
+      ? await readNativeLinkTicket(url, env.SESSION_SECRET, 'github')
+      : null;
+    if (nativeLinkRequested && !nativeLinkTicket) {
+      return json(400, { ok: false, error: 'invalid_native_link_request' });
+    }
     if (linkMode && nativeRequest.requested) {
       return json(400, { ok: false, error: 'invalid_link_request' });
     }
@@ -1585,6 +2297,13 @@ async function handleAuth(request, url, env) {
     const flowCookie = nativeRequest.flow
       ? await signSession({
         ...nativeRequest.flow,
+        ...(nativeLinkTicket
+          ? {
+              kind: 'native_link',
+              uid: nativeLinkTicket.uid,
+              session_hash: nativeLinkTicket.session_hash,
+            }
+          : {}),
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + STATE_TTL,
       }, env.SESSION_SECRET)
@@ -1592,6 +2311,7 @@ async function handleAuth(request, url, env) {
     return redirect(`${GITHUB_AUTHORIZE}?${q}`, {
       'set-cookie': [
         cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+        cookie(GOOGLE_DRIVE_STATE_COOKIE, '', { clear: true }),
         ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
         ...(linkCookie
           ? [cookie(OAUTH_LINK_COOKIE, linkCookie, { maxAge: STATE_TTL })]
@@ -1601,6 +2321,39 @@ async function handleAuth(request, url, env) {
   }
 
   if (path === '/api/auth/google') {
+    if (url.searchParams.get('mode') === 'drive') {
+      if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+        return json(503, { ok: false, error: 'accounts_not_configured' });
+      }
+      if (!ggOn) {
+        return json(503, { ok: false, error: 'provider_not_configured', provider: 'google' });
+      }
+      const driveLink = await beginGoogleDriveLink(request, env);
+      if (driveLink.error === 'unauthenticated') return redirect('/?auth=required');
+      if (driveLink.error === 'already_connected') return redirect('/dashboard?drive=already_connected');
+      if (driveLink.error === 'provider_not_configured') {
+        return json(503, { ok: false, error: 'provider_not_configured', provider: 'google' });
+      }
+      if (driveLink.error) return json(503, { ok: false, error: 'account_storage' });
+      const driveQuery = new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        redirect_uri: callbackUrl(url, 'google'),
+        response_type: 'code',
+        scope: GOOGLE_DRIVE_SCOPE,
+        state: driveLink.state,
+        access_type: 'offline',
+        prompt: 'consent',
+        include_granted_scopes: 'true',
+      });
+      return redirect(`${GOOGLE_AUTHORIZE}?${driveQuery}`, {
+        'set-cookie': [
+          cookie(OAUTH_STATE_COOKIE, driveLink.state, { maxAge: STATE_TTL }),
+          cookie(GOOGLE_DRIVE_STATE_COOKIE, driveLink.flowCookie, { maxAge: STATE_TTL }),
+          cookie(OAUTH_FLOW_COOKIE, '', { clear: true }),
+          cookie(OAUTH_LINK_COOKIE, '', { clear: true }),
+        ],
+      });
+    }
     if (!ggOn) {
       return json(500, { ok: false, error: 'provider_not_configured', provider: 'google' });
     }
@@ -1609,6 +2362,13 @@ async function handleAuth(request, url, env) {
       return json(400, { ok: false, error: 'invalid_native_oauth_request' });
     }
     const linkMode = url.searchParams.get('mode') === 'link';
+    const nativeLinkRequested = url.searchParams.get('mode') === 'native_link';
+    const nativeLinkTicket = nativeLinkRequested
+      ? await readNativeLinkTicket(url, env.SESSION_SECRET, 'google')
+      : null;
+    if (nativeLinkRequested && !nativeLinkTicket) {
+      return json(400, { ok: false, error: 'invalid_native_link_request' });
+    }
     if (linkMode && nativeRequest.requested) {
       return json(400, { ok: false, error: 'invalid_link_request' });
     }
@@ -1635,6 +2395,13 @@ async function handleAuth(request, url, env) {
     const flowCookie = nativeRequest.flow
       ? await signSession({
         ...nativeRequest.flow,
+        ...(nativeLinkTicket
+          ? {
+              kind: 'native_link',
+              uid: nativeLinkTicket.uid,
+              session_hash: nativeLinkTicket.session_hash,
+            }
+          : {}),
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + STATE_TTL,
       }, env.SESSION_SECRET)
@@ -1642,6 +2409,7 @@ async function handleAuth(request, url, env) {
     return redirect(`${GOOGLE_AUTHORIZE}?${q}`, {
       'set-cookie': [
         cookie(OAUTH_STATE_COOKIE, state, { maxAge: STATE_TTL }),
+        cookie(GOOGLE_DRIVE_STATE_COOKIE, '', { clear: true }),
         ...(flowCookie ? [cookie(OAUTH_FLOW_COOKIE, flowCookie, { maxAge: STATE_TTL })] : []),
         ...(linkCookie
           ? [cookie(OAUTH_LINK_COOKIE, linkCookie, { maxAge: STATE_TTL })]
@@ -1656,11 +2424,15 @@ async function handleAuth(request, url, env) {
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
     const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'github');
+    const nativeLinkFlow = await readNativeLinkFlow(request, env.SESSION_SECRET, 'github');
     const linkFlow = await readLinkFlow(request, env.SESSION_SECRET, env.ACCOUNTS_DB, 'github');
     // Always drop both flow cookies, either way, so they cannot be replayed.
     const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect('/dashboard?auth=link_cancelled', { 'set-cookie': clearCookies });
       }
@@ -1669,6 +2441,9 @@ async function handleAuth(request, url, env) {
         : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
       }
@@ -1691,6 +2466,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
       }
@@ -1710,6 +2488,9 @@ async function handleAuth(request, url, env) {
     ).json().catch(() => null);
 
     if (!profile || !profile.id) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
       }
@@ -1745,6 +2526,9 @@ async function handleAuth(request, url, env) {
       email,
       emailVerified,
     };
+    if (nativeLinkFlow) {
+      return finishNativeProviderLink(env, providerProfile, nativeLinkFlow);
+    }
     if (linkFlow.present) {
       if (!linkFlow.flow) {
         return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
@@ -1756,15 +2540,24 @@ async function handleAuth(request, url, env) {
 
   // --- finish the round trip (Google) ---------------------------------------
   if (path === '/api/auth/google/callback') {
+    const driveFlow = await readGoogleDriveFlow(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+    const driveClearCookies = clearOAuthCookies();
+    if (driveFlow.present) {
+      return handleGoogleDriveCallback(request, url, env, driveFlow, driveClearCookies);
+    }
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state') || '';
     const expected = parseCookies(request)[OAUTH_STATE_COOKIE] || '';
     const nativeFlow = await readNativeFlow(request, env.SESSION_SECRET, 'google');
+    const nativeLinkFlow = await readNativeLinkFlow(request, env.SESSION_SECRET, 'google');
     const linkFlow = await readLinkFlow(request, env.SESSION_SECRET, env.ACCOUNTS_DB, 'google');
     // Always drop both flow cookies, either way, so they cannot be replayed.
     const clearCookies = clearOAuthCookies();
 
     if (url.searchParams.get('error')) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'access_denied' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect('/dashboard?auth=link_cancelled', { 'set-cookie': clearCookies });
       }
@@ -1773,6 +2566,9 @@ async function handleAuth(request, url, env) {
         : redirect('/?auth=cancelled', { 'set-cookie': clearCookies });
     }
     if (!code || !expected || !timingSafeEqual(state, expected)) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'invalid_request' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
       }
@@ -1797,6 +2593,9 @@ async function handleAuth(request, url, env) {
     const tokenJson = await tokenRes.json().catch(() => null);
     const token = tokenJson && tokenJson.access_token;
     if (!token) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
       }
@@ -1813,6 +2612,9 @@ async function handleAuth(request, url, env) {
     // unverified address: it is the identity key we merge accounts on, so an
     // unverified one could let someone claim another person's account.
     if (!info || !info.sub || !info.email || info.email_verified === false) {
+      if (nativeLinkFlow) {
+        return redirect(nativeCallbackUrl(nativeLinkFlow, { error: 'provider_error' }), { 'set-cookie': clearCookies });
+      }
       if (linkFlow.present) {
         return redirect(linkResultRedirect('provider_error'), { 'set-cookie': clearCookies });
       }
@@ -1824,12 +2626,18 @@ async function handleAuth(request, url, env) {
     const providerProfile = {
       sub: info.sub,
       provider: 'google',
-      login: (info.email || '').split('@')[0],
-      name: info.name || info.email || '',
+      // Google does not provide a public handle. Never manufacture one from
+      // the email address: the user-controlled profile handle is the only
+      // public identity field.
+      login: '',
+      name: info.name || '',
       avatar: info.picture || '',
       email: info.email,
       emailVerified: info.email_verified === true,
     };
+    if (nativeLinkFlow) {
+      return finishNativeProviderLink(env, providerProfile, nativeLinkFlow);
+    }
     if (linkFlow.present) {
       if (!linkFlow.flow) {
         return redirect(linkResultRedirect('invalid_request'), { 'set-cookie': clearCookies });
@@ -1983,6 +2791,96 @@ async function handleAccountExport(request, env) {
     });
   } catch (error) {
     console.error('account export failed', error);
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+const ACCOUNT_DELETE_CONFIRMATION = 'HAPUS AKUN';
+
+function sameOriginMutation(request) {
+  let requestOrigin;
+  try {
+    requestOrigin = new URL(request.url).origin;
+  } catch {
+    return false;
+  }
+  // The destructive endpoint is intentionally limited to the canonical site.
+  // This also prevents a POST sent to a legacy Pages hostname from bypassing
+  // the normal GET-only canonical redirect.
+  if (requestOrigin !== `https://${CANONICAL_HOST}`) return false;
+  const origin = request.headers.get('origin');
+  return !origin || origin === requestOrigin;
+}
+
+async function deleteAccountData(db, userId) {
+  const uid = String(userId || '').trim();
+  if (!uid) throw new Error('account_id_missing');
+  if (!db || typeof db.prepare !== 'function' || typeof db.batch !== 'function') {
+    throw new Error('account_batch_unavailable');
+  }
+
+  // Keep the child deletes explicit even though the migrations also declare
+  // ON DELETE CASCADE. This documents the erasure boundary and makes the
+  // operation safe if a future table changes its foreign-key policy.
+  const statements = [
+    'google_drive_connections',
+    'account_backups',
+    'profiles',
+    'oauth_codes',
+    'sessions',
+    'identities',
+    'users',
+  ].map((table) => db.prepare(`DELETE FROM ${table} WHERE ${table === 'users' ? 'id' : 'user_id'} = ?`).bind(uid));
+
+  await db.batch(statements);
+  return { deleted: true };
+}
+
+async function handleAccountDelete(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!sameOriginMutation(request)) {
+    return json(403, { ok: false, error: 'cross_origin_request' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > 4096) return json(413, { ok: false, error: 'request_too_large' });
+  if (!String(request.headers.get('content-type') || '').toLowerCase().includes('application/json')) {
+    return json(415, { ok: false, error: 'json_required' });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json(400, { ok: false, error: 'invalid_json' });
+  }
+  const confirmation = typeof body?.confirmation === 'string' ? body.confirmation.trim() : '';
+  if (confirmation !== ACCOUNT_DELETE_CONFIRMATION) {
+    return json(400, { ok: false, error: 'confirmation_required' });
+  }
+
+  try {
+    await deleteAccountData(env.ACCOUNTS_DB, session.uid);
+    const response = json(200, {
+      ok: true,
+      deleted: true,
+      // The app-created file is outside this account database and is not
+      // deleted implicitly. The user can remove it from Google Drive directly.
+      remote_drive_file_preserved: true,
+    });
+    response.headers.append('set-cookie', cookie(SESSION_COOKIE, '', { clear: true }));
+    for (const value of clearOAuthCookies()) response.headers.append('set-cookie', value);
+    return response;
+  } catch (error) {
+    console.error('account deletion failed', error);
     return json(503, { ok: false, error: 'account_storage' });
   }
 }
@@ -2151,6 +3049,389 @@ async function handleCloudBackup(request, env) {
   }
 }
 
+async function readGoogleDriveConnection(db, userId) {
+  return db.prepare(`
+    SELECT user_id, refresh_token_ciphertext, scope, drive_file_id,
+           connected_at, updated_at, last_backup_at
+      FROM google_drive_connections
+     WHERE user_id = ?
+     LIMIT 1
+  `).bind(userId).first();
+}
+
+async function handleGoogleDriveStatus(request, env) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+  try {
+    const row = await readGoogleDriveConnection(env.ACCOUNTS_DB, session.uid);
+    return json(200, {
+      ok: true,
+      connected: Boolean(row),
+      scope: row ? (row.scope || GOOGLE_DRIVE_SCOPE) : null,
+      connected_at: row ? Number(row.connected_at) || null : null,
+      last_backup_at: row ? Number(row.last_backup_at) || null : null,
+      backup_available: Boolean(row?.drive_file_id),
+      backup_file_name: row ? GOOGLE_DRIVE_BACKUP_NAME : null,
+    });
+  } catch (error) {
+    console.error('google drive status failed', error?.code || 'account_storage');
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+async function handleGoogleDriveDisconnect(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+  try {
+    await env.ACCOUNTS_DB.prepare(
+      'DELETE FROM google_drive_connections WHERE user_id = ?',
+    ).bind(session.uid).run();
+    return json(200, {
+      ok: true,
+      disconnected: true,
+      remote_file_preserved: true,
+    });
+  } catch (error) {
+    console.error('google drive disconnect failed', error?.code || 'account_storage');
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+async function refreshGoogleDriveAccessToken(env, connection) {
+  const refreshToken = await decryptDriveSecret(
+    connection?.refresh_token_ciphertext,
+    env.SESSION_SECRET,
+  );
+  if (!refreshToken) return { error: 'drive_reauthorize' };
+
+  let response;
+  try {
+    response = await fetch(GOOGLE_TOKEN, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' },
+      body: new URLSearchParams({
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }).toString(),
+    });
+  } catch {
+    return { error: 'drive_unavailable' };
+  }
+  const payload = await response.json().catch(() => null);
+  const accessToken = typeof payload?.access_token === 'string'
+    ? payload.access_token.trim()
+    : '';
+  if (!response.ok || !accessToken) {
+    return {
+      error: response.status === 400 || response.status === 401
+        ? 'drive_reauthorize'
+        : 'drive_unavailable',
+    };
+  }
+  const rotatedRefreshToken = typeof payload.refresh_token === 'string'
+    ? payload.refresh_token.trim()
+    : '';
+  return {
+    accessToken,
+    refreshToken: rotatedRefreshToken || null,
+  };
+}
+
+function driveMultipartBody(content) {
+  const boundary = `voidscriptor_${crypto.randomUUID().replaceAll('-', '')}`;
+  const metadata = JSON.stringify({
+    name: GOOGLE_DRIVE_BACKUP_NAME,
+    mimeType: 'application/json',
+  });
+  const body = [
+    `--${boundary}\r\n`,
+    'Content-Type: application/json; charset=UTF-8\r\n\r\n',
+    metadata,
+    `\r\n--${boundary}\r\n`,
+    'Content-Type: application/json\r\n\r\n',
+    content,
+    `\r\n--${boundary}--\r\n`,
+  ].join('');
+  return {
+    body,
+    contentType: `multipart/related; boundary=${boundary}`,
+  };
+}
+
+function driveApiError(status) {
+  if (status === 401 || status === 403) return 'drive_reauthorize';
+  return 'drive_unavailable';
+}
+
+async function findGoogleDriveBackup(accessToken) {
+  try {
+    const query = new URLSearchParams({
+      q: `name = '${GOOGLE_DRIVE_BACKUP_NAME}' and trashed = false`,
+      spaces: 'drive',
+      pageSize: '10',
+      orderBy: 'modifiedTime desc',
+      fields: 'files(id,name,modifiedTime)',
+    });
+    const response = await fetch(`${GOOGLE_DRIVE_API}/files?${query}`, {
+      headers: { authorization: `Bearer ${accessToken}`, accept: 'application/json' },
+    });
+    if (!response.ok) return { ok: false, error: driveApiError(response.status) };
+    const payload = await response.json().catch(() => null);
+    if (!Array.isArray(payload?.files)) return { ok: false, error: 'drive_invalid_response' };
+    const file = payload.files
+      .filter((item) => (
+        item &&
+        item.name === GOOGLE_DRIVE_BACKUP_NAME &&
+        typeof item.id === 'string' &&
+        GOOGLE_DRIVE_FILE_ID_RE.test(item.id)
+      ))
+      .sort((left, right) => Date.parse(right.modifiedTime || '') - Date.parse(left.modifiedTime || ''))[0];
+    const modifiedAt = file ? Date.parse(file.modifiedTime || '') : NaN;
+    return {
+      ok: true,
+      fileId: file?.id || null,
+      lastBackupAt: Number.isFinite(modifiedAt) && modifiedAt > 0
+        ? Math.floor(modifiedAt / 1000)
+        : null,
+    };
+  } catch {
+    return { ok: false, error: 'drive_unavailable' };
+  }
+}
+
+async function uploadGoogleDriveBackup(accessToken, fileId, content) {
+  try {
+    const headers = { authorization: `Bearer ${accessToken}` };
+    if (GOOGLE_DRIVE_FILE_ID_RE.test(String(fileId || ''))) {
+      const update = await fetch(
+        `${GOOGLE_DRIVE_UPLOAD_API}/${encodeURIComponent(fileId)}?uploadType=media&fields=id,name,modifiedTime`,
+        {
+          method: 'PATCH',
+          headers: { ...headers, 'content-type': 'application/json; charset=utf-8' },
+          body: content,
+        },
+      );
+      if (update.ok) {
+        const payload = await update.json().catch(() => null);
+        if (typeof payload?.id === 'string' && GOOGLE_DRIVE_FILE_ID_RE.test(payload.id)) {
+          return { ok: true, fileId: payload.id };
+        }
+        return { ok: false, error: 'drive_invalid_response' };
+      }
+      if (update.status !== 404) return { ok: false, error: driveApiError(update.status) };
+    }
+
+    const multipart = driveMultipartBody(content);
+    const create = await fetch(
+      `${GOOGLE_DRIVE_UPLOAD_API}?uploadType=multipart&fields=id,name,modifiedTime`,
+      {
+        method: 'POST',
+        headers: { ...headers, 'content-type': multipart.contentType },
+        body: multipart.body,
+      },
+    );
+    if (!create.ok) return { ok: false, error: driveApiError(create.status) };
+    const payload = await create.json().catch(() => null);
+    if (typeof payload?.id !== 'string' || !GOOGLE_DRIVE_FILE_ID_RE.test(payload.id)) {
+      return { ok: false, error: 'drive_invalid_response' };
+    }
+    return { ok: true, fileId: payload.id };
+  } catch {
+    return { ok: false, error: 'drive_unavailable' };
+  }
+}
+
+async function downloadGoogleDriveBackup(accessToken, fileId) {
+  if (!GOOGLE_DRIVE_FILE_ID_RE.test(String(fileId || ''))) {
+    return { ok: false, error: 'drive_backup_not_found' };
+  }
+  try {
+    const response = await fetch(
+      `${GOOGLE_DRIVE_API}/files/${encodeURIComponent(fileId)}?alt=media`,
+      { headers: { authorization: `Bearer ${accessToken}` } },
+    );
+    if (!response.ok) {
+      if (response.status === 404) return { ok: false, error: 'drive_backup_not_found' };
+      return { ok: false, error: driveApiError(response.status) };
+    }
+    const contentLength = Number(response.headers.get('content-length') || 0);
+    if (contentLength > CLOUD_BACKUP_MAX_BODY_BYTES) {
+      return { ok: false, error: 'drive_backup_too_large' };
+    }
+    const content = await response.text();
+    if (new TextEncoder().encode(content).byteLength > CLOUD_BACKUP_MAX_BODY_BYTES) {
+      return { ok: false, error: 'drive_backup_too_large' };
+    }
+    let payload;
+    try {
+      payload = JSON.parse(content);
+    } catch {
+      return { ok: false, error: 'drive_backup_invalid' };
+    }
+    return { ok: true, payload };
+  } catch {
+    return { ok: false, error: 'drive_unavailable' };
+  }
+}
+
+async function handleGoogleDriveBackup(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  try {
+    const connection = await readGoogleDriveConnection(env.ACCOUNTS_DB, session.uid);
+    if (!connection) return json(409, { ok: false, error: 'drive_not_connected' });
+    const backup = await env.ACCOUNTS_DB.prepare(`
+      SELECT payload_json, updated_at
+        FROM account_backups
+       WHERE user_id = ?
+       LIMIT 1
+    `).bind(session.uid).first();
+    if (!backup) return json(409, { ok: false, error: 'backup_not_found' });
+
+    let snapshot;
+    try {
+      snapshot = JSON.parse(backup.payload_json);
+    } catch {
+      return json(503, { ok: false, error: 'backup_corrupt' });
+    }
+    const exportedAt = new Date().toISOString();
+    const content = JSON.stringify({
+      format: CLOUD_BACKUP_FORMAT,
+      version: 1,
+      exported_at: exportedAt,
+      snapshot,
+    });
+    const token = await refreshGoogleDriveAccessToken(env, connection);
+    if (token.error) return json(502, { ok: false, error: token.error });
+
+    if (token.refreshToken) {
+      const rotatedCiphertext = await encryptDriveSecret(token.refreshToken, env.SESSION_SECRET);
+      await env.ACCOUNTS_DB.prepare(`
+        UPDATE google_drive_connections
+           SET refresh_token_ciphertext = ?, updated_at = ?
+         WHERE user_id = ?
+      `).bind(rotatedCiphertext, Math.floor(Date.now() / 1000), session.uid).run();
+    }
+
+    const upload = await uploadGoogleDriveBackup(token.accessToken, connection.drive_file_id, content);
+    if (!upload.ok) return json(502, { ok: false, error: upload.error });
+    const now = Math.floor(Date.now() / 1000);
+    await env.ACCOUNTS_DB.prepare(`
+      UPDATE google_drive_connections
+         SET drive_file_id = ?, last_backup_at = ?, updated_at = ?
+       WHERE user_id = ?
+    `).bind(upload.fileId, now, now, session.uid).run();
+    return json(200, {
+      ok: true,
+      backup: {
+        file_name: GOOGLE_DRIVE_BACKUP_NAME,
+        last_backup_at: now,
+      },
+    });
+  } catch (error) {
+    console.error('google drive backup failed', error?.code || 'account_storage');
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
+async function handleGoogleDriveRestore(request, env) {
+  if (request.method !== 'POST') {
+    return json(405, { ok: false, error: 'method_not_allowed' });
+  }
+  if (!env.ACCOUNTS_DB || !env.SESSION_SECRET) {
+    return json(503, { ok: false, error: 'accounts_not_configured' });
+  }
+  const session = await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB);
+  if (!session) return json(401, { ok: false, error: 'unauthenticated' });
+
+  try {
+    const connection = await readGoogleDriveConnection(env.ACCOUNTS_DB, session.uid);
+    if (!connection) return json(409, { ok: false, error: 'drive_not_connected' });
+    if (!GOOGLE_DRIVE_FILE_ID_RE.test(String(connection.drive_file_id || ''))) {
+      return json(409, { ok: false, error: 'drive_backup_not_found' });
+    }
+
+    const token = await refreshGoogleDriveAccessToken(env, connection);
+    if (token.error) return json(502, { ok: false, error: token.error });
+    if (token.refreshToken) {
+      const rotatedCiphertext = await encryptDriveSecret(token.refreshToken, env.SESSION_SECRET);
+      await env.ACCOUNTS_DB.prepare(`
+        UPDATE google_drive_connections
+           SET refresh_token_ciphertext = ?, updated_at = ?
+         WHERE user_id = ?
+      `).bind(rotatedCiphertext, Math.floor(Date.now() / 1000), session.uid).run();
+    }
+
+    const remote = await downloadGoogleDriveBackup(token.accessToken, connection.drive_file_id);
+    if (!remote.ok) return json(502, { ok: false, error: remote.error });
+    if (
+      !remote.payload ||
+      remote.payload.format !== CLOUD_BACKUP_FORMAT ||
+      Number(remote.payload.version) !== 1
+    ) {
+      return json(502, { ok: false, error: 'drive_backup_invalid' });
+    }
+    const snapshot = normalizeCloudSnapshot(remote.payload.snapshot);
+    if (!snapshot) return json(502, { ok: false, error: 'drive_backup_invalid' });
+    const payloadJson = JSON.stringify(snapshot);
+    const sizeBytes = new TextEncoder().encode(payloadJson).byteLength;
+    if (sizeBytes > CLOUD_BACKUP_MAX_PAYLOAD_BYTES) {
+      return json(502, { ok: false, error: 'drive_backup_too_large' });
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const previous = await env.ACCOUNTS_DB.prepare(
+      'SELECT created_at FROM account_backups WHERE user_id = ? LIMIT 1',
+    ).bind(session.uid).first();
+    const createdAt = Number(previous?.created_at) || now;
+    await env.ACCOUNTS_DB.prepare(`
+      INSERT INTO account_backups (
+        user_id, format_version, payload_json, size_bytes, created_at, updated_at
+      ) VALUES (?, 1, ?, ?, ?, ?)
+      ON CONFLICT(user_id) DO UPDATE SET
+        format_version = excluded.format_version,
+        payload_json = excluded.payload_json,
+        size_bytes = excluded.size_bytes,
+        updated_at = excluded.updated_at
+    `).bind(session.uid, payloadJson, sizeBytes, createdAt, now).run();
+    return json(200, {
+      ok: true,
+      restored: {
+        file_name: GOOGLE_DRIVE_BACKUP_NAME,
+        format: CLOUD_BACKUP_FORMAT,
+        version: 1,
+        size_bytes: sizeBytes,
+        created_at: createdAt,
+        updated_at: now,
+      },
+    });
+  } catch (error) {
+    console.error('google drive restore failed', error?.code || 'account_storage');
+    return json(503, { ok: false, error: 'account_storage' });
+  }
+}
+
 async function handleAccountActivity(request, env) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return json(405, { ok: false, error: 'method_not_allowed' });
@@ -2254,14 +3535,24 @@ export default {
       const target = `https://${CANONICAL_HOST}${url.pathname}${url.search}`;
       return redirect(target, { 'cache-control': 'public, max-age=86400' }, 301);
     }
-    if (INTERNAL.some((rx) => rx.test(url.pathname))) {
+    const internalPath = canonicalInternalPath(url.pathname);
+    if (internalPath === null || INTERNAL.some((rx) => rx.test(internalPath))) {
       return new Response('Not found', { status: 404, headers: BASE_HEADERS });
     }
     if (url.pathname === APP_PREVIEW_PREFIX || url.pathname.startsWith(APP_PREVIEW_PREFIX + '/')) {
       return handleAppPreview(request, url, env);
     }
+    if (url.pathname === '/api/health') {
+      return handleHealth(request, env, url);
+    }
     if (url.pathname === '/api/byte') {
       return handleByte(request, env);
+    }
+    if (url.pathname === '/api/qowner/leaderboard') {
+      return handleQownerLeaderboard(request, env);
+    }
+    if (url.pathname === '/api/qowner/waitlist') {
+      return handleQownerWaitlist(request, env);
     }
     if (url.pathname === '/api/account/me') {
       return handleAccount(request, env);
@@ -2269,11 +3560,38 @@ export default {
     if (url.pathname === '/api/account/export') {
       return handleAccountExport(request, env);
     }
+    if (url.pathname === '/api/account/delete') {
+      return handleAccountDelete(request, env);
+    }
     if (url.pathname === '/api/account/backup') {
       return handleCloudBackup(request, env);
     }
+    if (url.pathname === '/api/integrations/google-drive') {
+      return handleGoogleDriveStatus(request, env);
+    }
+    if (url.pathname === '/api/integrations/google-drive/backup') {
+      return handleGoogleDriveBackup(request, env);
+    }
+    if (url.pathname === '/api/integrations/google-drive/restore') {
+      return handleGoogleDriveRestore(request, env);
+    }
+    if (url.pathname === '/api/integrations/github' ||
+        url.pathname.startsWith('/api/integrations/github/')) {
+      return handleGitHubAppIntegration(request, url, env, {
+        readSession,
+        signSession,
+        verifySignedPayload,
+        sha256B64url,
+      });
+    }
+    if (url.pathname === '/api/integrations/google-drive/disconnect') {
+      return handleGoogleDriveDisconnect(request, env);
+    }
     if (url.pathname === '/api/account/activity') {
       return handleAccountActivity(request, env);
+    }
+    if (url.pathname === '/api/account/connections/link/start') {
+      return handleNativeLinkStart(request, url, env);
     }
     if (url.pathname === '/api/account/profile') {
       return handleProfile(request, env);
@@ -2297,48 +3615,94 @@ export default {
       return handleAuth(request, url, env);
     }
     if (url.pathname.startsWith('/downloads/')) {
-      const key = decodeURIComponent(url.pathname.slice('/downloads/'.length));
+      if (request.method !== 'GET' && request.method !== 'HEAD') {
+        return new Response('Method not allowed', {
+          status: 405,
+          headers: { ...BASE_HEADERS, Allow: 'GET, HEAD', 'Cache-Control': 'no-store' },
+        });
+      }
+      const downloadErrorHeaders = () => ({ ...BASE_HEADERS, 'Cache-Control': 'no-store' });
+      let key;
+      try {
+        key = decodeURIComponent(url.pathname.slice('/downloads/'.length));
+      } catch {
+        // Malformed percent-encoding is a bad request for an unknown object,
+        // not a reason to let URIError escape the worker.
+        return new Response('Download not found', {
+          status: 404,
+          headers: downloadErrorHeaders(),
+        });
+      }
+      if (!PUBLIC_DOWNLOAD_KEYS.has(key)) {
+        return new Response('Download not found', {
+          status: 404,
+          headers: downloadErrorHeaders(),
+        });
+      }
       // A 30 MB installer over a flaky connection must be resumable, so honour
       // `Range` and advertise it. Without this a dropped transfer restarts from
       // zero every time; browsers and download managers both rely on 206s.
       const rangeHeader = request.headers.get('range');
       let range = null;
       let wantRange = false;
-      if (rangeHeader) {
-        const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
-        if (m) {
-          const hasStart = m[1] !== '', hasEnd = m[2] !== '';
-          if (hasStart) {
-            const start = Number(m[1]);
-            const end = hasEnd ? Number(m[2]) : undefined;
-            range = { offset: start, length: hasEnd ? end - start + 1 : undefined };
-            wantRange = true;
-          } else if (hasEnd) {
-            // `bytes=-N` means the final N bytes; R2 needs an absolute offset,
-            // which requires knowing the size, so resolve it with a HEAD first.
-            const head = await env.DOWNLOADS.head(key);
-            if (head) {
-              range = { suffix: Number(m[2]), size: head.size };
-              wantRange = true;
-            }
-          }
+      let objectSize = null;
+      if (rangeHeader !== null) {
+        // Resolve the object size before parsing any requested window. This lets
+        // us reject inverted, out-of-bounds, zero-length, and overflowed ranges
+        // with a valid 416 instead of asking R2 for an invalid slice.
+        const head = await env.DOWNLOADS.head(key);
+        if (!head) {
+          return new Response('Download not found', {
+            status: 404,
+            headers: downloadErrorHeaders(),
+          });
         }
+        objectSize = Number(head.size);
+        const rejectRange = () => new Response('Range not satisfiable', {
+          status: 416,
+          headers: {
+            ...BASE_HEADERS,
+            'Cache-Control': 'no-store',
+            'Accept-Ranges': 'bytes',
+            'Content-Range': `bytes */${objectSize}`,
+          },
+        });
+        if (!Number.isSafeInteger(objectSize) || objectSize < 0) return rejectRange();
+
+        const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+        if (!m) return rejectRange();
+        const hasStart = m[1] !== '', hasEnd = m[2] !== '';
+        if (!hasStart && !hasEnd) return rejectRange();
+
+        if (hasStart) {
+          const start = Number(m[1]);
+          if (!Number.isSafeInteger(start) || start < 0 || start >= objectSize) return rejectRange();
+          const requestedEnd = hasEnd ? Number(m[2]) : objectSize - 1;
+          if (!Number.isSafeInteger(requestedEnd) || requestedEnd < start) return rejectRange();
+          const end = Math.min(requestedEnd, objectSize - 1);
+          range = { offset: start, length: end - start + 1 };
+        } else {
+          // `bytes=-N` means the final N bytes. Suffix zero is explicitly
+          // unsatisfiable; otherwise it would produce an invalid start>end 206.
+          const suffix = Number(m[2]);
+          if (!Number.isSafeInteger(suffix) || suffix <= 0 || objectSize === 0) return rejectRange();
+          const offset = Math.max(0, objectSize - suffix);
+          range = { offset, length: objectSize - offset };
+        }
+        wantRange = true;
       }
 
       let obj;
-      if (range && range.suffix !== undefined) {
-        const offset = Math.max(0, range.size - range.suffix);
-        obj = await env.DOWNLOADS.get(key, { range: { offset, length: range.size - offset } });
-      } else if (range) {
+      if (range) {
         obj = await env.DOWNLOADS.get(key, { range });
       } else {
         obj = await env.DOWNLOADS.get(key);
       }
 
       if (obj === null) {
-        return new Response('Download not found: ' + key, {
+        return new Response('Download not found', {
           status: 404,
-          headers: BASE_HEADERS,
+          headers: downloadErrorHeaders(),
         });
       }
 
@@ -2346,12 +3710,22 @@ export default {
       obj.writeHttpMetadata(headers);
       headers.set('etag', obj.httpEtag);
       for (const [k, v] of Object.entries(BASE_HEADERS)) headers.set(k, v);
+      // Downloads are immutable release bytes, but the route must not let an
+      // edge cache retain full or partial responses across deployments.
+      headers.set('Cache-Control', 'no-store');
       // Always advertise range support so a resumable client will try it.
       headers.set('Accept-Ranges', 'bytes');
       // Any downloadable artifact is offered as an attachment, not just .zip:
       // the .exe installer must download rather than be treated as a page.
       if (/\.(?:zip|exe|msi|dmg|appimage|deb|rpm|pkg|tar\.gz|tgz)$/i.test(key)) {
-        headers.set('Content-Disposition', 'attachment; filename="' + key + '"');
+        // The allowlist above currently contains safe ASCII release names. Keep
+        // both header parameters defensive so a future key cannot inject CR/LF
+        // or an unescaped quote into Content-Disposition.
+        const safeName = key.replaceAll(String.fromCharCode(13), '_').replaceAll(String.fromCharCode(10), '_').replaceAll('"', '_').replaceAll(String.fromCharCode(92), '_');
+        headers.set(
+          'Content-Disposition',
+          `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(safeName)}`,
+        );
       }
 
       // Only answer 206 when the client actually asked for a range. R2 populates
@@ -2366,6 +3740,10 @@ export default {
         return new Response(obj.body, { status: 206, headers });
       }
 
+      // R2 metadata does not always add Content-Length to a no-store HEAD
+      // response at the edge. Set the full object length explicitly so clients
+      // and download managers can validate the transfer before reading bytes.
+      headers.set('Content-Length', String(obj.size));
       if (request.method === 'HEAD') return new Response(null, { status: 200, headers });
       return new Response(obj.body, { headers });
     }
@@ -2393,11 +3771,15 @@ export default {
       headers.set('cache-control', 'no-store');
       return harden(new Response(dash.body, { status: 200, headers }), '/dashboard', true);
     }
-
     // Public profile pages are rendered by one small static shell; the shell
     // fetches only the explicitly public profile fields from the API.
     if (url.pathname.startsWith('/u/')) {
-      const handle = decodeURIComponent(url.pathname.slice(3));
+      let handle;
+      try {
+        handle = decodeURIComponent(url.pathname.slice(3));
+      } catch {
+        return new Response('Not found', { status: 404, headers: BASE_HEADERS });
+      }
       if (!PROFILE_HANDLE_RE.test(handle)) {
         return new Response('Not found', { status: 404, headers: BASE_HEADERS });
       }
@@ -2432,4 +3814,11 @@ export default {
 
     return harden(res, url.pathname, isHtml);
   },
+};
+
+export {
+  deleteAccountData,
+  normalizeCloudSnapshot,
+  findGoogleDriveBackup,
+  downloadGoogleDriveBackup,
 };
