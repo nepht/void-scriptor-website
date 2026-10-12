@@ -12,6 +12,8 @@ import { handleGitHubAppIntegration } from './github_app_connector.js';
 
 const INTERNAL = [
   /^\/wrangler\.toml$/i,
+  /^\/package\.json$/i,
+  /^\/package-lock\.json$/i,
   /^\/\.assetsignore$/i,
   /^\/\.gitignore$/i,
   /^\/_worker\.js$/i,
