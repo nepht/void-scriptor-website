@@ -31,6 +31,13 @@ const INTERNAL = [
   /^\/preview-entry\.txt$/i,
   /^\/test(?:\/|$)/i,
   /^\/migrations(?:\/|$)/i,
+  // Windows reserved device names (NUL/CON/PRN/AUX/COM1/LPT1...) can be created
+  // in the publish root by shell redirection (`... > NUL`, `dir ... 2> NUL`).
+  // Such a file is a stray tooling artifact, never site content, yet
+  // `wrangler pages deploy` uploads it and `/.assetsignore` is not consulted on
+  // the Pages path. Deny the family so a redirection slip cannot publish
+  // 54 bytes of shell error text at `/NUL` (verified live before this fix).
+  /^\/(?:NUL|CON|PRN|AUX|COM[0-9]|LPT[0-9])$/i,
 ];
 const APP_PREVIEW_PREFIX = '/preview';
 
