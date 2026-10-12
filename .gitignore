@@ -1,1 +1,6 @@
 .wrangler/
+node_modules/
+crawl.pkl
+NUL
+# Stale local checksum output for a ZIP that is not part of the current release.
+release-manifests/voidscriptor-1.2.0-rc.1-windows-x64.zip.sha256
