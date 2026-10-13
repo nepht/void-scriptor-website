@@ -8,7 +8,7 @@ const englishHomepage = fs.readFileSync('en/index.html', 'utf8');
 
 test('homepage uses the cinematic full-bleed visual system on both language routes', () => {
   assert.match(css, /\.page-home \.hero\{[^}]*min-height:100dvh/);
-  assert.match(css, /\.page-home \.hero \.scene\{[^}]*background-image:url\(['"]?\/assets\/slides\/void-studio\.webp/);
+  assert.match(css, /\.page-home \.hero \.scene\{[^}]*background-image:url\(['"]?\/assets\/slides\/void-studio(?:\.v\d+)?\.webp/);
   assert.match(css, /\.page-home \.hero-inner\{[^}]*align-items:flex-start/);
   assert.match(css, /\.page-home \.carousel\{[^}]*width:100%/);
   assert.match(css, /\.page-home \.caro-viewport\{[^}]*border-inline:0/);
@@ -18,8 +18,8 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=cinematic-fullbleed-20261012/,
-      `${route} homepage must load the cinematic stylesheet revision`);
+    assert.match(source, /site\.css\?v=theme-20261013/,
+      `${route} homepage must load the current theme stylesheet revision`);
   }
 });
 

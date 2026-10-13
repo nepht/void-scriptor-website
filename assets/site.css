@@ -1,4 +1,7 @@
 @font-face{font-family:Inter;font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/inter-latin-var.woff2') format('woff2')}
+@font-face{font-family:Sora;font-style:normal;font-weight:200 700;font-display:swap;src:url('/fonts/sora-latin-var.woff2') format('woff2')}
+@font-face{font-family:'Albert Sans';font-style:normal;font-weight:300 700;font-display:swap;src:url('/fonts/albert-sans-latin-var.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:300 600;font-display:swap;src:url('/fonts/jetbrains-mono-latin-var.woff2') format('woff2')}
 
 :root{
   --void:#000;
@@ -25,9 +28,9 @@
   --muted:#b8b8bc;
   --faint:#858589;
   --line:rgba(217,207,255,.18);
-  --font-display:'DM Serif Display',Georgia,serif;
-  --font-body:Inter,system-ui,'Segoe UI',sans-serif;
-  --font-mono:'Roboto Mono',ui-monospace,monospace;
+  --font-display:Sora,'Albert Sans',system-ui,'Segoe UI',sans-serif;
+  --font-body:'Albert Sans',Inter,system-ui,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'Roboto Mono',monospace;
   --radius-control:8px;
   --radius-card:16px;
   --radius-feature:30px;
@@ -115,7 +118,7 @@ p,li{color:var(--ash)}
 .page-home .caro-viewport::before{background:radial-gradient(90% 110% at 12% 0,rgba(124,92,255,.18),transparent 60%)}
 .page-home .caro-slide{display:block;min-height:clamp(520px,54vw,720px);padding:0;position:relative;isolation:isolate;overflow:hidden}
 .page-home .caro-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;min-height:clamp(520px,54vw,720px);max-width:650px;padding:clamp(34px,6vw,86px);text-align:left}
-.page-home .caro-copy h2{max-width:15ch;color:var(--pure);text-shadow:0 2px 24px rgba(0,0,0,.58)}
+.page-home .caro-copy h2{max-width:15ch;color:var(--pure);text-shadow:0 2px 24px rgba(0,0,0,.58);font-weight:250;letter-spacing:-.01em}
 .page-home .caro-copy p{color:rgba(245,245,247,.82);text-shadow:0 1px 16px rgba(0,0,0,.62)}
 .page-home .caro-art{position:absolute;inset:0;z-index:0;margin:0;border:0;border-radius:0;box-shadow:none;background:#08090b}
 .page-home .caro-art::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,5,7,.92) 0%,rgba(5,5,7,.68) 32%,rgba(5,5,7,.12) 72%),linear-gradient(0deg,rgba(5,5,7,.72),transparent 48%)}
@@ -1374,7 +1377,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .hero .scene{filter:saturate(.72) contrast(1.03)}
 .page-home .hero .veil{background:linear-gradient(180deg,rgba(5,5,7,.8),rgba(5,5,7,.2) 36%,rgba(5,5,7,.28) 58%,rgba(5,5,7,.94) 86%,#050507 100%),radial-gradient(52% 42% at 50% 42%,rgba(5,5,7,.56),transparent 72%)}
 .page-home .hero::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");mix-blend-mode:screen}
-.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:italic;font-weight:400;color:var(--primary-pale);text-shadow:0 0 42px rgba(157,184,255,.2)}
+.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em;color:var(--primary-pale);text-shadow:0 0 42px rgba(157,184,255,.2)}
 .page-home .hero h1 span:last-child{font-family:var(--font-body);font-weight:650;color:var(--cloud);text-shadow:none}
 .page-home .hero .primary{border-color:#c9d7ff;background:linear-gradient(135deg,#b8caff,#718ed3);color:#080b15;box-shadow:0 0 25px rgba(157,184,255,.22)}
 .page-home .hero .actions .secondary{min-height:44px;padding:0;color:var(--primary);border:0;border-bottom:1px solid rgba(157,184,255,.58);border-radius:0;background:transparent;text-transform:none;letter-spacing:.02em;font-size:13px;font-weight:650}
@@ -1439,10 +1442,10 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 @media(max-width:760px){.page-home .platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch}.page-home .platforms .plat{border-left:0;border-bottom:1px solid rgba(255,255,255,.1);padding:8px 4px;justify-content:flex-start}.page-home .platforms .plat:first-child{border-left:0}.page-home .platforms .plat em{font-size:9px}}
 @media(max-width:400px){.page-home .platforms{grid-template-columns:1fr}}
 
-/* Homepage type hierarchy: reserve the serif face for one editorial cue and
-   keep product information in a calmer sans voice. */
+/* Homepage type hierarchy: one calm geometric sans (Sora) carries both the
+   hero and product headings; no serif, no editorial italic cue. */
 .page-home h2,.page-home h3,.page-home .metrics strong{font-family:var(--font-body);font-weight:650;letter-spacing:-.035em}
-.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:italic;font-weight:400}
+.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em}
 .page-home .hero h1 span:last-child{font-family:var(--font-body);font-weight:650}
 .page-home .caro-copy h2{font-family:var(--font-body);font-weight:650}
 .page-home .brand span,.page-home .footbrand strong,.page-home .footbrand span{font-family:var(--font-body)}
@@ -1634,13 +1637,13 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home header{position:absolute;inset:0 0 auto;height:76px;background:linear-gradient(180deg,rgba(5,5,7,.76),rgba(5,5,7,.18) 80%,transparent);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
 .page-home .hero{min-height:100dvh;border-bottom:1px solid rgba(255,255,255,.1);background:#050507;isolation:isolate}
 .page-home .hero-inner{min-height:100dvh;width:min(1200px,calc(100% - 64px));padding-top:clamp(118px,15vh,164px);padding-bottom:calc(clamp(52px,8vh,96px) + env(safe-area-inset-bottom));align-items:flex-start;justify-content:center;text-align:left}
-.page-home .hero .scene{background-image:url('/assets/slides/void-studio.webp');background-position:68% 50%;transform:scale(1.035);filter:saturate(.82) contrast(1.05)}
+.page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2.webp');background-position:68% 50%;transform:scale(1.035);filter:saturate(.9) contrast(1.05)}
 .page-home .hero .veil{background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.74) 34%,rgba(5,5,7,.24) 70%,rgba(5,5,7,.44) 100%),linear-gradient(0deg,rgba(5,5,7,.9) 0%,rgba(5,5,7,.08) 56%,rgba(5,5,7,.48) 100%)}
 .page-home .hero .copy{max-width:680px;align-items:flex-start;text-align:left;font-family:var(--font-body)}
 .page-home .hero .hero-logo{width:clamp(54px,6vw,78px);margin-bottom:20px}
 .page-home .hero .eyebrow{margin-bottom:18px;padding:0;border:0;border-radius:0;background:none;letter-spacing:.18em}
 .page-home .hero .eyebrow::before{display:none}
-.page-home .hero h1{max-width:12ch;font-size:clamp(52px,6.2vw,90px);line-height:.93}
+.page-home .hero h1{max-width:12ch;font-size:clamp(52px,6.2vw,90px);line-height:.93;font-weight:250;letter-spacing:-.01em}
 .page-home .hero .lead{max-width:30ch;margin-top:26px}
 .page-home .hero .desc{max-width:54ch}
 .page-home .hero .actions{justify-content:flex-start}
