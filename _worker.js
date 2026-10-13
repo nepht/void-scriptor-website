@@ -112,13 +112,12 @@ const CSP_SITE = [
 // stale-while-revalidate: repeat visits stop waiting on the network, while a
 // deploy still propagates (stale is served at most once, then replaced).
 //
-// Public pages and static assets are safe to cache: visitor identity is fetched
-// from no-store API endpoints, never rendered into the HTML response itself.
-// Keep a short browser window, a longer edge window, and stale-while-revalidate
-// so a deploy propagates without making every repeat visit wait for the origin.
+// Public HTML is safe to cache: visitor identity is fetched from no-store API
+// endpoints, never rendered into the HTML response itself. Binary art and fonts
+// get a longer stale-while-revalidate window; HTML and metadata files keep the
+// platform's revalidation behavior so deploys do not leave stale policy files.
 // Private dashboard/profile responses and the gated Flutter bundle stay no-store.
 const CACHE_ART = /\.(?:webp|png|jpe?g|svg|gif|ico|avif|woff2?|ttf|otf)$/i;
-const CACHE_STATIC = /\.(?:css|js|json|txt|xml|webmanifest|sha256)$/i;
 const RELEASE_MANIFEST = /^\/release-manifests\/.*\.sha256$/i;
 const PRIVATE_HTML = /^\/(?:dashboard(?:\.html)?|profile(?:\.html)?)(?:\/)?$/;
 function cachePolicy(pathname, isHtml, status) {
@@ -128,7 +127,6 @@ function cachePolicy(pathname, isHtml, status) {
   if (RELEASE_MANIFEST.test(pathname)) return 'no-store';
   if (isHtml) return 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
   if (CACHE_ART.test(pathname)) return 'public, max-age=86400, stale-while-revalidate=604800';
-  if (CACHE_STATIC.test(pathname)) return 'public, max-age=86400, stale-while-revalidate=604800';
   return null;
 }
 
