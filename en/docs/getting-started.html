@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The official guide to downloading, verifying, installing, and uninstalling Void Scriptor Studio RC.2 on Windows.">
+<title>Getting Started with Void Scriptor Studio: Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=theme-20261013">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/en/docs/getting-started">
+<link rel="alternate" hreflang="en" href="https://voidscriptor.com/en/docs/getting-started">
+<link rel="alternate" hreflang="id" href="https://voidscriptor.com/docs/getting-started">
+<link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/docs/getting-started">
+<meta property="og:site_name" content="Void Scriptor">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://voidscriptor.com/en/docs/getting-started">
+<meta property="og:title" content="Getting Started with Void Scriptor Studio">
+<meta property="og:description" content="A guide to downloading, verifying the checksum, installing, uninstalling, and connecting to local Byte.">
+<meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta property="og:image:alt" content="Void Scriptor — Real tools. Honest status.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Getting Started with Void Scriptor Studio">
+<meta name="twitter:description" content="The official Void Scriptor Studio RC.2 guide for Windows.">
+<meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:image:alt" content="Void Scriptor — Real tools. Honest status.">
+</head>
+<body class="page-legal page-docs">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header><div class="shell navrow"><a class="brand" href="/en/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/en/">← Back to home</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">DOCUMENTATION · WINDOWS</div>
+<h1>Start without guessing.</h1>
+<p class="lede">This guide includes only steps supported by available artifacts and testing. The current release is <strong>Void Scriptor Studio 1.2.0-rc.2</strong>, a release candidate for Windows x64, not a stable release.</p>
+<nav class="docnav" aria-label="Documentation navigation"><a href="/en/docs/getting-started" aria-current="page">Getting started</a><a href="/en/status">Status</a><a href="/en/report-bug">Report a bug</a><a href="/en/changelog">Release notes</a></nav>
+
+<section class="docs-section" aria-labelledby="download-title">
+<span class="eyebrow">01 · DOWNLOAD &amp; VERIFY</span>
+<h2 id="download-title">Use an installer with a clear source.</h2>
+<p>Download only from the canonical domain <code>voidscriptor.com</code>. The SHA-256 checksum detects changed or corrupted files; the checksum alone does not prove provenance or a publisher signature.</p>
+<div class="docs-grid">
+<article class="docs-card docs-card--accent"><div class="docs-card-head"><span class="status-tag">PREVIEW</span><code>Windows x64</code></div><h3>.exe installer</h3><p>The published Windows x64 installer for this release candidate.</p><dl class="docs-facts"><div><dt>Version</dt><dd>1.2.0-rc.2</dd></div><div><dt>Size</dt><dd>32,746,152 bytes · 32.75 MB</dd></div><div><dt>Stable release</dt><dd>Not yet</dd></div></dl><a class="status-primary" href="/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe" download>Download Windows installer</a></article>
+<article class="docs-card"><div class="docs-card-head"><span class="status-tag">SHA-256</span><code>LOCAL VERIFICATION</code></div><h3>Published fingerprint</h3><p class="hash">f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</p><p class="docs-muted">Text fallback readable without JavaScript:</p><a href="/release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256">Open checksum manifest</a></article>
+</div>
+<div class="docs-command"><p><strong>PowerShell:</strong> run this from the folder where the installer is stored.</p><pre><code>Get-FileHash .\VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -Algorithm SHA256</code></pre><p>The <code>Hash</code> value must exactly match the manifest. If it differs, do not run the installer; preserve the evidence and use the <a href="/en/report-bug">bug report form</a>.</p></div>
+<div class="docs-command"><p><strong>Maintainer verification:</strong> the repository provides checksum and Authenticode checks in one step.</p><pre><code>pwsh -File tools/verify-release.ps1 -InstallerPath ./VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -ManifestPath ./release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256</code></pre><p>A result of <code>SignatureStatus: Valid</code> only means the signature can be verified. RC.2 still uses a self-issued certificate, so the publisher is not trusted by SmartScreen.</p></div>
+</section>
+
+<section class="docs-section" aria-labelledby="install-title">
+<span class="eyebrow">02 · INSTALLATION</span>
+<h2 id="install-title">Install and remove it through Windows.</h2>
+<div class="docs-steps"><article><span>01</span><div><h3>Run the installer</h3><p>Open <code>VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe</code> after the checksum matches. The installer uses the default Windows location and offers an optional shortcut.</p></div></article><article><span>02</span><div><h3>If SmartScreen appears</h3><p>RC.2 has a timestamped Authenticode signature that passed a local audit, but its certificate is self-issued and is not yet a publisher identity trusted by SmartScreen. SmartScreen may still show a warning. Verify the source and checksum before deciding in the Windows dialog.</p></div></article><article><span>03</span><div><h3>Uninstall</h3><p>Open <strong>Settings → Apps → Installed apps → Void Scriptor → Uninstall</strong>, or run <em>Uninstall Void Scriptor</em> from the Start Menu. Project documents and user data should not be removed without a manual check.</p></div></article></div>
+</section>
+
+<section class="docs-section" aria-labelledby="portable-title">
+<span class="eyebrow">03 · PORTABLE / ZIP</span>
+<h2 id="portable-title">Do not mix the two distribution formats.</h2>
+<div class="docs-note"><strong>Portable ZIP is not provided for RC.2.</strong><p>The last audited portable artifact was marked RC.1: 34,496,233 bytes, SHA-256 <code>1a13bbeaf1e2af1401690004cc4a34ad8f4a9e3e2b8377a0587fe79805ac071f</code>, 497 members (494 matching payloads in CHECKSUMS.txt, plus BACA-SAYA.txt, CHECKSUMS.txt, and codesign.pub). Its public download has not been republished, so this page no longer offers a ZIP download button.</p><p class="docs-muted">The RC.1 archive fingerprint can still be checked through the <a href="/release-manifests/voidscriptor-1.2.0-rc.1-windows-x64.zip.sha256">ZIP checksum manifest</a>.</p></div>
+<p>If you have an RC.1 portable archive from a trusted copy, verify its sibling <code>.zip.sha256</code> hash, extract the entire folder, then run <code>Release\void_scriptor.exe</code>. Do not run the executable from inside the ZIP or separate the DLL/data files. Portable documentation is separate from installer documentation because the distribution flows differ.</p>
+</section>
+
+<section class="docs-section" aria-labelledby="requirements-title">
+<span class="eyebrow">04 · REQUIREMENTS</span>
+<h2 id="requirements-title">Known limits, not invented numbers.</h2>
+<div class="docs-note"><strong>Official minimum requirements have not been published.</strong><p>The following configuration is a real test configuration measured for local evidence; it is not an official minimum requirement and does not promise compatibility with every device.</p></div>
+<dl class="docs-facts docs-facts--wide"><div><dt>Test OS</dt><dd>Windows 11 Pro 64-bit</dd></div><div><dt>Test CPU</dt><dd>Intel Core i5-4570 · 4 logical/physical cores</dd></div><div><dt>Test RAM</dt><dd>32 GiB installed</dd></div><div><dt>Test GPU</dt><dd>AMD Radeon RX590 GME</dd></div><div><dt>Official minimum</dt><dd>Not established</dd></div><div><dt>Disk space</dt><dd>Not established as a requirement</dd></div></dl>
+</section>
+
+<section class="docs-section" aria-labelledby="data-title">
+<span class="eyebrow">05 · DATA &amp; CONNECTIONS</span>
+<h2 id="data-title">Know what stays local.</h2>
+<div class="docs-grid"><article class="docs-card"><h3>Application data</h3><p>Sign-in status and error reports are stored in the Windows application support folder (the technical component is named <code>path_provider</code>), inside <code>VoidScriptor\state</code> and <code>VoidScriptor\diagnostics\crash</code>. The folder location may vary according to Windows configuration.</p></article><article class="docs-card"><h3>Projects</h3><p>If you do not choose a location yourself, the main project folder is in Documents, inside <code>VoidScriptor\Projects</code>. Your chosen location is the primary reference; if the drive is unavailable, the application tells you that a fallback location is being used.</p></article><article class="docs-card"><h3>Sign-in &amp; Byte connection</h3><p>The website uses GitHub or Google for sign-in. The session cookie only helps keep you signed in and does not contain a password. The optional Byte connection runs only on your computer at <code>127.0.0.1:8766</code> and accepts requests from permitted origins. Do not copy tokens, cookies, or secrets into a report.</p></article></div>
+</section>
+
+<section class="docs-section docs-next" aria-labelledby="next-title"><span class="eyebrow">NEXT STEPS</span><h2 id="next-title">Need help?</h2><p>Check the <a href="/en/status">status and release limits</a>, read the <a href="/en/changelog">release notes</a>, or send a <a href="/en/report-bug">structured bug report</a>. For security issues, use <a href="/.well-known/security.txt">security.txt</a>.</p></section>
+</div></main>
+<footer><div class="shell foot"><a href="/en/">Home</a><a href="/en/status">Service health</a><a href="/en/changelog">Release notes</a><a href="/en/report-bug">Report a bug</a><a href="/en/privacy">Privacy</a><a href="/en/terms">Terms</a><a href="/en/contact">Contact</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+</body>
+</html>

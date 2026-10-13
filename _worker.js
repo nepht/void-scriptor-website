@@ -1188,6 +1188,28 @@ function redirect(location, extraHeaders = {}, status = 302) {
   return new Response(null, { status, headers });
 }
 
+// Prefer English only when the client's Accept-Language ranks `en` above `id`,
+// so the dashboard auth gate sends visitors to a notice in their own language.
+function prefersEnglish(acceptLanguage) {
+  if (!acceptLanguage) return false;
+  const best = (list) => (list.length ? Math.max(...list) : 0);
+  const entries = String(acceptLanguage)
+    .split(',')
+    .map((part) => {
+      const [tag, ...params] = part.trim().split(';');
+      let weight = 1;
+      for (const param of params) {
+        const m = param.trim().match(/^q=([0-9.]+)$/i);
+        if (m) weight = Number.parseFloat(m[1]);
+      }
+      return { tag: tag.trim().toLowerCase(), weight };
+    })
+    .filter((entry) => entry.tag);
+  const en = best(entries.filter((e) => e.tag === 'en' || e.tag.startsWith('en-')).map((e) => e.weight));
+  const id = best(entries.filter((e) => e.tag === 'id' || e.tag.startsWith('id-')).map((e) => e.weight));
+  return en > 0 && en > id;
+}
+
 function authConfigured(env) {
   return Boolean(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET && env.SESSION_SECRET);
 }
@@ -3779,7 +3801,11 @@ export default {
         : null;
       if (!session) {
         // no-store: a cached redirect must never bounce a signed-in visitor.
-        return redirect('/?auth=required', { 'cache-control': 'no-store' });
+        // Locale-aware: English-preferring visitors get the English notice page.
+        const target = prefersEnglish(request.headers.get('accept-language'))
+          ? '/en/?auth=required'
+          : '/?auth=required';
+        return redirect(target, { 'cache-control': 'no-store' });
       }
       const dash = await env.ASSETS.fetch(new URL('/dashboard.html', url).toString());
       if (!dash.ok) {

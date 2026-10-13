@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Void Scriptor release notes and current product status.">
+<title>Release notes: Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=theme-20261013">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/en/changelog">
+<link rel="alternate" hreflang="en" href="https://voidscriptor.com/en/changelog">
+<link rel="alternate" hreflang="id" href="https://voidscriptor.com/changelog">
+<link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/changelog">
+<meta property="og:site_name" content="Void Scriptor">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://voidscriptor.com/en/changelog">
+<meta property="og:title" content="Void Scriptor release notes">
+<meta property="og:description" content="Release notes, product status, and verification steps for Void Scriptor Studio.">
+<meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta property="og:image:alt" content="Void Scriptor — Real tools. Honest status.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Void Scriptor release notes">
+<meta name="twitter:description" content="Release notes, product status, and verification steps for Void Scriptor Studio.">
+<meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:image:alt" content="Void Scriptor — Real tools. Honest status.">
+<script type="application/ld+json">
+{"@context":"https://***@type":"WebPage","name":"Void Scriptor release notes","url":"https://voidscriptor.com/en/changelog","description":"Release notes, product status, and verification steps for Void Scriptor Studio.","isPartOf":{"@type":"WebSite","name":"Void Scriptor","url":"https://voidscriptor.com/"},"about":{"@type":"SoftwareApplication","name":"Void Scriptor Studio","operatingSystem":"Windows","applicationCategory":"DesignApplication"}}
+</script>
+</head>
+<body class="page-legal page-changelog">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header><div class="shell navrow"><a class="brand" href="/en/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/en/">← Back to home</a></div></header>
+<main id="main-content"><div class="shell">
+<span class="eyebrow">RELEASE NOTES</span>
+<h1>Notes you can verify.</h1>
+<p class="lede">This page records what is available now and what has not been released. No launch date is added before a release is actually ready.</p>
+<section class="changelog-grid" aria-label="Product status">
+  <article class="status-item status-item--current"><div class="status-top"><span class="status-tag">PREVIEW</span><code>1.2.0-rc.2</code></div><h2>Void Scriptor Studio</h2><p>The Windows x64 installer is available as a release candidate, not a stable release. The SHA-256 checksum helps detect a damaged or changed file. The installer has a timestamped self-issued Authenticode signature, but no publicly trusted publisher identity for SmartScreen. The tested configuration is documented in the <a href="/en/docs/getting-started">Getting Started guide</a>; it is not an official minimum requirement.</p><dl class="status-specs"><div><dt>Platform</dt><dd>Windows x64</dd></div><div><dt>Size</dt><dd>32.75 MB</dd></div><div><dt>Stage</dt><dd>Release candidate</dd></div><div><dt>Minimum requirements</dt><dd>Not set</dd></div><div><dt>Tested configuration</dt><dd>Windows 11 Pro 64-bit · i5-4570 · 32 GiB · RX590 GME</dd></div></dl><div class="status-actions"><a class="status-primary" href="/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe" download>Download the installer</a><a href="/release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256" target="_blank" rel="noopener">View checksum</a></div></article>
+  <article class="status-item"><div class="status-top"><span class="status-tag">COMING SOON</span><code>QOWNER</code></div><h2>QOWNER Quiz Maker</h2><p>The mobile app for iOS and Android is being prepared. It is not available for download yet.</p><div class="status-actions"><span class="status-primary is-unavailable" aria-disabled="true">iOS · Not available</span><span class="is-unavailable" aria-disabled="true">Android · Not available</span></div></article>
+  <article class="status-item"><div class="status-top"><span class="status-tag">PREVIEW</span><code>BYTE</code></div><h2>Byte Assistant</h2><p>The interactive widget is available on the homepage and dashboard. A local Byte connection can connect Byte to a workspace.</p><a href="/en/#byteAssistant">Talk to Byte →</a></article>
+</section>
+<section class="status-verify" aria-labelledby="verify-title"><span class="eyebrow">LOCAL VERIFICATION</span><h2 id="verify-title">Check before running.</h2><p>In Windows PowerShell, calculate the SHA-256 hash of the installer you downloaded. Compare it with the value above; do not run the file if it differs.</p><pre><code>Get-FileHash .\VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe -Algorithm SHA256</code></pre><p class="verify-note">Current release value: <code>f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</code>. A matching value shows that the file is the same as the published checksum; the timestamped Authenticode signature can be checked separately, but its self-issued certificate does not prove a trusted publisher.</p></section>
+<section class="status-notes" aria-labelledby="notes-title"><span class="eyebrow">RC.2 SUMMARY</span><h2 id="notes-title">What you can verify now.</h2><p>RC.2 is an evaluation build for Windows x64. Detailed technical notes will be updated when system requirements and a stable release have been set.</p><ul><li>The Windows x64 installer is available for testing.</li><li>A SHA-256 checksum is available for local verification.</li><li>Linux and macOS have not been released.</li><li>QOWNER mobile is not available for download yet.</li></ul></section>
+<section class="status-roadmap" aria-labelledby="roadmap-title"><span class="eyebrow">NOT RELEASED</span><h2 id="roadmap-title">Next platforms</h2><p>Studio for Linux and macOS is still unreleased. There is no public date; this page will be updated when a testable build is available.</p><div class="roadmap-list"><span>Linux <b>Not released</b></span><span>macOS <b>Not released</b></span></div></section>
+<section class="status-proof" aria-labelledby="proof-title"><span class="eyebrow">PRODUCT EVIDENCE</span><h2 id="proof-title">What you can see now</h2><p>The homepage shows product highlights and a Byte widget that opens directly. For the Windows release, the installer size and SHA-256 are listed above so release status does not rely on claims alone.</p><div class="status-actions"><a href="/en/#spotlight">View product highlights →</a><a href="/en/#release">View release details →</a></div></section>
+</div></main>
+<footer><div class="shell foot"><a href="/en/">VOID SCRIPTOR</a><span>Independent technology studio · <a href="/en/docs/getting-started">Getting started</a> · <a href="/en/report-bug">Report a bug</a> · <a href="/en/status">Service health</a> · <a href="/en/contact">Contact</a> · <a href="/en/privacy">Privacy</a> · <a href="/en/terms">Terms</a></span><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+</body>
+</html>

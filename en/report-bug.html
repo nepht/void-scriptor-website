@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Void Scriptor bug report form that prepares a local email without uploading data to a server.">
+<title>Report a Bug: Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=theme-20261013">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050507">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/en/report-bug">
+<link rel="alternate" hreflang="en" href="https://voidscriptor.com/en/report-bug">
+<link rel="alternate" hreflang="id" href="https://voidscriptor.com/report-bug">
+<link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/report-bug">
+<meta property="og:site_name" content="Void Scriptor"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://voidscriptor.com/en/report-bug"><meta property="og:title" content="Report a Bug: Void Scriptor"><meta property="og:description" content="A bug report prepared on your device and opened through your email application."><meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta property="og:image:alt" content="Void Scriptor — Real tools. Honest status.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Report a Bug: Void Scriptor"><meta name="twitter:description" content="A local bug report form for Void Scriptor."><meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:image:alt" content="Void Scriptor — Real tools. Honest status.">
+</head>
+<body class="page-legal page-report">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header><div class="shell navrow"><a class="brand" href="/en/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/en/">← Back to home</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">SUPPORT · BUG REPORT</div>
+<h1>Help us find the crack.</h1>
+<p class="lede">This form only prepares an email draft on your device. There is no <code>fetch</code>, upload, or third-party endpoint. Describe the reproduction steps in as much detail as possible and do not include secrets.</p>
+<nav class="docnav" aria-label="Support navigation"><a href="/en/docs/getting-started">Getting started</a><a href="/en/status">Status</a><a href="/en/report-bug" aria-current="page">Report a bug</a><a href="/en/contact">Contact</a></nav>
+<div class="docs-note docs-note--warning"><strong>Before sending</strong><p>Remove passwords, tokens, API keys, cookies, verification codes, unnecessary personal addresses, and sensitive file contents. Replace them with <code>[REDACTED]</code>. For security reports, use the channel in <a href="/.well-known/security.txt">security.txt</a>, not this general form.</p></div>
+<form class="report-form" id="bugReportForm" novalidate>
+<div class="form-row"><div class="fld"><label for="bug-name">Name or handle</label><input id="bug-name" name="name" type="text" autocomplete="name" required></div><div class="fld"><label for="bug-email">Reply email</label><input id="bug-email" name="email" type="email" autocomplete="email" required></div></div>
+<div class="form-row"><div class="fld"><label for="bug-version">Product version</label><select id="bug-version" name="version"><option value="Void Scriptor Studio 1.2.0-rc.2">Void Scriptor Studio 1.2.0-rc.2</option><option value="QOWNER web archive">QOWNER web archive</option><option value="Byte Assistant web preview">Byte Assistant web preview</option><option value="Unknown">Unknown</option></select></div><div class="fld"><label for="bug-platform">OS / browser</label><input id="bug-platform" name="platform" type="text" placeholder="Example: Windows 11 64-bit · Chrome" required></div></div>
+<div class="fld"><label for="bug-steps">Steps to reproduce</label><textarea id="bug-steps" name="steps" required placeholder="1. Open…&#10;2. Click…&#10;3. Observe…"></textarea></div>
+<div class="form-row"><div class="fld"><label for="bug-expected">Expected result</label><textarea id="bug-expected" name="expected" required></textarea></div><div class="fld"><label for="bug-actual">Actual result</label><textarea id="bug-actual" name="actual" required></textarea></div></div>
+<div class="fld"><label for="bug-logs">Logs or additional context (optional)</label><textarea id="bug-logs" name="logs" placeholder="Paste log excerpts after redacting secrets. Do not attach credentials."></textarea></div>
+<button type="submit">Open email draft</button><p class="form-status" id="bugStatus" role="status" aria-live="polite"></p><p class="form-note">Recipient: <a href="mailto:voidscriptor@gmail.com">voidscriptor@gmail.com</a>. The button only opens your local email application; you review and send it yourself.</p>
+</form>
+<section class="docs-section docs-next" aria-labelledby="bug-next-title"><span class="eyebrow">HELPFUL EVIDENCE</span><h2 id="bug-next-title">Include what can be verified.</h2><ul class="docs-list"><li>URL/feature and time of occurrence.</li><li>Version shown on the page or installer.</li><li>Minimal reproduction steps and whether the issue happens every time.</li><li>Installer checksum if the issue appeared after downloading.</li><li>A screenshot cleaned of personal data.</li></ul></section>
+</div></main>
+<footer><div class="shell foot"><a href="/en/">Home</a><a href="/en/docs/getting-started">Getting started</a><a href="/en/status">Service health</a><a href="/en/changelog">Release notes</a><a href="/en/privacy">Privacy</a><a href="/en/terms">Terms</a><a href="/en/contact">Contact</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+<script>
+(function(){var form=document.getElementById('bugReportForm'),status=document.getElementById('bugStatus');if(!form)return;function value(id){return document.getElementById(id).value.trim()}form.addEventListener('submit',function(event){event.preventDefault();var name=value('bug-name'),email=value('bug-email'),version=value('bug-version'),platform=value('bug-platform'),steps=value('bug-steps'),expected=value('bug-expected'),actual=value('bug-actual'),logs=value('bug-logs');if(!name){document.getElementById('bug-name').focus();status.textContent='Name or handle is required.';return}if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){document.getElementById('bug-email').focus();status.textContent='Enter a valid email address.';return}if(!platform||!steps||!expected||!actual){status.textContent='Complete the OS/browser, steps, expected result, and actual result fields.';return}var subject='[Bug report] '+version+' · '+platform;var body=['Name/handle: '+name,'Email: '+email,'Version: '+version,'OS/browser: '+platform,'','Steps to reproduce:',steps,'','Expected result:',expected,'','Actual result:',actual,'','Additional logs/context:',logs||'(none)','', 'Note: I have removed secrets or replaced them with [REDACTED].'].join('\n');status.textContent='Opening email application…';window.location.href='mailto:voidscriptor@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body)})})();
+</script>
+</body>
+</html>
