@@ -69,3 +69,20 @@ test('English subpages are listed in the sitemap', () => {
     );
   }
 });
+
+test('every page exposes a visible language switch', () => {
+  for (const page of PAGES) {
+    const idHtml = read(`${page}.html`);
+    assert.ok(idHtml.includes('class="btn-lang"'), `${page}.html needs a language control`);
+    assert.ok(
+      idHtml.includes(`class="btn-lang" href="/en/${page}"`) || idHtml.includes('id="btnEN"'),
+      `${page}.html needs a switch to English (link to /en/${page} or an in-place EN control)`,
+    );
+    const enHtml = read(`en/${page}.html`);
+    assert.ok(enHtml.includes('class="btn-lang"'), `en/${page}.html needs a language control`);
+    assert.ok(
+      enHtml.includes(`class="btn-lang" href="/${page}"`) || enHtml.includes('id="btnID"'),
+      `en/${page}.html needs a switch to Indonesian`,
+    );
+  }
+});
