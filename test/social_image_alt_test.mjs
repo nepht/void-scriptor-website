@@ -14,13 +14,25 @@ function meta(html, attr, key) {
   return m && m[1];
 }
 
+// Walk the publish tree so a nested public page (e.g. docs/getting-started.html)
+// cannot silently ship a social image without alt text. The previous version
+// only scanned the root *.html plus en/index.html, which let docs/ slip through.
+const SKIP_DIRS = new Set(['node_modules', '.git', '.wrangler', 'app', 'tools', 'test', 'migrations']);
+
+function walkHtml(dir, out) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (SKIP_DIRS.has(entry.name)) continue;
+      walkHtml(dir === '.' ? entry.name : `${dir}/${entry.name}`, out);
+    } else if (entry.name.endsWith('.html')) {
+      out.push(dir === '.' ? entry.name : `${dir}/${entry.name}`);
+    }
+  }
+  return out;
+}
+
 function publicPages() {
-  const pages = fs
-    .readdirSync('.')
-    .filter((f) => f.endsWith('.html'))
-    .map((f) => f);
-  if (fs.existsSync('en/index.html')) pages.push('en/index.html');
-  return pages.sort();
+  return walkHtml('.', []).sort();
 }
 
 test('every public page with a twitter:image also ships twitter:image:alt', () => {
@@ -50,4 +62,9 @@ test('image alt text matches the locale of its page', () => {
 
   const aboutAlt = meta(fs.readFileSync('about.html', 'utf8'), 'name', 'twitter:image:alt');
   assert.match(aboutAlt, /Alat nyata\. Status terbuka\./);
+
+  // Nested public page: must carry Indonesian alt text like its sibling pages.
+  const docs = fs.readFileSync('docs/getting-started.html', 'utf8');
+  assert.match(meta(docs, 'property', 'og:image:alt'), /Alat nyata\. Status terbuka\./);
+  assert.match(meta(docs, 'name', 'twitter:image:alt'), /Alat nyata\. Status terbuka\./);
 });
