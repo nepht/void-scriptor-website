@@ -26,7 +26,7 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=responsive-20261015/,
+    assert.match(source, /site\.css\?v=responsive-images-20261015/,
       `${route} homepage must load the current theme stylesheet revision`);
   }
 });
@@ -53,6 +53,20 @@ test('long status and documentation values wrap on narrow screens', () => {
   assert.match(css, /\.page-status code,\.page-docs code\{overflow-wrap:anywhere;word-break:break-word\}/);
   assert.match(css, /\.page-docs \.docs-command pre,\.page-docs \.docs-note pre\{max-width:100%;box-sizing:border-box;overflow-x:auto\}/);
   assert.match(css, /\.page-docs \.docs-command pre code\{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word\}/);
+});
+
+test('hero artwork serves a size-appropriate variant on small screens', () => {
+  const slideCandidates = (name) => `srcset="/assets/slides/${name}-1280.webp 1280w, /assets/slides/${name}-1920.webp 1920w, /assets/slides/${name}.webp 2560w" sizes="100vw"`;
+  for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
+    for (const name of ['void-studio.v2', 'qowner-quiz.v2', 'byte-assistant.v2']) {
+      assert.ok(source.includes(slideCandidates(name)),
+        `${route} homepage must offer the 1280/1920/2560 candidates for ${name}`);
+    }
+    assert.doesNotMatch(source, /sizes="\(max-width: 720px\) 100vw, 58vw"/,
+      `${route} homepage must drop the sizes hint that never matched the rendered width`);
+  }
+  assert.match(css, /@media\(max-width:900px\)\{\s*\.page-home \.hero \.scene\{background-image:url\('\/assets\/slides\/void-studio\.v2-1280\.webp'\)\}/);
+  assert.match(css, /@media\(max-width:900px\)\{[\s\S]*?\.page-quiz \.hero::before\{background-image:[^}]*qowner-quiz\.v2-1280\.webp/);
 });
 
 test('closed Byte does not float over homepage content on narrow screens', () => {

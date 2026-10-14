@@ -1704,3 +1704,11 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   .page-docs .docs-command pre code{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
   .page-home .byte-assistant.is-open{width:min(380px,calc(100% - 32px));margin:16px auto 24px}
 }
+
+/* Phones and small tablets render the hero around 400-900px wide, so the
+   2560px artwork is wasted bandwidth there. Serve the 1280px variant; the
+   carousel srcset picks its own size for every density. */
+@media(max-width:900px){
+  .page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2-1280.webp')}
+  .page-quiz .hero::before{background-image:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.48) 48%,rgba(5,5,7,.22)),url('/assets/slides/qowner-quiz.v2-1280.webp')}
+}
