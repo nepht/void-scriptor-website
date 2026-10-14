@@ -1637,7 +1637,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home header{position:absolute;inset:0 0 auto;height:76px;background:linear-gradient(180deg,rgba(5,5,7,.76),rgba(5,5,7,.18) 80%,transparent);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
 .page-home .hero{min-height:100dvh;border-bottom:1px solid rgba(255,255,255,.1);background:#050507;isolation:isolate}
 .page-home .hero-inner{min-height:100dvh;width:min(1200px,calc(100% - 64px));padding-top:clamp(118px,15vh,164px);padding-bottom:calc(clamp(52px,8vh,96px) + env(safe-area-inset-bottom));align-items:flex-start;justify-content:center;text-align:left}
-.page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2.webp');background-position:68% 50%;transform:translate3d(0,var(--vs-hero-shift,0px),0) scale(1.035);animation:cinematicFullBleed 24s ease-in-out infinite alternate;filter:saturate(.9) contrast(1.05)}
+.page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2.webp');background-position:68% 50%;transform:translate3d(0,var(--vs-hero-shift,0px),0) scale(1.035);animation:cinematicFullBleed 24s ease-in-out infinite alternate;animation-play-state:var(--vs-hero-play,running);filter:saturate(.9) contrast(1.05)}
 @keyframes cinematicFullBleed{from{scale:1;translate:0 0}to{scale:1.08;translate:-1% 0}}
 .page-home .hero .veil{background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.74) 34%,rgba(5,5,7,.24) 70%,rgba(5,5,7,.44) 100%),linear-gradient(0deg,rgba(5,5,7,.9) 0%,rgba(5,5,7,.08) 56%,rgba(5,5,7,.48) 100%)}
 .page-home .hero .copy{max-width:680px;align-items:flex-start;text-align:left;font-family:var(--font-body)}
@@ -1689,7 +1689,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 /* QOWNER opening: the archive artwork gets the same restrained cinematic
    movement as the homepage without moving the readable copy rail. */
 .page-quiz .hero{position:relative;overflow:hidden;isolation:isolate;background:#050507}
-.page-quiz .hero::before{content:"";position:absolute;inset:-4%;z-index:0;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.48) 48%,rgba(5,5,7,.22)),url('/assets/slides/qowner-quiz.v2.webp') center/cover no-repeat;animation:quizCinematicBleed 26s ease-in-out infinite alternate;transform-origin:center}
+.page-quiz .hero::before{content:"";position:absolute;inset:-4%;z-index:0;pointer-events:none;background:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.48) 48%,rgba(5,5,7,.22)),url('/assets/slides/qowner-quiz.v2.webp') center/cover no-repeat;animation:quizCinematicBleed 26s ease-in-out infinite alternate;animation-play-state:var(--vs-quiz-play,running);transform-origin:center}
 .page-quiz .hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(5,5,7,.18),rgba(5,5,7,.12) 44%,rgba(5,5,7,.82) 100%)}
 .page-quiz .hero>.grid,.page-quiz .hero>.shell{position:relative;z-index:1}
 @keyframes quizCinematicBleed{from{scale:1;translate:0 0}to{scale:1.08;translate:-1% 0}}

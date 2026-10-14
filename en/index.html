@@ -130,7 +130,7 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
 @media(max-width:720px){.page-home .caro-nav{padding-inline:24px}.page-home .caro-slide{padding:28px 24px}.page-home .caro-art{order:-1;max-width:none}}
 @media(prefers-reduced-motion:reduce){.caro-slide{transition:none!important}.caro-track{transition:none}.caro-art img{transition:none!important}.caro-slide.is-active .caro-art img{transform:none}}
 </style>
-<link rel="stylesheet" href="/assets/site.css?v=cinematic-20261014-quiz">
+<link rel="stylesheet" href="/assets/site.css?v=cinematic-20261015">
 
 <link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -503,7 +503,19 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 <script>
-/* spotlight carousel: crossfade, thin progress controls, pause on hover/focus, respects reduced-motion */
+/* Pause the cinematic scene while it is outside the viewport. */
+(function(){
+  var hero=document.querySelector('.page-home .hero');
+  if(!hero||!window.IntersectionObserver)return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce)return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){hero.style.setProperty('--vs-hero-play',entry.isIntersecting?'running':'paused')});
+  },{threshold:0.01}).observe(hero);
+})();
+</script>
+<script>
+/* spotlight carousel: crossfade, thin progress controls, pause on hover/focus, respects reduced motion */
 (function(){
   var track=document.getElementById('caroTrack'),dotsBox=document.getElementById('caroDots'),
       prev=document.getElementById('caroPrev'),next=document.getElementById('caroNext'),toggle=document.getElementById('caroToggle'),nav=document.querySelector('#spotlight .caro-nav');

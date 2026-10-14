@@ -42,7 +42,7 @@ footer{padding:34px 0;border-top:1px solid rgba(155,115,230,.14)}.foot{display:f
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
 </style>
-<link rel="stylesheet" href="/assets/site.css?v=cinematic-20261014-quiz">
+<link rel="stylesheet" href="/assets/site.css?v=cinematic-20261015">
 <link rel="icon" type="image/webp" href="assets/void_scriptor_emblem.webp">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
@@ -501,6 +501,18 @@ var quizNav=document.querySelector('header nav'),quizMenu=document.getElementByI
 if(quizNav&&quizMenu){quizNav.id='quizNav';function closeQuizNav(){quizNav.classList.remove('open');quizMenu.setAttribute('aria-expanded','false')}quizMenu.onclick=function(){var open=quizNav.classList.toggle('open');quizMenu.setAttribute('aria-expanded',open?'true':'false')};quizNav.querySelectorAll('a').forEach(function(link){link.onclick=closeQuizNav});document.addEventListener('keydown',function(ev){if(ev.key==='Escape')closeQuizNav()})}
 setLang(lang);
 })();</script>
+<script>
+/* Pause the QOWNER cinematic scene while it is outside the viewport. */
+(function(){
+  var hero=document.querySelector('.page-quiz .hero');
+  if(!hero||!window.IntersectionObserver)return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce)return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){hero.style.setProperty('--vs-quiz-play',entry.isIntersecting?'running':'paused')});
+  },{threshold:0.01}).observe(hero);
+})();
+</script>
 <script>
 /* Keep the mobile menu's accessible name in sync with its visible state. */
 (function(){

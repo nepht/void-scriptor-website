@@ -5,6 +5,8 @@ import test from 'node:test';
 const css = fs.readFileSync('assets/site.css', 'utf8');
 const homepage = fs.readFileSync('index.html', 'utf8');
 const englishHomepage = fs.readFileSync('en/index.html', 'utf8');
+const quizPage = fs.readFileSync('quiz.html', 'utf8');
+const englishQuizPage = fs.readFileSync('en/quiz.html', 'utf8');
 
 test('homepage uses the cinematic full-bleed visual system on both language routes', () => {
   assert.match(css, /\.page-home \.hero\{[^}]*min-height:100dvh/);
@@ -18,10 +20,13 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /\.page-home \.caro-slide\{[^}]*min-height:clamp\(560px,68vw,100dvh\)/);
   assert.match(css, /\.page-home \.caro-art img\{[^}]*object-position:50% 50%/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
+  assert.match(css, /animation-play-state:var\(--vs-hero-play,running\)/);
+  assert.match(homepage, /IntersectionObserver/);
+  assert.match(englishHomepage, /IntersectionObserver/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=cinematic-20261014-quiz/,
+    assert.match(source, /site\.css\?v=cinematic-20261015/,
       `${route} homepage must load the current theme stylesheet revision`);
   }
 });
@@ -32,6 +37,9 @@ test('QOWNER hero applies a cinematic full-bleed art layer with reduced-motion f
   assert.match(css, /\.page-quiz \.hero::before\{[^}]*animation:quizCinematicBleed 26s ease-in-out infinite alternate/);
   assert.match(css, /@keyframes quizCinematicBleed\{from\{scale:1;translate:0 0\}to\{scale:1\.08;translate:-1% 0\}\}/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.page-quiz \.hero::before\{animation:none;scale:1;translate:0 0\}\}/);
+  assert.match(css, /animation-play-state:var\(--vs-quiz-play,running\)/);
+  assert.match(quizPage, /--vs-quiz-play/);
+  assert.match(englishQuizPage, /--vs-quiz-play/);
 });
 
 test('QOWNER keeps a cinematic full-height hero without forcing the dashboard layout', () => {
