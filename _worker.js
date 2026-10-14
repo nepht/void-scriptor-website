@@ -3833,6 +3833,13 @@ export default {
       } catch {
         return new Response('Not found', { status: 404, headers: BASE_HEADERS });
       }
+      // The shell (profile.html) matches /^\/u\/([^/]+)\/?$/ and lowercases the
+      // captured handle before it calls the API, which in turn matches with
+      // COLLATE NOCASE. Normalize the same way here: without this, a shared
+      // /u/<handle>/ link or a differently-cased /u/<Handle> fell through to a
+      // hard 404 instead of the profile the shell was written to render.
+      if (handle.endsWith('/')) handle = handle.slice(0, -1);
+      handle = handle.toLowerCase();
       if (!PROFILE_HANDLE_RE.test(handle)) {
         return new Response('Not found', { status: 404, headers: BASE_HEADERS });
       }
