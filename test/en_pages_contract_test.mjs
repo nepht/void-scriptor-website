@@ -48,7 +48,7 @@ for (const page of PAGES) {
 }
 
 test('English subpages carry no leftover Indonesian UI copy', () => {
-  const markers = ['Lihat ', 'Silahkan', 'Hapus akun dan data server', 'studio independen yang dikelola'];
+  const markers = ['Lihat ', 'Silahkan', 'Hapus akun dan data server', 'studio independen yang dikelola', 'Note rilis', 'Catatan rilis'];
   for (const page of PAGES) {
     const html = read(`en/${page}.html`);
     const visible = html
