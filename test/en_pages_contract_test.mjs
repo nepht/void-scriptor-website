@@ -80,7 +80,10 @@ test('English QOWNER page roots every site asset at the origin', () => {
     '/assets/apple-touch-icon-180x180.png',
     '/site.webmanifest',
   ]) {
-    assert.ok(html.includes(`href="${asset}"`), `en/quiz.html must use the root asset ${asset}`);
+    assert.ok(
+      html.includes(`href="${asset}"`) || html.includes(`href="${asset}?v=`),
+      `en/quiz.html must use the root asset ${asset}`,
+    );
   }
 });
 
