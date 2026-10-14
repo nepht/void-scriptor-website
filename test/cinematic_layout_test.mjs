@@ -26,6 +26,14 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   }
 });
 
+test('QOWNER hero applies a cinematic full-bleed art layer with reduced-motion fallback', () => {
+  assert.match(css, /\.page-quiz \.hero\{[^}]*overflow:hidden/);
+  assert.match(css, /\.page-quiz \.hero::before\{[^}]*url\(['"]?\/assets\/slides\/qowner-quiz\.v2\.webp/);
+  assert.match(css, /\.page-quiz \.hero::before\{[^}]*animation:quizCinematicBleed 26s ease-in-out infinite alternate/);
+  assert.match(css, /@keyframes quizCinematicBleed\{from\{scale:1;translate:0 0\}to\{scale:1\.08;translate:-1% 0\}\}/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{\.page-quiz \.hero::before\{animation:none;scale:1;translate:0 0\}\}/);
+});
+
 test('QOWNER keeps a cinematic full-height hero without forcing the dashboard layout', () => {
   assert.match(css, /\.page-quiz \.hero\{[^}]*min-height:max\(620px,100dvh\)/);
   assert.match(css, /\.page-quiz \.hero\{[^}]*display:grid/);
