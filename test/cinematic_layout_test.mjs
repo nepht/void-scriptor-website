@@ -9,6 +9,9 @@ const englishHomepage = fs.readFileSync('en/index.html', 'utf8');
 test('homepage uses the cinematic full-bleed visual system on both language routes', () => {
   assert.match(css, /\.page-home \.hero\{[^}]*min-height:100dvh/);
   assert.match(css, /\.page-home \.hero \.scene\{[^}]*background-image:url\(['"]?\/assets\/slides\/void-studio(?:\.v\d+)?\.webp/);
+  assert.match(css, /\.page-home \.hero \.scene\{[^}]*transform:translate3d\(0,var\(--vs-hero-shift,0px\),0\) scale\(1\.035\)/);
+  assert.match(css, /\.page-home \.hero \.scene\{[^}]*animation:cinematicFullBleed 24s ease-in-out infinite alternate/);
+  assert.match(css, /@keyframes cinematicFullBleed\{from\{scale:1\.035\}to\{scale:1\.08\}\}/);
   assert.match(css, /\.page-home \.hero-inner\{[^}]*align-items:flex-start/);
   assert.match(css, /\.page-home \.carousel\{[^}]*width:100%/);
   assert.match(css, /\.page-home \.caro-viewport\{[^}]*border-inline:0/);
@@ -18,7 +21,7 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=theme-20261013/,
+    assert.match(source, /site\.css\?v=cinematic-20261014/,
       `${route} homepage must load the current theme stylesheet revision`);
   }
 });

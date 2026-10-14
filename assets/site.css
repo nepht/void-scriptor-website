@@ -1637,7 +1637,8 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home header{position:absolute;inset:0 0 auto;height:76px;background:linear-gradient(180deg,rgba(5,5,7,.76),rgba(5,5,7,.18) 80%,transparent);border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
 .page-home .hero{min-height:100dvh;border-bottom:1px solid rgba(255,255,255,.1);background:#050507;isolation:isolate}
 .page-home .hero-inner{min-height:100dvh;width:min(1200px,calc(100% - 64px));padding-top:clamp(118px,15vh,164px);padding-bottom:calc(clamp(52px,8vh,96px) + env(safe-area-inset-bottom));align-items:flex-start;justify-content:center;text-align:left}
-.page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2.webp');background-position:68% 50%;transform:scale(1.035);filter:saturate(.9) contrast(1.05)}
+.page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2.webp');background-position:68% 50%;transform:translate3d(0,var(--vs-hero-shift,0px),0) scale(1.035);animation:cinematicFullBleed 24s ease-in-out infinite alternate;filter:saturate(.9) contrast(1.05)}
+@keyframes cinematicFullBleed{from{scale:1.035}to{scale:1.08}}
 .page-home .hero .veil{background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.74) 34%,rgba(5,5,7,.24) 70%,rgba(5,5,7,.44) 100%),linear-gradient(0deg,rgba(5,5,7,.9) 0%,rgba(5,5,7,.08) 56%,rgba(5,5,7,.48) 100%)}
 .page-home .hero .copy{max-width:680px;align-items:flex-start;text-align:left;font-family:var(--font-body)}
 .page-home .hero .hero-logo{width:clamp(54px,6vw,78px);margin-bottom:20px}
