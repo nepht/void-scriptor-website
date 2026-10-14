@@ -70,6 +70,20 @@ test('English subpages are listed in the sitemap', () => {
   }
 });
 
+test('English QOWNER page roots every site asset at the origin', () => {
+  const html = read('en/quiz.html');
+  for (const asset of [
+    '/assets/void_scriptor_emblem.webp',
+    '/favicon.ico',
+    '/assets/favicon-32x32.png',
+    '/assets/favicon-16x16.png',
+    '/assets/apple-touch-icon-180x180.png',
+    '/site.webmanifest',
+  ]) {
+    assert.ok(html.includes(`href="${asset}"`), `en/quiz.html must use the root asset ${asset}`);
+  }
+});
+
 test('every page exposes a visible language switch', () => {
   for (const page of PAGES) {
     const idHtml = read(`${page}.html`);
