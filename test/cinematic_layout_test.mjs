@@ -26,7 +26,7 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=cinematic-20261015/,
+    assert.match(source, /site\.css\?v=responsive-20261015/,
       `${route} homepage must load the current theme stylesheet revision`);
   }
 });
@@ -47,6 +47,12 @@ test('QOWNER keeps a cinematic full-height hero without forcing the dashboard la
   assert.match(css, /\.page-quiz \.hero\{[^}]*display:grid/);
   assert.match(css, /@media\(max-width:760px\)[\s\S]*?\.page-quiz\{[^}]*background-position:18% top/);
   assert.match(css, /\.page-dashboard main\.dash\{[^}]*max-width/);
+});
+
+test('long status and documentation values wrap on narrow screens', () => {
+  assert.match(css, /\.page-status code,\.page-docs code\{overflow-wrap:anywhere;word-break:break-word\}/);
+  assert.match(css, /\.page-docs \.docs-command pre,\.page-docs \.docs-note pre\{max-width:100%;box-sizing:border-box;overflow-x:auto\}/);
+  assert.match(css, /\.page-docs \.docs-command pre code\{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word\}/);
 });
 
 test('closed Byte does not float over homepage content on narrow screens', () => {

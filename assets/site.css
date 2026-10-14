@@ -1699,5 +1699,8 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
    cover a hero CTA, carousel controls, or the last form field. */
 @media(max-width:760px){
   .page-home .byte-assistant{position:relative;right:auto;bottom:auto;width:62px;margin:16px 16px 24px auto;pointer-events:auto}
+  .page-status code,.page-docs code{overflow-wrap:anywhere;word-break:break-word}
+  .page-docs .docs-command pre,.page-docs .docs-note pre{max-width:100%;box-sizing:border-box;overflow-x:auto}
+  .page-docs .docs-command pre code{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
   .page-home .byte-assistant.is-open{width:min(380px,calc(100% - 32px));margin:16px auto 24px}
 }
