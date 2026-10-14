@@ -3793,14 +3793,23 @@ export default {
     // renders, but gating here as well means an anonymous request never
     // receives the markup at all -- and `.html` is gated too, otherwise
     // /dashboard.html would be served straight from ASSETS and slip past it.
-    if (url.pathname === '/dashboard' || url.pathname === '/dashboard.html' || url.pathname === '/dashboard/') {
+    // /en/dashboard is the English URL for the same private area: without this
+    // alias it fell through to the static 404 page instead of the auth notice.
+    const enDashboard = url.pathname === '/en/dashboard'
+      || url.pathname === '/en/dashboard.html'
+      || url.pathname === '/en/dashboard/';
+    if (enDashboard
+      || url.pathname === '/dashboard'
+      || url.pathname === '/dashboard.html'
+      || url.pathname === '/dashboard/') {
       const session = env.SESSION_SECRET
         ? await readSession(request, env.SESSION_SECRET, env.ACCOUNTS_DB)
         : null;
       if (!session) {
         // no-store: a cached redirect must never bounce a signed-in visitor.
-        // Locale-aware: English-preferring visitors get the English notice page.
-        const target = prefersEnglish(request.headers.get('accept-language'))
+        // Locale-aware: the /en/ URL, and English-preferring visitors, get the
+        // English notice page.
+        const target = enDashboard || prefersEnglish(request.headers.get('accept-language'))
           ? '/en/?auth=required'
           : '/?auth=required';
         return redirect(target, { 'cache-control': 'no-store' });
