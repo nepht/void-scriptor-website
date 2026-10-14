@@ -3654,6 +3654,13 @@ export default {
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
     }
+    if (url.pathname === '/downloads' || url.pathname === '/downloads/'
+      || url.pathname === '/en/downloads' || url.pathname === '/en/downloads/') {
+      const downloadIndex = url.pathname.startsWith('/en/') ? '/en/downloads.html' : '/downloads.html';
+      const index = await env.ASSETS.fetch(new URL(downloadIndex, url).toString());
+      if (!index.ok) return harden(index, url.pathname, false);
+      return harden(new Response(index.body, { status: 200, headers: index.headers }), url.pathname, true);
+    }
     if (url.pathname.startsWith('/downloads/')) {
       if (request.method !== 'GET' && request.method !== 'HEAD') {
         return new Response('Method not allowed', {
