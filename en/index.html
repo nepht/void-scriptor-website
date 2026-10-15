@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var english=document.documentElement.lang==='en';
   function sync(){var open=nav.classList.contains('open');button.setAttribute('aria-expanded',open?'true':'false');button.setAttribute('aria-label',open?(english?'Close navigation menu':'Tutup menu navigasi'):(english?'Open navigation menu':'Buka menu navigasi'))}
   window.addEventListener('pageshow',function(){resetMenu();sync()});
-  button.addEventListener('click',function(){window.setTimeout(sync,0)});
+  button.addEventListener('click',function(){window.setTimeout(function(){sync();if(nav.classList.contains('open')){var first=nav.querySelector('a,button');if(first)first.focus()}},0)});
   nav.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('a'))window.setTimeout(sync,0)});
   document.addEventListener('click',function(ev){if(nav.classList.contains('open')&&!nav.contains(ev.target)&&ev.target!==button){nav.classList.remove('open');sync()}});
   document.addEventListener('keydown',function(ev){if(ev.key==='Escape'){nav.classList.remove('open');sync()}});

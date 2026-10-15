@@ -29,5 +29,10 @@ test('primary navigation is closed before JavaScript runs on both locales', () =
       `${page}: pageshow reset must close the menu`,
     );
     assert.match(source, /document\.body\.classList\.add\('menu-ready'\);/, `${page}: menu readiness must be explicit`);
+    assert.match(
+      source,
+      /if\(nav\.classList\.contains\('open'\)\)\{var first=nav\.querySelector\('a,button'\);if\(first\)first\.focus\(\)\}/,
+      `${page}: opening the menu must move focus into the menu`,
+    );
   }
 });
