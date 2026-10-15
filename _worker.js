@@ -82,16 +82,19 @@ const BASE_HEADERS = {
 };
 
 // Strict policy for our own hand-written pages. They are fully self-contained
-// (inline CSS/JS, same-origin images), so this needs no external allowances.
-// The only exceptions are the two sign-in providers: their avatar hosts so the
-// header can show the person's real picture, and github.com for form-action
-// during the authorize POST. Every other image on the site is same-origin.
+// (inline CSS/JS, same-origin images), so this needs almost no external
+// allowances. The exceptions are: the two sign-in providers (their avatar hosts
+// so the header can show the person's real picture, and github.com for
+// form-action during the authorize POST), and Cloudflare's own Web Analytics
+// beacon, which the edge injects into HTML before the visitor's browser sees
+// it. Blocking that beacon produced a CSP console error on every page load and
+// silently discarded the analytics it was collecting.
 const CSP_SITE = [
   "default-src 'self'",
   "img-src 'self' data: blob: https://avatars.githubusercontent.com https://lh3.googleusercontent.com",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline'",
-  "connect-src 'self' http://127.0.0.1:8766 http://localhost:8766",
+  "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+  "connect-src 'self' http://127.0.0.1:8766 http://localhost:8766 https://cloudflareinsights.com",
   "font-src 'self' data:",
   "base-uri 'self'",
   "form-action 'self' https://github.com",
