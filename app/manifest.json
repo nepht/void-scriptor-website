@@ -1,11 +1,11 @@
 {
-    "name": "QOWNER Demo Preview",
-    "short_name": "QOWNER",
+    "name": "Void Scriptor Studio Preview",
+    "short_name": "Void Scriptor Studio",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#050507",
     "theme_color": "#050507",
-    "description": "QOWNER Quiz Maker public demo preview from Void Scriptor.",
+    "description": "Void Scriptor Studio browser preview for characters, worlds, and stories.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

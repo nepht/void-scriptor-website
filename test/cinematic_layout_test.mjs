@@ -26,7 +26,7 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=responsive-images-20261015/,
+    assert.match(source, /site\.css\?v=byte-motion-20261015/,
       `${route} homepage must load the current theme stylesheet revision`);
   }
 });

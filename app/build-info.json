@@ -1,0 +1,12 @@
+{
+  "product": "Void Scriptor Studio",
+  "version": "1.2.0-rc.1",
+  "sourceCommit": "bf300ce6e95a53d6cc657787eb8dbc8db194e042",
+  "baseHref": "/app/",
+  "buildCommand": "flutter build web --release --base-href=/app/",
+  "sha256": {
+    "main.dart.js": "48023396b33dcac6d71822b084ee5a8e9d0c5081b991df5f13dbf7fb6526f27c",
+    "flutter_bootstrap.js": "eafd28edd59630728e76d86b1f2e332c0232823d6ba153bc34ff01753cdddfff",
+    "flutter_service_worker.js": "dbfbe64ae5be5b462abb97338eb9af783ed4ed57a8c73a53c2a44488a26f6416"
+  }
+}

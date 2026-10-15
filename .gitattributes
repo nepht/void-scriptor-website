@@ -1,0 +1,6 @@
+# Generated Flutter artifacts must retain the bytes recorded in build-info.json.
+app/** -text whitespace=cr-at-eol
+# Preserve the upstream dependency-license bundle verbatim, including whitespace.
+app/assets/NOTICES -whitespace
+# CanvasKit is generated third-party SDK code, copied without formatting edits.
+app/canvaskit/** -whitespace
