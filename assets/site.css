@@ -511,6 +511,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .byte-retry[hidden]{display:none}
 .byte-settings-toggle{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(217,207,255,.16);border-radius:var(--radius-control);background:rgba(255,255,255,.025);color:var(--fog);font-size:16px;cursor:pointer}
 .byte-settings-toggle:hover,.byte-settings-toggle[aria-expanded=true]{color:#a8f2ff;border-color:rgba(0,179,221,.6);background:rgba(0,179,221,.1)}
+.byte-settings-toggle:focus-visible,.byte-memory-clear:focus-visible,.byte-close:focus-visible,.byte-scan:focus-visible{outline:3px solid var(--primary-pale);outline-offset:2px}
 .byte-panel-id{display:flex;align-items:center;gap:11px;min-width:0}
 .byte-panel-id>img{width:44px;height:48px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(66,232,255,.44))}
 .byte-panel-id>div{display:grid;gap:4px;min-width:0}

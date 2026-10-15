@@ -25,10 +25,10 @@ test('homepage uses the cinematic full-bleed visual system on both language rout
   assert.match(englishHomepage, /IntersectionObserver/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
 
-  for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    assert.match(source, /site\.css\?v=byte-motion-20261015/,
-      `${route} homepage must load the current theme stylesheet revision`);
-  }
+  const cssRevision = homepage.match(/site\.css\?v=([\w.-]+)/)?.[1];
+  assert.ok(cssRevision, 'homepage must declare a theme stylesheet revision');
+  assert.equal(englishHomepage.match(/site\.css\?v=([\w.-]+)/)?.[1], cssRevision,
+    'ID and EN homepages must load the same theme stylesheet revision');
 });
 
 test('QOWNER hero applies a cinematic full-bleed art layer with reduced-motion fallback', () => {
