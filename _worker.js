@@ -114,10 +114,14 @@ const CSP_SITE = [
 //
 // Public HTML is safe to cache: visitor identity is fetched from no-store API
 // endpoints, never rendered into the HTML response itself. Binary art and fonts
-// get a longer stale-while-revalidate window; HTML and metadata files keep the
+// get a longer stale-while-revalidate window. HTML and metadata files keep the
 // platform's revalidation behavior so deploys do not leave stale policy files.
+// CSS/JS are not content-hashed, so they must be revalidated before every reuse:
+// `max-age=0, must-revalidate` still never serves a stale byte, but the resulting
+// 304 spares a repeat visitor re-downloading site.css (~145 KB) each navigation.
 // Private dashboard/profile responses and the gated Flutter bundle stay no-store.
 const CACHE_ART = /\.(?:webp|png|jpe?g|svg|gif|ico|avif|woff2?|ttf|otf)$/i;
+const CACHE_UI = /\.(?:css|js)$/i;
 const RELEASE_MANIFEST = /^\/release-manifests\/.*\.sha256$/i;
 const PRIVATE_HTML = /^\/(?:dashboard(?:\.html)?|profile(?:\.html)?)(?:\/)?$/;
 function cachePolicy(pathname, isHtml, status) {
@@ -150,10 +154,17 @@ function harden(res, pathname, isHtml) {
   // matters for the dashboard/profile branches, which pass through harden()
   // after setting no-store themselves.
   if (cc && !preservesNoStore) headers.set('cache-control', cc);
-  // Keep unknown/error responses conservative. Successful public HTML and
-  // versioned/static UI files keep the cache policy selected above.
-  if (res.status === 200 && !cc && !preservesNoStore && (isHtml || /\.(?:css|js|json|txt|xml|webmanifest)$/i.test(pathname))) {
-    headers.set('cache-control', 'no-store');
+  // Keep unknown/error responses conservative, and never let a static UI file be
+  // reused without revalidating: it is not content-hashed, so a stale copy would
+  // outlive a deploy. The gated Flutter bundle (/app/, /preview/) and metadata
+  // files stay no-store.
+  if (res.status === 200 && !cc && !preservesNoStore) {
+    const isPrivateBundle = pathname.startsWith('/app/') || pathname.startsWith('/preview/');
+    if (!isHtml && !isPrivateBundle && CACHE_UI.test(pathname)) {
+      headers.set('cache-control', 'public, max-age=0, must-revalidate');
+    } else if (isHtml || /\.(?:css|js|json|txt|xml|webmanifest)$/i.test(pathname)) {
+      headers.set('cache-control', 'no-store');
+    }
   }
   return new Response(res.body, {
     status: res.status,
