@@ -457,7 +457,7 @@ function render(){
   clear(active);clear(winners);
   if(has){renderList(active,activeRows);renderList(winners,winnerRows)}
   if(status){status.hidden=false;status.textContent=has?copy[lang()].ready:(data&&data.live === true?copy[lang()].live:copy[lang()].demo)}
-  if(policy)policy.textContent=data&&data.live === true?(lang()==='en'?'Live provider data; only public aliases are shown.':'Data dari provider live; hanya alias publik yang ditampilkan.'):dict[lang]['leader-policy'];
+  if(policy)policy.textContent=data&&data.live === true?(lang()==='en'?'Live provider data; only public aliases are shown.':'Data dari provider live; hanya alias publik yang ditampilkan.'):dict[lang()]['leader-policy'];
   if(updated){updated.hidden=!has;if(has&&data&&data.updatedAt){var d=new Date(String(data.updatedAt)+'T00:00:00');updated.textContent=(lang()==='en'?'Last updated: ':'Data terakhir: ')+(isNaN(d.getTime())?String(data.updatedAt):d.toLocaleDateString(lang()==='en'?'en-US':'id-ID',{dateStyle:'long'}))}else updated.textContent=''}
 }
 window.__qownerLeaderboardRender=function(){render()};
