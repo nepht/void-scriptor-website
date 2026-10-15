@@ -137,6 +137,53 @@ function cachePolicy(pathname, isHtml, status) {
   return null;
 }
 
+// A Pages asset never reaches the edge cache once this Worker owns the response,
+// so every visitor paid a full origin round trip for markup that only changes on
+// deploy -- the `s-maxage=3600` the HTML advertises was never honoured. Keep the
+// hardened markup in the colo cache instead.
+//
+// The key carries the deployment id, so a new deploy is a different key and can
+// never hand a visitor the previous release's markup. That stale-root failure
+// (Pages keeping an old `/` while `/index.html` was fresh) is why the root is
+// resolved explicitly above, and a versionless key would reintroduce it for
+// every page. The query string is deliberately dropped: Pages serves the same
+// bytes for `/quiz?lang=en` and `/quiz`, and the language is applied client-side,
+// so including it would only let anyone inflate the cache with junk keys.
+const HTML_CACHE_HEADER = 'x-vs-html-cache';
+// The Cache API is always present in the Workers runtime, but resolving it
+// defensively keeps a cache outage -- or a harness that only stubs the bindings
+// it needs -- from turning a static page into a 500.
+function htmlCache() {
+  try {
+    return typeof caches !== 'undefined' && caches.default ? caches.default : null;
+  } catch {
+    return null;
+  }
+}
+function htmlCacheKey(request, url, env) {
+  if (request.method !== 'GET') return null;
+  if (url.pathname.startsWith('/app/') || url.pathname.startsWith('/preview/')) return null;
+  if (PRIVATE_HTML.test(url.pathname) || RELEASE_MANIFEST.test(url.pathname)) return null;
+  const version = (env && env.CF_PAGES_COMMIT_SHA) || 'unversioned';
+  const key = new URL(url.pathname, url);
+  key.searchParams.set('__vs_html', version);
+  return new Request(key.toString(), { method: 'GET' });
+}
+
+// Report where the markup came from. `miss:2c0534b` also shows which deployment
+// the cached copy belongs to, which is the only way to tell a warm colo from a
+// key that never changes. A bypassed route has no entry, so it carries no id.
+function markHtmlCache(res, state, env) {
+  const out = new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers: res.headers,
+  });
+  const version = env && env.CF_PAGES_COMMIT_SHA ? `:${env.CF_PAGES_COMMIT_SHA.slice(0, 7)}` : '';
+  out.headers.set(HTML_CACHE_HEADER, state === 'bypass' ? state : `${state}${version}`);
+  return out;
+}
+
 function harden(res, pathname, isHtml) {
   const headers = new Headers(res.headers);
   for (const [k, v] of Object.entries(BASE_HEADERS)) headers.set(k, v);
@@ -3580,7 +3627,7 @@ async function handleAccountActivity(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const isLegacyHost = LEGACY_HOSTS.has(url.hostname)
       || url.hostname === WWW_HOST
@@ -3877,6 +3924,12 @@ export default {
     const assetRequest = url.pathname === '/'
       ? new URL('/index.html', url).toString()
       : request;
+    const cacheKey = htmlCacheKey(request, url, env);
+    const cache = cacheKey ? htmlCache() : null;
+    if (cache) {
+      const cached = await cache.match(cacheKey).catch(() => null);
+      if (cached) return markHtmlCache(cached, 'hit', env);
+    }
     const res = await env.ASSETS.fetch(assetRequest);
     const contentType = res.headers.get('content-type') || '';
     const isHtml = contentType.includes('text/html');
@@ -3893,7 +3946,13 @@ export default {
       }
     }
 
-    return harden(res, url.pathname, isHtml);
+    const hardened = harden(res, url.pathname, isHtml);
+    if (cache && isHtml && hardened.status === 200 && ctx && typeof ctx.waitUntil === 'function') {
+      // Clone before the cache-status header is attached so the stored copy is
+      // exactly what a visitor would have received on the miss.
+      ctx.waitUntil(cache.put(cacheKey, hardened.clone()).catch(() => {}));
+    }
+    return markHtmlCache(hardened, cache ? 'miss' : 'bypass', env);
   },
 };
 
