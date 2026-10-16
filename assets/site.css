@@ -1789,3 +1789,45 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .caro-viewport,.page-home .caro-art{background-image:none!important;box-shadow:none!important}
 .page-home .hero{min-height:auto!important}
 .page-home .carousel{margin-top:0!important;padding-top:24px}
+
+/* Light cinematic production stage */
+.page-home .carousel .caro-viewport{background:#f2f6fb}
+.page-home .carousel .caro-slide{--stage-accent:#315f9b;background:#f2f6fb;color:#0e1a2b}
+.page-home .carousel .caro-slide[data-product="studio"]{--stage-accent:#315f9b}
+.page-home .carousel .caro-slide[data-product="qowner"]{--stage-accent:#805a1e}
+.page-home .carousel .caro-slide[data-product="byte"]{--stage-accent:#116b66}
+.page-home .carousel .caro-slide::before{background:linear-gradient(90deg,rgba(242,246,251,.99) 0%,rgba(242,246,251,.9) 42%,rgba(242,246,251,.24) 72%,rgba(242,246,251,.06) 100%)}
+.page-home .carousel .caro-slide::after{background:none;box-shadow:inset 0 0 150px rgba(48,67,91,.12)}
+.page-home .carousel .caro-art{display:block!important;position:absolute;inset:0;max-width:none;mask-image:none;-webkit-mask-image:none;z-index:0}
+.page-home .carousel .caro-art::before{background:linear-gradient(90deg,rgba(242,246,251,.99) 0%,rgba(242,246,251,.86) 38%,rgba(242,246,251,.2) 69%,rgba(242,246,251,.04) 100%)}
+.page-home .carousel .caro-art img{width:100%;height:100%;object-fit:cover;object-position:center;filter:brightness(1.12) saturate(.82) contrast(.94)}
+.page-home .carousel .caro-copy{position:relative;z-index:2;color:#172940;text-shadow:none}
+.page-home .carousel .caro-copy::before{background:linear-gradient(90deg,rgba(242,246,251,.98),rgba(242,246,251,.76),transparent)}
+.page-home .carousel .caro-copy h2{color:#071423;text-shadow:none}
+.page-home .carousel .caro-copy p,.page-home .carousel .caro-status{color:#172940;text-shadow:none}
+.page-home .carousel .caro-brandmark,.page-home .carousel .kicker{color:var(--stage-accent);text-shadow:none}
+.page-home .carousel .caro-cta,.page-home .carousel .caro-cta--primary{color:#fff!important;border-color:#16283e!important;background:#16283e!important;box-shadow:0 8px 24px rgba(22,40,62,.16)!important}
+.page-home .carousel .caro-cta--secondary{color:#16283e!important;border-color:#52657b!important;background:rgba(255,255,255,.82)!important;box-shadow:none!important}
+.page-home header{background:rgba(255,255,255,.94)!important;border-bottom-color:rgba(22,40,62,.16)!important;box-shadow:0 6px 22px rgba(22,40,62,.08)!important}
+.page-home header .brand,.page-home header nav a,.page-home header .navrow>div>a{color:#13263d!important;text-shadow:none!important}
+.page-home header .outline,.page-home header .btn-out,.page-home header .btn-lang{color:#13263d!important;border-color:#52657b!important;background:rgba(255,255,255,.88)!important}
+.page-home header .brand span{color:#243b55}
+.page-home .presentation-switch__rail{background:rgba(250,252,255,.92);border-color:rgba(28,50,76,.28);box-shadow:0 12px 34px rgba(43,61,84,.18)}
+.page-home .presentation-switch__tab{color:#30465f}
+.page-home .presentation-switch__tab[aria-selected=true]{background:#16283e;color:#fff}
+.page-home .caro-arrow,.page-home .caro-toggle{color:#10243b;border-color:rgba(16,36,59,.42);background:#fff}
+.page-home .caro-dot{background:rgba(23,41,64,.38)}
+.page-home .caro-dot[aria-selected=true]{background:#10243b}
+.page-quiz .hero{background:#fffaf0;color:#201b14}
+.page-quiz .hero::before{filter:brightness(1.18) saturate(.76) contrast(.92);opacity:.5}
+.page-quiz .hero::after{background:linear-gradient(90deg,rgba(255,250,240,.99),rgba(255,250,240,.92) 56%,rgba(255,250,240,.58)),linear-gradient(180deg,rgba(255,250,240,.24),rgba(255,250,240,.88))}
+.page-quiz .hero h1{color:#35204f;text-shadow:none}
+.page-quiz .hero .lead,.page-quiz .hero .quote-en,.page-quiz .hero .source{color:#30291f;text-shadow:none}
+.page-quiz .hero .eyebrow,.page-quiz .hero .kicker{color:#245369;text-shadow:none}
+.page-quiz .hero .primary{background:#56357d;color:#fff;border-color:#56357d}
+.page-quiz .hero .secondary{background:rgba(255,255,255,.88);color:#35204f;border-color:#6f568c}
+@media(max-width:760px){
+  .page-home .caro-art::before{background:linear-gradient(0deg,rgba(242,246,251,.98) 0%,rgba(242,246,251,.72) 54%,rgba(242,246,251,.12) 100%)}
+  .page-home .caro-art img{object-position:58% center}
+  .page-home .caro-copy::before{background:linear-gradient(0deg,rgba(242,246,251,.9),rgba(242,246,251,.34),transparent)}
+}
