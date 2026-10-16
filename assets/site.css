@@ -1537,6 +1537,10 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   left:max(32px,calc((100% - 1200px)/2));
   margin:0;
   padding:14px 0 0;
+  /* the base .caro-nav centres itself with translateX(-50%); this rule replaces
+     left:50% with fixed insets, so the leftover transform pushed the whole
+     control strip off the left edge. */
+  transform:none;
 }
 .page-home .carousel .caro-nav .caro-dot{
   width:44px;
@@ -1589,6 +1593,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
     grid-template-columns:44px minmax(0,1fr) 44px 44px;
     gap:4px;
     padding:12px 70px 0 0;
+    transform:none;
   }
   .page-home .carousel .caro-nav .caro-dots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
   .page-home .carousel .caro-nav .caro-dot{
