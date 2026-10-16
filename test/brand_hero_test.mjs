@@ -68,11 +68,12 @@ test('the homepage opens with a brand hero before the product presentation', () 
       `${path}: every capability entry needs an icon`,
     );
 
-    // The artwork is served from the site origin in two resolutions.
+    // The artwork is served from the site origin in two resolutions, under a
+    // cache revision so a changed file is never shadowed by the edge cache.
     assert.match(
       source,
-      /srcset="\/assets\/scenes\/hero-brand-1280\.webp 1280w, \/assets\/scenes\/hero-brand\.webp 1672w"/,
-      `${path}: hero artwork must be root-absolute and responsive`,
+      /srcset="\/assets\/scenes\/hero-brand-1280\.webp\?v=[a-z0-9-]+ 1280w, \/assets\/scenes\/hero-brand\.webp\?v=[a-z0-9-]+ 1672w"/,
+      `${path}: hero artwork must be root-absolute, responsive and cache-revisioned`,
     );
 
     // The product presentation the page already shipped must survive.
