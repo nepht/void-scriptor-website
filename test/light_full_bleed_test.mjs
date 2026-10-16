@@ -39,10 +39,11 @@ test('the final homepage stage uses light surfaces and dark readable copy', () =
   assert.match(css, /\.page-home \.carousel \.caro-art img\{[^}]*brightness\(1\.12\)/);
 });
 
-test('QOWNER full-bleed opening and browser chrome use the light treatment in both locales', () => {
-  assert.match(css, /\.page-quiz \.hero\{[^}]*background:#fffaf0/);
-  assert.match(css, /\.page-quiz \.hero::before\{[^}]*brightness\(1\.18\)/);
+test('QOWNER page adopts the light cosmic treatment in both locales', () => {
+  const lightCss = readFileSync(new URL('../assets/light.css', import.meta.url), 'utf8');
+  assert.match(lightCss, /body\.theme-light\.page-quiz \.hero\{background:transparent\}/);
   for (const { path, source } of quizPages) {
-    assert.match(source, /<meta name="theme-color" content="#fffaf0">/, `${path} theme color must match the light QOWNER opening`);
+    assert.match(source, /<meta name="theme-color" content="#f2f6fb">/, `${path} theme color must match the light cosmic theme`);
+    assert.match(source, /--page-art:url\('\/assets\/scenes\/quiz\.webp'\)/, `${path} must keep its unique quiz artwork band`);
   }
 });

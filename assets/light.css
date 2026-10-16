@@ -1,0 +1,240 @@
+/* Light cosmic production theme — Void Scriptor
+   Scope: body.theme-light. Loaded after /assets/site.css and after each page's
+   inline <style>, so equal-specificity rules here win by source order and
+   body.theme-light.<x> wins by specificity. */
+
+body.theme-light{
+  --ls-bg:#f2f6fb;
+  --ls-bg-2:#e8eef8;
+  --ls-surface:#ffffff;
+  --ls-glass:rgba(255,255,255,.72);
+  --ls-glass-2:rgba(255,255,255,.55);
+  --ls-ink:#0b1b2b;
+  --ls-muted:#41556b;
+  --ls-faint:#5c6f85;
+  --ls-line:rgba(19,45,74,.12);
+  --ls-line-2:rgba(19,45,74,.2);
+  --ls-violet:#6b4bd6;
+  --ls-violet-2:#8a6bf0;
+  --ls-violet-pale:#e6ddff;
+  --ls-cyan:#0e8fb8;
+  --ls-cyan-pale:#d6f1fb;
+  --ls-shadow:0 18px 44px rgba(19,45,74,.12);
+  /* retune the legacy dark-theme tokens so page-level inline rules that still
+     reference them (footer, quiz surfaces, hairline borders) stay readable */
+  --muted:#41556b;
+  --faint:#5c6f85;
+  --ash:#41556b;
+  --fog:#5c6f85;
+  --silver:#5c6f85;
+  --line:rgba(19,45,74,.14);
+  --quiz-surface:rgba(255,255,255,.72);
+  --quiz-surface-strong:rgba(255,255,255,.92);
+  background:var(--ls-bg);
+  color:var(--ls-ink);
+}
+
+/* ---------- page artwork band (one unique artwork per page) ---------- */
+body.theme-light .page-art{
+  position:absolute;top:0;left:0;right:0;height:clamp(340px,56vh,600px);
+  background-image:var(--page-art);background-size:cover;background-position:right center;
+  background-repeat:no-repeat;pointer-events:none;z-index:0;
+}
+body.theme-light .page-art::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(242,246,251,.94) 0,rgba(242,246,251,.78) 30%,rgba(242,246,251,.34) 58%,rgba(242,246,251,0) 80%);
+}
+body.theme-light .page-art::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(242,246,251,.28) 0,rgba(242,246,251,.5) 58%,var(--ls-bg) 100%);
+}
+body.theme-light > header,body.theme-light > main,body.theme-light > footer,
+body.theme-light > .backdrop,body.theme-light > .toast,body.theme-light > .byte-panel,
+body.theme-light > .byte-assistant{position:relative;z-index:1}
+
+/* ---------- base surfaces ---------- */
+html{background:#f2f6fb}
+body.theme-light{background:var(--ls-bg)}
+body.theme-light h1,body.theme-light h2,body.theme-light h3,
+body.theme-light h1 span,body.theme-light .code{color:var(--ls-ink)}
+body.theme-light p,body.theme-light li,body.theme-light .lede,body.theme-light .desc{color:var(--ls-muted)}
+body.theme-light a{color:var(--ls-violet)}
+body.theme-light a:hover{color:var(--ls-ink)}
+body.theme-light .eyebrow,body.theme-light .kicker{color:var(--ls-violet)}
+body.theme-light .eyebrow::before{background:var(--ls-violet)}
+body.theme-light ::selection{background:var(--ls-violet);color:#fff}
+body.theme-light :focus-visible{outline-color:var(--ls-violet)!important}
+
+/* header */
+body.theme-light header{background:rgba(242,246,251,.86);border-bottom:1px solid var(--ls-line);backdrop-filter:blur(14px)}
+body.theme-light header .brand,body.theme-light header .brand span{color:var(--ls-ink)}
+body.theme-light nav a{color:var(--ls-muted)}
+body.theme-light nav a:hover,body.theme-light nav a[aria-current=page]{color:var(--ls-ink)}
+body.theme-light .btn-lang,body.theme-light .back,body.theme-light .outline,body.theme-light .btn-out,body.theme-light .outline-gate,body.theme-light .plain,body.theme-light .plain-gate{
+  background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
+body.theme-light .btn-lang:hover,body.theme-light .back:hover,body.theme-light .outline:hover,body.theme-light .btn-out:hover{background:#fff;border-color:var(--ls-violet);color:var(--ls-ink)}
+body.theme-light .brand img{filter:none}
+body.theme-light .hamb i,body.theme-light .hamb::after{background:var(--ls-ink)}
+
+/* generic cards / read surfaces used across pages */
+body.theme-light .card,body.theme-light .hero-card,body.theme-light .grid article,
+body.theme-light .c,body.theme-light .form,body.theme-light .note,body.theme-light .law,
+body.theme-light .preview-card,body.theme-light .leaderboard,body.theme-light .canon,
+body.theme-light .lockcard,body.theme-light .clear-box,body.theme-light .profile-card,
+body.theme-light .docs-card,body.theme-light .status-item,body.theme-light .changelog-grid,
+body.theme-light .panel,body.theme-light .dash-center-card,body.theme-light .dash-op,
+body.theme-light .dash-readiness,body.theme-light .dash-settings-panel,body.theme-light .dash-command{
+  background:var(--ls-glass);border:1px solid var(--ls-line);color:var(--ls-ink);
+  box-shadow:var(--ls-shadow);backdrop-filter:blur(10px)}
+body.theme-light .rule{border-top:1px solid var(--ls-line)}
+body.theme-light .links a,body.theme-light .docnav a,body.theme-light .company-links a{
+  border:1px solid var(--ls-line-2);background:rgba(255,255,255,.6);color:var(--ls-ink)}
+body.theme-light .links a:hover,body.theme-light .docnav a:hover{background:#fff;border-color:var(--ls-violet)}
+body.theme-light .fld input,body.theme-light .fld select,body.theme-light .fld textarea,
+body.theme-light .form input,body.theme-light .form textarea,body.theme-light .form select,
+body.theme-light .dash-settings-grid select{
+  background:#fff;border:1px solid var(--ls-line-2);color:var(--ls-ink)}
+body.theme-light .fld input:focus,body.theme-light .fld textarea:focus,body.theme-light .fld select:focus{
+  border-color:var(--ls-violet);outline:3px solid var(--ls-violet-pale);outline-offset:1px}
+body.theme-light .primary,body.theme-light .caro-cta--primary,body.theme-light .status-primary,
+body.theme-light .cardfoot button,body.theme-light .form button,body.theme-light .gh{
+  background:var(--ls-ink);color:#fff;border:1px solid var(--ls-ink)}
+body.theme-light .primary:hover,body.theme-light .caro-cta--primary:hover,body.theme-light .gh:hover{background:#16324d;color:#fff}
+body.theme-light .secondary,body.theme-light .ghost,body.theme-light .caro-cta,body.theme-light .caro-cta--secondary{
+  background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
+body.theme-light .secondary:hover,body.theme-light .ghost:hover,body.theme-light .caro-cta:hover{background:#fff;border-color:var(--ls-violet)}
+body.theme-light .badge,body.theme-light .status-tag,body.theme-light .status-state{
+  background:var(--ls-violet-pale);color:#3c2a86;border:1px solid rgba(107,75,214,.28)}
+body.theme-light code,body.theme-light pre,body.theme-light .status-verify pre{
+  background:#fff;border:1px solid var(--ls-line);color:#173a5e}
+body.theme-light .metrics strong,body.theme-light .release-facts strong,body.theme-light .release-facts code{color:var(--ls-ink)}
+body.theme-light table{border-color:var(--ls-line)}
+body.theme-light th,body.theme-light td{border-color:var(--ls-line);color:var(--ls-muted)}
+body.theme-light footer{border-top:1px solid var(--ls-line);background:rgba(255,255,255,.5)}
+body.theme-light .foot,body.theme-light .foot a,body.theme-light .copyline{color:var(--ls-muted)}
+body.theme-light .foot a:hover{color:var(--ls-ink)}
+body.theme-light .footbrand span,body.theme-light .copyline,body.theme-light .footlinks{color:var(--ls-muted)}
+body.theme-light .copyline{color:var(--ls-muted)}
+
+/* kill the legacy dark page washes on read surfaces */
+body.theme-light.page-legal::before,body.theme-light.page-legal::after,
+body.theme-light.page-quiz::before,body.theme-light.page-quiz::after,
+body.theme-light.page-home::before,body.theme-light.page-home::after{background:none;content:none}
+body.theme-light.page-quiz .hero{background:transparent}
+body.theme-light.page-quiz .hero::before,body.theme-light.page-quiz .hero::after{background:none;content:none}
+/* neutralize the legacy dark scrim painted on the main column (site.css:440/443) */
+body.theme-light main,
+body.theme-light.page-home main,body.theme-light.page-dashboard main,
+body.theme-light.page-contact main,body.theme-light.page-legal main{background-image:none}
+body.theme-light .products,body.theme-light .metrics,body.theme-light .company-wrap{background-image:none}
+
+/* ---------- homepage: new reference sections ---------- */
+body.theme-light .eco,body.theme-light .flow,body.theme-light .caps,body.theme-light .gallery{
+  padding:clamp(40px,6vw,78px) 0;position:relative;z-index:1}
+body.theme-light .sec-head{max-width:760px;margin:0 auto clamp(24px,3.5vw,40px);text-align:center}
+body.theme-light .sec-head h2{font-family:var(--font-display);font-size:clamp(24px,3.2vw,40px);margin:10px 0 10px;letter-spacing:-.02em}
+body.theme-light .sec-head p{font-size:15px;margin:0}
+
+body.theme-light .eco-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,24px)}
+body.theme-light .eco-card{background:var(--ls-glass);border:1px solid var(--ls-line);border-radius:20px;overflow:hidden;box-shadow:var(--ls-shadow);display:flex;flex-direction:column}
+body.theme-light .eco-card figure{margin:0;aspect-ratio:16/9;overflow:hidden;background:var(--ls-bg-2)}
+body.theme-light .eco-card img{width:100%;height:100%;object-fit:cover;display:block}
+body.theme-light .eco-body{padding:18px 20px 22px}
+body.theme-light .eco-body .tag{font:700 10px var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ls-cyan)}
+body.theme-light .eco-body h3{font-family:var(--font-display);font-size:22px;margin:8px 0 8px}
+body.theme-light .eco-body p{font-size:14px;margin:0 0 14px}
+body.theme-light .eco-state{display:inline-block;font:700 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--ls-violet-pale);color:#3c2a86;margin-bottom:14px}
+body.theme-light .eco-cta{display:inline-block;font-weight:650;font-size:13px;color:var(--ls-violet)}
+
+body.theme-light .flow-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;counter-reset:flow}
+body.theme-light .flow-step{background:var(--ls-glass);border:1px solid var(--ls-line);border-radius:18px;padding:14px;box-shadow:var(--ls-shadow)}
+body.theme-light .flow-step figure{margin:0 0 12px;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:var(--ls-bg-2)}
+body.theme-light .flow-step img{width:100%;height:100%;object-fit:cover;display:block}
+body.theme-light .flow-step .n{font:700 11px var(--font-mono);color:var(--ls-violet);letter-spacing:.14em}
+body.theme-light .flow-step h3{font-size:16px;margin:6px 0 6px;font-family:var(--font-display)}
+body.theme-light .flow-step p{font-size:12.5px;margin:0}
+
+body.theme-light .caps-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,22px)}
+body.theme-light .cap-card{background:var(--ls-glass);border:1px solid var(--ls-line);border-radius:18px;overflow:hidden;box-shadow:var(--ls-shadow)}
+body.theme-light .cap-card figure{margin:0;aspect-ratio:16/9;overflow:hidden;background:var(--ls-bg-2)}
+body.theme-light .cap-card img{width:100%;height:100%;object-fit:cover;display:block}
+body.theme-light .cap-body{padding:14px 16px 18px}
+body.theme-light .cap-body h3{font-size:17px;margin:0 0 6px;font-family:var(--font-display)}
+body.theme-light .cap-body p{font-size:13px;margin:0}
+
+body.theme-light .gallery-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+body.theme-light .gallery-card{grid-column:span 2;background:var(--ls-glass);border:1px solid var(--ls-line);border-radius:18px;overflow:hidden;box-shadow:var(--ls-shadow)}
+body.theme-light .gallery-card:nth-child(4),body.theme-light .gallery-card:nth-child(5){grid-column:span 3}
+body.theme-light .gallery-card figure{margin:0;aspect-ratio:16/9;overflow:hidden;background:var(--ls-bg-2)}
+body.theme-light .gallery-card img{width:100%;height:100%;object-fit:cover;display:block}
+body.theme-light .gallery-body{padding:14px 16px 18px}
+body.theme-light .gallery-body .label{font:700 10px var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ls-cyan)}
+body.theme-light .gallery-body h3{font-size:16px;margin:7px 0 6px;font-family:var(--font-display)}
+body.theme-light .gallery-body p{font-size:12.5px;margin:0}
+body.theme-light .gallery-note{max-width:760px;margin:18px auto 0;text-align:center;font-size:12px;color:var(--ls-faint)}
+
+@media(max-width:1020px){
+  body.theme-light .flow-rail{grid-template-columns:repeat(3,minmax(0,1fr))}
+  body.theme-light .gallery-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  body.theme-light .gallery-card,body.theme-light .gallery-card:nth-child(4),body.theme-light .gallery-card:nth-child(5){grid-column:span 2}
+}
+@media(max-width:760px){
+  body.theme-light .eco-grid,body.theme-light .caps-grid{grid-template-columns:1fr}
+  body.theme-light .flow-rail{grid-template-columns:1fr 1fr}
+  body.theme-light .gallery-grid{grid-template-columns:1fr 1fr}
+  body.theme-light .gallery-card,body.theme-light .gallery-card:nth-child(4),body.theme-light .gallery-card:nth-child(5){grid-column:span 1}
+}
+@media(max-width:430px){
+  body.theme-light .flow-rail,body.theme-light .gallery-grid{grid-template-columns:1fr}
+}
+
+/* 404: keep the decorative glow inside the viewport on small screens */
+body.theme-light.page-404{overflow-x:clip}
+body.theme-light.page-404 .glow{width:min(640px,100vw);height:min(640px,100vw)}
+
+/* ---------- legacy dark surfaces → light (theme authority) ----------
+   These elements keep hard-coded dark fills in site.css or in a page's own
+   inline <style> that can load after this file, so the theme layer wins
+   explicitly. Intentional dark accents (navy primary buttons, active tab,
+   the violet 404 numerals) are deliberately NOT in this list. */
+body.theme-light .carousel,
+body.theme-light .company,
+body.theme-light .proof-frame,
+body.theme-light .proof-frame figure,
+body.theme-light .proof-frame figcaption,
+body.theme-light .proof-media,
+body.theme-light .status-rail,
+body.theme-light .c,
+body.theme-light .qowner-waitlist,
+body.theme-light .guidance-card,
+body.theme-light .report-form,
+body.theme-light .status-row,
+body.theme-light .modal,
+body.theme-light .toast,
+body.theme-light .skip-link,
+body.theme-light .state,
+body.theme-light .release-facts span,
+body.theme-light .preview-card,
+body.theme-light .changelog-card,
+body.theme-light .release-card,
+body.theme-light .proof-frame figcaption small,
+body.theme-light .proof-frame figcaption strong{
+  background-image:none!important;
+  background-color:var(--ls-glass)!important;
+  border-color:var(--ls-line)!important;
+  color:var(--ls-ink)!important;
+}
+body.theme-light .proof-frame figcaption small,
+body.theme-light .proof-frame figcaption b,
+body.theme-light .proof-frame .proof-label{color:var(--ls-muted)!important}
+body.theme-light .backdrop{background:rgba(242,246,251,.72)!important}
+body.theme-light .qowner-waitlist input,body.theme-light .qowner-waitlist select,
+body.theme-light .qowner-waitlist textarea,body.theme-light .report-form input,
+body.theme-light .report-form select,body.theme-light .report-form textarea,
+body.theme-light .guidance-card input,body.theme-light .guidance-card textarea{
+  background:#fff!important;border:1px solid var(--ls-line-2)!important;color:var(--ls-ink)!important}
+body.theme-light .status-rail .status-item,body.theme-light .status-row{
+  background-color:var(--ls-glass)!important;border-color:var(--ls-line)!important}
+body.theme-light .status-row .status-row__state,
+body.theme-light .status-row strong,body.theme-light .status-row b{color:var(--ls-ink)!important}
+body.theme-light .status-row p,body.theme-light .status-row small{color:var(--ls-muted)!important}
