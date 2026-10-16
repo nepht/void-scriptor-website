@@ -296,3 +296,16 @@ body.theme-light .brand-hero-caps small{font-size:11.5px;line-height:1.42;color:
 @media(max-width:520px){body.theme-light .brand-hero-caps{grid-template-columns:1fr}body.theme-light .brand-hero-caps li{border-left:0;padding-left:0}}
 body.theme-light header .account .outline{background:linear-gradient(135deg,var(--ls-violet),var(--ls-violet-2));border-color:transparent;color:#fff}
 body.theme-light header .account .outline:hover{background:linear-gradient(135deg,#5a3bc4,#7b5ae8);color:#fff}
+
+/* Keep the product showcase cinematic without reintroducing a dark half-page.
+   The source art stays intact; this light-theme treatment lifts its luminance
+   and lets the pale page surface carry the transition. */
+body.theme-light.page-home .carousel .caro-art img{filter:brightness(1.42) saturate(.82) contrast(.88)}
+body.theme-light.page-home .carousel .caro-art::before{background:linear-gradient(90deg,rgba(242,246,251,.99) 0%,rgba(242,246,251,.9) 35%,rgba(242,246,251,.48) 61%,rgba(242,246,251,.12) 86%,rgba(242,246,251,0) 100%)}
+body.theme-light.page-home .carousel .caro-slide::after{background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));box-shadow:inset 0 0 150px rgba(48,67,91,.06)}
+body.theme-light.page-home .carousel .caro-viewport,
+body.theme-light.page-home .carousel .caro-slide{background:#eef3f9}
+@media(max-width:760px){
+  body.theme-light.page-home .carousel .caro-art img{filter:brightness(1.48) saturate(.8) contrast(.88)}
+  body.theme-light.page-home .carousel .caro-art::before{background:linear-gradient(0deg,rgba(242,246,251,.98) 0%,rgba(242,246,251,.76) 54%,rgba(242,246,251,.22) 100%)}
+}
