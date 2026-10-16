@@ -11,14 +11,20 @@ import test from 'node:test';
 
 const PAGES = [
   'about',
+  'byte',
   'changelog',
   'contact',
   'docs/getting-started',
+  'help',
   'privacy',
+  'products',
   'quiz',
   'report-bug',
+  'roadmap',
   'status',
+  'studio',
   'terms',
+  'tutorials',
 ];
 
 const read = (p) => fs.readFileSync(p, 'utf8');

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Void Scriptor help centre: common questions about releases, platforms, installer verification, data and Byte.">
+<title>Help centre : Void Scriptor</title>
+<link rel="stylesheet" href="/assets/site.css?v=light-stage-20261016"><link rel="stylesheet" href="/assets/light.css?v=light-cosmic-20261016b">
+<link rel="icon" type="image/webp" href="/assets/void_scriptor_emblem.webp">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f2f6fb">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/en/help"><link rel="alternate" hreflang="id" href="https://voidscriptor.com/help"><link rel="alternate" hreflang="en" href="https://voidscriptor.com/en/help"><link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/help">
+<meta property="og:site_name" content="Void Scriptor"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="id_ID"><meta property="og:type" content="website"><meta property="og:url" content="https://voidscriptor.com/en/help"><meta property="og:title" content="Help centre : Void Scriptor"><meta property="og:description" content="Void Scriptor help centre: common questions about releases, platforms, installer verification, data and Byte."><meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp"><meta property="og:image:secure_url" content="https://voidscriptor.com/assets/og-image.webp"><meta property="og:image:type" content="image/webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Void Scriptor — Real tools. Honest status.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Help centre : Void Scriptor"><meta name="twitter:description" content="Void Scriptor help centre: common questions about releases, platforms, installer verification, data and Byte."><meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:image:alt" content="Void Scriptor — Real tools. Honest status.">
+</head>
+<body class="page-legal page-help theme-light" style="--page-art:url('/assets/scenes/help.webp');--page-art-sm:url('/assets/scenes/help-1280.webp')">
+<div class="page-art" aria-hidden="true"></div>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header><div class="shell navrow"><a class="brand" href="/en/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/en/">← Back to home</a><a class="btn-lang" href="/help" hreflang="id" lang="id" aria-label="Switch to Indonesian">ID</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">SUPPORT · HELP CENTRE</div>
+<h1>Questions that come up most.</h1>
+<p class="lede">The answers below contain only what can be checked from the existing release and documentation. When something is not settled yet, this page says so plainly.</p>
+<nav class="docnav" aria-label="Page navigation"><a href="/en/help" aria-current="page">Help</a><a href="/en/tutorials">Tutorials</a><a href="/en/contact">Contact</a><a href="/en/status">Status</a></nav>
+<section class="docs-section" aria-labelledby="rel-title"><span class="eyebrow">RELEASES &amp; PLATFORMS</span><h2 id="rel-title">About releases and platforms.</h2><div class="docs-grid">
+<article class="docs-card"><h3>Are the products free?</h3><p>The Studio preview installer can be downloaded from the canonical domain at no cost. Pricing and licensing for a stable release are not set on this page, so no figure is stated here.</p></article>
+<article class="docs-card"><h3>Is there a macOS or Linux version?</h3><p>Not yet. Studio is Windows x64 only right now. Linux and macOS are unreleased with no public date.</p></article>
+<article class="docs-card"><h3>Can QOWNER be downloaded?</h3><p>Not yet. The web version is playable on the <a href="/en/quiz">quiz page</a>, leaderboard included. The iOS and Android apps are still being prepared and are not available to download.</p></article>
+<article class="docs-card"><h3>Is there a portable build?</h3><p>Not for RC.2. Only the .exe installer is published, with no portable ZIP archive.</p></article>
+</div></section>
+<section class="docs-section" aria-labelledby="ver-title"><span class="eyebrow">VERIFICATION</span><h2 id="ver-title">About checking files.</h2><div class="docs-grid">
+<article class="docs-card"><h3>How do I verify the installer?</h3><p>Hash the downloaded file with SHA-256 and compare it with the official manifest. The full steps are in the <a href="/en/docs/getting-started">getting started guide</a>.</p></article>
+<article class="docs-card"><h3>Why does SmartScreen warn me?</h3><p>The installer's Authenticode signature uses a self-issued certificate. The signature can be verified, but the publisher identity is not trusted by SmartScreen yet, so a warning can still appear even when the checksum matches.</p></article>
+<article class="docs-card"><h3>The checksum matches, so it is safe?</h3><p>A matching checksum means the file you downloaded is the file that was published. That is not a guarantee the software is free of problems, and the decision to run it stays with you.</p></article>
+<article class="docs-card"><h3>Where do I report a broken file?</h3><p>Through the <a href="/en/report-bug">bug report page</a>; include the filename, size and the hash value you got.</p></article>
+</div></section>
+<section class="docs-section" aria-labelledby="data-title"><span class="eyebrow">DATA &amp; BYTE</span><h2 id="data-title">About data and Byte.</h2><div class="docs-grid">
+<article class="docs-card"><h3>Does Byte send my data to a server?</h3><p>The Byte connection on your computer runs only at <code>127.0.0.1:8766</code> and accepts requests only from allowed addresses. It is not a public service. Never paste a token, cookie or secret into a report.</p></article>
+<article class="docs-card"><h3>Where are projects and app data stored?</h3><p>Projects live in <code>Documents\VoidScriptor\Projects</code>. Application files are in the <code>VoidScriptor\state</code> and <code>VoidScriptor\diagnostics\crash</code> folders. Details are in the <a href="/en/privacy">Privacy Policy</a>.</p></article>
+<article class="docs-card"><h3>How do I request my data or delete my account?</h3><p>Use the Data &amp; privacy section of the <a href="/en/dashboard">dashboard</a>. The delete button requires confirmation, and backup copies on Google Drive are not removed with it.</p></article>
+<article class="docs-card"><h3>How do I report a bug?</h3><p>Send a structured report through the <a href="/en/report-bug">bug report page</a> with reproduction steps and the product version you are using.</p></article>
+</div></section>
+<section class="docs-section" aria-labelledby="comm-title"><span class="eyebrow">COMMUNITY</span><h2 id="comm-title">About official channels.</h2><p>There is no official community forum yet, so this page links to none. The official channels available today are the support email and the Threads account <strong>@choirudin_choi</strong>; both are listed on the <a href="/en/contact">contact page</a>.</p></section>
+<section class="docs-section docs-next"><span class="eyebrow">NEXT STEPS</span><h2>If the answer is not here yet.</h2><p>Follow the <a href="/en/tutorials">step-by-step tutorials</a>, check <a href="/en/status">service health</a>, or reach out through the <a href="/en/contact">contact page</a>.</p></section></div></main>
+<footer><div class="shell foot"><a href="/en/">Home</a><a href="/en/products">Products</a><a href="/en/downloads">Downloads</a><a href="/en/docs/getting-started">Docs</a><a href="/en/tutorials">Tutorials</a><a href="/en/help">Help</a><a href="/en/changelog">Release notes</a><a href="/en/roadmap">Roadmap</a><a href="/en/status">Status</a><a href="/en/contact">Contact</a><a href="/en/privacy">Privacy</a><a href="/en/terms">Terms</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+</body>
+</html>
