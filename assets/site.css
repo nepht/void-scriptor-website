@@ -1712,3 +1712,16 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   .page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2-1280.webp')}
   .page-quiz .hero::before{background-image:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.48) 48%,rgba(5,5,7,.22)),url('/assets/slides/qowner-quiz.v2-1280.webp')}
 }
+
+/* Homepage clean-surface mode: content images remain, decorative surfaces do not. */
+.page-home::before,.page-home::after,.page-home body::before,.page-home body::after{display:none!important;background:none!important}
+.page-home main,.page-home .hero,.page-home .scene,.page-home .veil,.page-home .hero .grid,
+.page-home .products,.page-home .metrics,.page-home .company-wrap,
+.page-home .hero::before,.page-home .hero::after,.page-home .caro-viewport::before,
+.page-home .release-strip,.page-home .proof-rail{background-image:none!important}
+.page-home .hero,.page-home .products,.page-home .metrics,.page-home .company-wrap,
+.page-home .release-strip,.page-home .proof-rail{background-color:transparent!important}
+.page-home .scene,.page-home .veil,.page-home .hero .grid{display:none!important}
+.page-home .caro-viewport,.page-home .caro-art{background-image:none!important;box-shadow:none!important}
+.page-home .hero{min-height:auto!important}
+.page-home .carousel{margin-top:0!important;padding-top:24px}
