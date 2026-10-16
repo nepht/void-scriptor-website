@@ -246,3 +246,47 @@ body.theme-light .status-rail .status-item,body.theme-light .status-row{
 body.theme-light .status-row .status-row__state,
 body.theme-light .status-row strong,body.theme-light .status-row b{color:var(--ls-ink)!important}
 body.theme-light .status-row p,body.theme-light .status-row small{color:var(--ls-muted)!important}
+
+/* ---------- brand hero (homepage) ----------
+   A brand-level opening stage: full-bleed light cosmic artwork on the right,
+   navy copy plus four capability entries on the left. It sits above the
+   product presentation switch so the homepage opens as a universe, not as a
+   single product. */
+body.theme-light .brand-hero{position:relative;overflow:hidden;isolation:isolate;
+  padding:clamp(30px,5.2vw,66px) 0 clamp(30px,5.4vw,68px)}
+body.theme-light .brand-hero-art{position:absolute;inset:0;z-index:0}
+body.theme-light .brand-hero-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:right center}
+body.theme-light .brand-hero-art::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(242,246,251,.96) 0,rgba(242,246,251,.86) 34%,rgba(242,246,251,.34) 58%,rgba(242,246,251,0) 76%)}
+body.theme-light .brand-hero-inner{position:relative;z-index:1}
+body.theme-light .brand-hero-title{margin:10px 0 0;font-size:clamp(44px,7.4vw,88px);line-height:1.02;letter-spacing:-.025em;
+  background-image:linear-gradient(96deg,#0b1b2b 6%,#5b3fce 48%,#0e8fb8 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+body.theme-light .brand-hero-tagline{margin:14px 0 0;max-width:520px;font-size:clamp(17px,1.6vw,21px);
+  line-height:1.5;color:var(--ls-ink);font-weight:600}
+body.theme-light .brand-hero-body{margin:10px 0 0;max-width:540px;font-size:15px;line-height:1.7;color:var(--ls-muted)}
+body.theme-light .brand-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0}
+body.theme-light .brand-hero-actions .btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;
+  padding:0 22px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none}
+body.theme-light .brand-hero-actions .btn.primary{background:var(--ls-ink);border:1px solid var(--ls-ink);color:#fff}
+body.theme-light .brand-hero-actions .btn.primary:hover{background:#132b45;border-color:#132b45;color:#fff}
+body.theme-light .brand-hero-actions .btn.ghost{background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
+body.theme-light .brand-hero-actions .btn.ghost:hover{background:#fff;border-color:var(--ls-violet);color:var(--ls-ink)}
+body.theme-light .brand-hero-caps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;
+  margin:30px 0 0;padding:0;list-style:none;max-width:880px}
+body.theme-light .brand-hero-caps li{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;
+  column-gap:11px;row-gap:2px;align-items:center;padding:12px 14px;border:1px solid var(--ls-line);border-radius:14px;
+  background:rgba(255,255,255,.74);backdrop-filter:blur(10px);box-shadow:0 10px 26px rgba(19,45,74,.06)}
+body.theme-light .bh-ico{grid-row:1/3;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;
+  background:linear-gradient(135deg,var(--ls-violet-pale),var(--ls-cyan-pale));color:var(--ls-violet)}
+body.theme-light .bh-ico svg{width:19px;height:19px}
+body.theme-light .brand-hero-caps strong{font-size:13px;font-weight:700;line-height:1.25;color:var(--ls-ink)}
+body.theme-light .brand-hero-caps small{font-size:11.5px;line-height:1.42;color:var(--ls-faint)}
+@media(max-width:1000px){body.theme-light .brand-hero-caps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+  body.theme-light .brand-hero{padding:22px 0 30px}
+  body.theme-light .brand-hero-art img{object-position:72% center}
+  body.theme-light .brand-hero-art::after{background:linear-gradient(180deg,rgba(242,246,251,.95) 0,rgba(242,246,251,.88) 44%,rgba(242,246,251,.52) 72%,rgba(242,246,251,.78) 100%)}
+  body.theme-light .brand-hero-title{font-size:clamp(38px,11vw,54px)}
+}
+@media(max-width:520px){body.theme-light .brand-hero-caps{grid-template-columns:1fr}}

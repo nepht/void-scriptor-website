@@ -1369,8 +1369,8 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .hero .scene{filter:saturate(.72) contrast(1.03)}
 .page-home .hero .veil{background:linear-gradient(180deg,rgba(5,5,7,.8),rgba(5,5,7,.2) 36%,rgba(5,5,7,.28) 58%,rgba(5,5,7,.94) 86%,#050507 100%),radial-gradient(52% 42% at 50% 42%,rgba(5,5,7,.56),transparent 72%)}
 .page-home .hero::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");mix-blend-mode:screen}
-.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em;color:var(--primary-pale);text-shadow:0 0 42px rgba(157,184,255,.2)}
-.page-home .hero h1 span:last-child{font-family:var(--font-body);font-weight:650;color:var(--cloud);text-shadow:none}
+.page-home .hero :is(h1,h2) span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em;color:var(--primary-pale);text-shadow:0 0 42px rgba(157,184,255,.2)}
+.page-home .hero :is(h1,h2) span:last-child{font-family:var(--font-body);font-weight:650;color:var(--cloud);text-shadow:none}
 .page-home .hero .primary{border-color:#c9d7ff;background:linear-gradient(135deg,#b8caff,#718ed3);color:#080b15;box-shadow:0 0 25px rgba(157,184,255,.22)}
 .page-home .hero .actions .secondary{min-height:44px;padding:0;color:var(--primary);border:0;border-bottom:1px solid rgba(157,184,255,.58);border-radius:0;background:transparent;text-transform:none;letter-spacing:.02em;font-size:13px;font-weight:650}
 .page-home .hero .actions .secondary:hover{border-color:var(--primary);color:#eef3ff;background:transparent}
@@ -1437,8 +1437,8 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 /* Homepage type hierarchy: one calm geometric sans (Sora) carries both the
    hero and product headings; no serif, no editorial italic cue. */
 .page-home h2,.page-home h3,.page-home .metrics strong{font-family:var(--font-body);font-weight:650;letter-spacing:-.035em}
-.page-home .hero h1 span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em}
-.page-home .hero h1 span:last-child{font-family:var(--font-body);font-weight:650}
+.page-home .hero :is(h1,h2) span:first-child{font-family:var(--font-display);font-style:normal;font-weight:250;letter-spacing:-.01em}
+.page-home .hero :is(h1,h2) span:last-child{font-family:var(--font-body);font-weight:650}
 .page-home .caro-copy h2{font-family:var(--font-body);font-weight:650}
 .page-home .brand span,.page-home .footbrand strong,.page-home .footbrand span{font-family:var(--font-body)}
 .page-home .kicker,.page-home .eyebrow{font-size:10px;letter-spacing:.12em}
@@ -1486,7 +1486,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   width:clamp(72px,8vw,108px);
   margin-bottom:24px;
 }
-.page-home .hero h1{
+.page-home .hero :is(h1,h2){
   max-width:12ch;
   font-size:clamp(58px,8.5vw,124px);
   line-height:.88;
@@ -1554,8 +1554,8 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   .page-home .hero-inner{min-height:max(640px,100dvh)}
   .page-home .hero-inner{width:calc(100% - 32px);padding-block:94px 44px}
   .page-home .hero-logo{width:64px;margin-bottom:18px}
-  .page-home .hero h1{font-size:clamp(42px,14vw,68px);line-height:.92}
-  .page-home .hero h1 span:first-child{max-width:none;margin-inline:0}
+  .page-home .hero :is(h1,h2){font-size:clamp(42px,14vw,68px);line-height:.92}
+  .page-home .hero :is(h1,h2) span:first-child{max-width:none;margin-inline:0}
   .page-home .hero .lead{font-size:17px}
   .page-home .carousel .product-intro{padding:40px 0 24px}
   .page-home .carousel .caro-viewport,
@@ -1610,7 +1610,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 }
 
 @media(max-width:430px){
-  .page-home .hero h1{font-size:clamp(40px,13vw,56px)}
+  .page-home .hero :is(h1,h2){font-size:clamp(40px,13vw,56px)}
   .page-home .carousel .caro-viewport,
   .page-home .carousel .caro-slide,
   .page-home .carousel .caro-copy{min-height:720px}
@@ -1636,7 +1636,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .hero .hero-logo{width:clamp(54px,6vw,78px);margin-bottom:20px}
 .page-home .hero .eyebrow{margin-bottom:18px;padding:0;border:0;border-radius:0;background:none;letter-spacing:.18em}
 .page-home .hero .eyebrow::before{display:none}
-.page-home .hero h1{max-width:12ch;font-size:clamp(52px,6.2vw,90px);line-height:.93;font-weight:250;letter-spacing:-.01em}
+.page-home .hero :is(h1,h2){max-width:12ch;font-size:clamp(52px,6.2vw,90px);line-height:.93;font-weight:250;letter-spacing:-.01em}
 .page-home .hero .lead{max-width:30ch;margin-top:26px}
 .page-home .hero .desc{max-width:54ch}
 .page-home .hero .actions{justify-content:flex-start}
@@ -1660,7 +1660,7 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
   .page-home .hero-inner{width:calc(100% - 40px);min-height:100dvh;padding-top:112px;padding-bottom:44px}
   .page-home .hero .scene{background-position:62% center}
   .page-home .hero .veil{background:linear-gradient(180deg,rgba(5,5,7,.62),rgba(5,5,7,.36) 38%,rgba(5,5,7,.92) 82%),linear-gradient(90deg,rgba(5,5,7,.62),rgba(5,5,7,.12))}
-  .page-home .hero h1{font-size:clamp(52px,15vw,76px)}
+  .page-home .hero :is(h1,h2){font-size:clamp(52px,15vw,76px)}
   .page-home .product-intro{width:calc(100% - 40px)}
   .page-home .caro-viewport,.page-home .caro-slide,.page-home .caro-copy{min-height:clamp(560px,calc(100dvh - 72px),760px)}
   .page-home .caro-copy{padding:34px 24px 42px;justify-content:flex-end}
