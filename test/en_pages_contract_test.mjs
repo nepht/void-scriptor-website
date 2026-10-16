@@ -18,6 +18,7 @@ const PAGES = [
   'help',
   'privacy',
   'products',
+  'qowner',
   'quiz',
   'report-bug',
   'roadmap',
