@@ -859,6 +859,16 @@ function json(status, obj) {
   });
 }
 
+const QOWNER_WEB_ORIGIN = 'https://quiz-qowner-e5c5a.web.app';
+
+function allowQownerSessionCors(request, response) {
+  if (request.headers.get('origin') === QOWNER_WEB_ORIGIN) {
+    response.headers.set('access-control-allow-origin', QOWNER_WEB_ORIGIN);
+    response.headers.set('vary', 'Origin');
+  }
+  return response;
+}
+
 // Request-level health probe. It verifies that this Worker is running and that
 // the primary public asset can be read, but it intentionally makes no claim
 // about historical uptime or third-party provider health.
@@ -2256,7 +2266,7 @@ async function handleAuth(request, url, env) {
       user: sessionView(renewal.session),
     });
     if (renewal.cookie) response.headers.append('set-cookie', renewal.cookie);
-    return response;
+    return allowQownerSessionCors(request, response);
   }
 
   // Sign-out needs no GitHub credentials — it only clears a cookie — so it must

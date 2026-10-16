@@ -417,28 +417,20 @@ footer{border-top:1px solid var(--line);background:var(--abyss)}
   .page-home .caro-art,.page-home .caro-art img{min-height:0}
 }
 
-/* True full-bleed slides: the artwork is the field, while copy floats above a
-   readability veil. This removes the old right-column/card treatment. */
-.page-home .caro-slide{display:block;width:100%;min-height:clamp(520px,68vh,760px);padding:clamp(42px,7vw,96px) max(32px,calc((100% - 1200px)/2));position:relative;isolation:isolate;overflow:hidden}
+/* Cinematic full-bleed slides: no product artwork, no card image wells.
+   Each slide is a complete atmospheric field with restrained grain, light,
+   and a readability veil behind the copy. */
+.page-home .caro-slide{display:block;width:100%;min-height:clamp(520px,68vh,760px);padding:clamp(42px,7vw,96px) max(32px,calc((100% - 1200px)/2));position:relative;isolation:isolate;overflow:hidden;background:#070811}
+.page-home .caro-slide::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 76% 18%,rgba(153,108,255,.32),transparent 34%),radial-gradient(ellipse at 84% 86%,rgba(0,196,226,.18),transparent 38%),linear-gradient(115deg,#080711 0%,#17102d 48%,#071821 100%)}
+.page-home .caro-slide::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.34;background-image:radial-gradient(rgba(255,255,255,.16) .65px,transparent .65px);background-size:4px 4px;mix-blend-mode:soft-light}
+.page-home .caro-slide:nth-child(2)::before{background:radial-gradient(ellipse at 72% 24%,rgba(255,126,72,.28),transparent 32%),radial-gradient(ellipse at 18% 84%,rgba(255,190,82,.13),transparent 34%),linear-gradient(120deg,#160b18 0%,#32152d 48%,#10152d 100%)}
+.page-home .caro-slide:nth-child(3)::before{background:radial-gradient(ellipse at 78% 16%,rgba(72,216,255,.3),transparent 32%),radial-gradient(ellipse at 20% 88%,rgba(116,84,255,.2),transparent 38%),linear-gradient(120deg,#07151c 0%,#101b3e 48%,#160c2b 100%)}
 .page-home .caro-copy{position:relative;z-index:3;max-width:590px;padding-block:20px}
-.page-home .caro-art{position:absolute;inset:0;z-index:0;max-width:none;min-height:0;margin:0;border:0;border-radius:0;background:#070811;box-shadow:none}
-.page-home .caro-art img{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:cover;object-position:center;display:block;filter:saturate(.95) contrast(1.04)}
-.page-home .caro-art::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.8) 28%,rgba(5,5,7,.34) 56%,rgba(5,5,7,.08) 82%,rgba(5,5,7,.18) 100%);pointer-events:none}
-.page-home .caro-art::after{z-index:2;border-radius:0;box-shadow:inset 0 0 0 1px rgba(201,166,255,.12)}
-.page-home .caro-slide:nth-child(1) .caro-art img{object-position:62% center}
-.page-home .caro-slide:nth-child(2) .caro-art img{object-position:52% center}
-.page-home .caro-slide:nth-child(3) .caro-art img{object-position:58% center}
-.page-home .caro-slide:nth-child(4) .caro-art img{object-position:50% center}
-
+.page-home .caro-copy::before{content:"";position:absolute;inset:-32px -48px -32px -32px;z-index:-1;background:linear-gradient(90deg,rgba(5,5,7,.72),rgba(5,5,7,.28),transparent);filter:blur(18px);pointer-events:none}
 @media(max-width:760px){
   .page-home .caro-slide{width:100%;min-height:570px;padding:34px 16px 42px}
   .page-home .caro-copy{max-width:100%;padding-block:12px}
-  .page-home .caro-art{order:initial;max-width:none}
-  .page-home .caro-slide:nth-child(1) .caro-art img{object-position:68% center}
-  .page-home .caro-slide:nth-child(2) .caro-art img{object-position:54% center}
-  .page-home .caro-slide:nth-child(3) .caro-art img{object-position:60% center}
-  .page-home .caro-slide:nth-child(4) .caro-art img{object-position:52% center}
-  .page-home .caro-art::before{background:linear-gradient(180deg,rgba(5,5,7,.88) 0%,rgba(5,5,7,.52) 42%,rgba(5,5,7,.18) 78%,rgba(5,5,7,.58) 100%)}
+  .page-home .caro-slide::before{background:radial-gradient(ellipse at 78% 16%,rgba(153,108,255,.28),transparent 34%),linear-gradient(180deg,#080711 0%,#17102d 100%)}
 }
 
 /* Void Scriptor x Qowner wallpaper system: one atmospheric field across the
@@ -1711,6 +1703,78 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 @media(max-width:900px){
   .page-home .hero .scene{background-image:url('/assets/slides/void-studio.v2-1280.webp')}
   .page-quiz .hero::before{background-image:linear-gradient(90deg,rgba(5,5,7,.88),rgba(5,5,7,.48) 48%,rgba(5,5,7,.22)),url('/assets/slides/qowner-quiz.v2-1280.webp')}
+}
+
+
+.page-home header{position:absolute;top:0;left:0;right:0;z-index:20;background:linear-gradient(180deg,rgba(4,3,12,.72),transparent);border-bottom-color:transparent}
+.page-home main{position:relative;min-height:100dvh}
+.page-home .presentation-switch{position:absolute;top:94px;left:50%;z-index:15;width:min(1200px,calc(100% - 64px));transform:translateX(-50%);padding:0;align-items:center}
+.page-home .presentation-switch__intro{max-width:360px}
+.page-home .presentation-switch__intro .kicker{color:#e1d5ff}
+.page-home .presentation-switch__intro p{color:rgba(245,245,247,.7)}
+.page-home .presentation-switch__rail{background:rgba(5,5,12,.36);border-color:rgba(255,255,255,.22);backdrop-filter:blur(12px)}
+.page-home .presentation-switch__tab[aria-selected=true]{background:#f2efff;color:#0a0812}
+.page-home .carousel{margin:0;padding:0;min-height:100dvh;position:relative}
+.page-home .carousel>.product-intro{display:none}
+.page-home .caro-viewport{min-height:100dvh;border:0;border-radius:0;background:#080611;box-shadow:none}
+.page-home .caro-track{min-height:100dvh}
+.page-home .caro-slide{min-height:100dvh;padding:clamp(190px,24vh,270px) max(32px,calc((100% - 1200px)/2)) clamp(90px,12vh,140px)}
+.page-home .caro-slide::before{background:radial-gradient(ellipse at 82% 20%,rgba(157,115,255,.38),transparent 30%),radial-gradient(ellipse at 18% 82%,rgba(0,187,222,.2),transparent 34%),linear-gradient(116deg,#090710 0%,#221331 47%,#071a21 100%)}
+.page-home .caro-slide:nth-child(2)::before{background:radial-gradient(ellipse at 76% 18%,rgba(255,113,71,.38),transparent 28%),radial-gradient(ellipse at 16% 84%,rgba(255,189,83,.18),transparent 34%),linear-gradient(116deg,#170a18 0%,#3a1630 47%,#10182c 100%)}
+.page-home .caro-slide:nth-child(3)::before{background:radial-gradient(ellipse at 80% 18%,rgba(68,215,255,.38),transparent 30%),radial-gradient(ellipse at 18% 84%,rgba(122,84,255,.26),transparent 35%),linear-gradient(116deg,#06151c 0%,#121b40 47%,#190b2e 100%)}
+.page-home .caro-copy{max-width:650px;min-height:0;padding:0;justify-content:center}
+.page-home .caro-copy::before{inset:-80px -120px -80px -90px;background:linear-gradient(90deg,rgba(4,3,12,.78),rgba(4,3,12,.35),transparent);filter:blur(24px)}
+.page-home .caro-copy h2{font-size:clamp(48px,7vw,104px);line-height:.9;max-width:9ch;letter-spacing:-.035em}
+.page-home .caro-copy p{font-size:clamp(15px,1.35vw,19px);max-width:48ch}
+.page-home .caro-brandmark img{display:none}
+.page-home .caro-brandmark{gap:0}
+.page-home .caro-actions{margin-top:28px}
+.page-home .caro-nav{position:absolute;left:50%;bottom:42px;z-index:10;transform:translateX(-50%);width:min(1200px,calc(100% - 64px));justify-content:flex-start;margin:0}
+.page-home .caro-dot{width:44px;height:2px;border-radius:0}
+.page-home .hero{display:none!important}
+@media(max-width:760px){
+  .page-home .presentation-switch{top:86px;width:calc(100% - 32px);align-items:stretch}
+  .page-home .presentation-switch__intro{display:none}
+  .page-home .carousel,.page-home .caro-viewport,.page-home .caro-track,.page-home .caro-slide{min-height:100dvh}
+  .page-home .caro-slide{padding:180px 16px 120px}
+  .page-home .caro-copy h2{font-size:clamp(48px,15vw,76px)}
+  .page-home .caro-nav{bottom:26px;width:calc(100% - 32px)}
+}
+
+/* Product-stage composition: reuse the existing truthful carousel as one
+   cinematic workspace, with the product switch acting as the bottom selector.
+   The stage remains CSS-generated; no slide artwork is rendered. */
+.page-home .presentation-switch{position:absolute;top:auto;bottom:28px;left:50%;transform:translateX(-50%);width:min(1200px,calc(100% - 64px));padding:0;z-index:18;pointer-events:none}
+.page-home .presentation-switch__intro{display:none}
+.page-home .presentation-switch__rail{pointer-events:auto;width:min(100%,1120px);margin-inline:auto;justify-content:stretch;gap:4px;padding:4px;background:rgba(6,7,16,.58);border-color:rgba(255,255,255,.24);box-shadow:0 12px 38px rgba(0,0,0,.28);backdrop-filter:blur(16px)}
+.page-home .presentation-switch__tab{flex:1;min-height:46px;color:rgba(245,245,247,.72);letter-spacing:.02em}
+.page-home .presentation-switch__tab[aria-selected=true]{background:#f2efff;color:#0a0812}
+.page-home .carousel{min-height:100dvh;padding:0;margin:0;position:relative;background:#070811}
+.page-home .caro-viewport{min-height:100dvh}
+.page-home .caro-track{min-height:100dvh}
+.page-home .caro-slide{min-height:100dvh;padding:clamp(150px,21vh,230px) max(32px,calc((100% - 1200px)/2)) 150px}
+.page-home .caro-slide::before{background:radial-gradient(ellipse at 78% 24%,rgba(165,109,255,.42),transparent 27%),radial-gradient(ellipse at 28% 86%,rgba(0,205,226,.18),transparent 33%),linear-gradient(116deg,#08070f 0%,#24132f 48%,#071b22 100%)}
+.page-home .caro-slide::after{opacity:.24;background-size:5px 5px}
+.page-home .caro-slide:nth-child(2)::before{background:radial-gradient(ellipse at 80% 22%,rgba(255,112,72,.42),transparent 27%),radial-gradient(ellipse at 18% 86%,rgba(255,190,82,.16),transparent 34%),linear-gradient(116deg,#160a17 0%,#38152f 48%,#11182c 100%)}
+.page-home .caro-slide:nth-child(3)::before{background:radial-gradient(ellipse at 80% 20%,rgba(64,218,255,.4),transparent 28%),radial-gradient(ellipse at 18% 86%,rgba(126,83,255,.24),transparent 34%),linear-gradient(116deg,#06151c 0%,#121c40 48%,#1a0b2d 100%)}
+.page-home .caro-slide::after{box-shadow:inset 0 0 180px rgba(0,0,0,.38)}
+.page-home .caro-copy{max-width:700px;min-height:0;padding:0;justify-content:center}
+.page-home .caro-copy::before{inset:-90px -130px -90px -90px;background:linear-gradient(90deg,rgba(5,4,13,.84),rgba(5,4,13,.4),transparent);filter:blur(26px)}
+.page-home .caro-copy h2{max-width:10ch;font-size:clamp(54px,7vw,108px);line-height:.9;letter-spacing:-.04em}
+.page-home .caro-copy p{max-width:48ch;font-size:clamp(15px,1.3vw,19px)}
+.page-home .caro-brandmark img{display:none}
+.page-home .caro-brandmark{gap:0}
+.page-home .caro-actions{margin-top:28px}
+.page-home .caro-nav{bottom:92px;z-index:16;width:min(1200px,calc(100% - 64px));margin-inline:auto;position:absolute;left:50%;transform:translateX(-50%);justify-content:flex-start}
+.page-home .caro-dot{width:38px;height:2px;border-radius:0}
+.page-home .hero{display:none!important}
+@media(max-width:760px){
+  .page-home .presentation-switch{bottom:22px;width:calc(100% - 32px)}
+  .page-home .presentation-switch__rail{width:100%;overflow:hidden}
+  .page-home .presentation-switch__tab{min-width:0;padding-inline:8px;font-size:10px}
+  .page-home .caro-slide{padding:170px 16px 150px}
+  .page-home .caro-copy h2{font-size:clamp(50px,15vw,78px)}
+  .page-home .caro-nav{bottom:88px;width:calc(100% - 32px)}
 }
 
 /* Homepage clean-surface mode: content images remain, decorative surfaces do not. */
