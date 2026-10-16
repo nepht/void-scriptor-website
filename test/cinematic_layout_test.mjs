@@ -58,7 +58,17 @@ test('long status and documentation values wrap on narrow screens', () => {
 test('hero artwork serves a size-appropriate variant on small screens', () => {
   const slideCandidates = (name) => `srcset="/assets/slides/${name}-1280.webp 1280w, /assets/slides/${name}-1920.webp 1920w, /assets/slides/${name}.webp 2560w" sizes="100vw"`;
   for (const [route, source] of [['id', homepage], ['en', englishHomepage]]) {
-    for (const name of ['void-studio.v2', 'qowner-quiz.v2', 'byte-assistant.v2']) {
+    assert.ok(source.includes(slideCandidates('void-studio.v2')),
+      `${route} homepage must eagerly offer the active Studio candidates`);
+    for (const name of ['qowner-quiz.v2', 'byte-assistant.v2']) {
+      assert.ok(source.includes(slideCandidates(name).replace('srcset=', 'data-srcset=')),
+        `${route} homepage must defer candidates for inactive ${name}`);
+    }
+    assert.match(source, /function activateSlide\(slide\)/,
+      `${route} homepage must activate deferred carousel artwork on selection`);
+    /* inactive artwork must not be eagerly requested */
+    /* original all-slide assertion intentionally replaced */
+    for (const name of [] ) {
       assert.ok(source.includes(slideCandidates(name)),
         `${route} homepage must offer the 1280/1920/2560 candidates for ${name}`);
     }
