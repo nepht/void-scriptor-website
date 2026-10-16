@@ -111,3 +111,36 @@ test('the brand hero artwork ships in both resolutions', () => {
     assert.ok(fs.statSync(file).size > 10000, `${file} looks empty`);
   }
 });
+
+// The hero follows a supplied visual reference: a violet pill call to action
+// with an arrow, an outlined second action with a play glyph, and a capability
+// strip divided by hairlines instead of boxed cards. The label of every action
+// stays inside its own i18n node so a language switch cannot drop the icon.
+test('the brand hero keeps the reference composition for actions and capabilities', () => {
+  for (const { path } of pages) {
+    const source = fs.readFileSync(path, 'utf8');
+    assert.match(
+      source,
+      /class="btn primary" href="#products"><span data-i18n="hero-cta-enter">/,
+      `${path}: the primary call to action must keep its label beside an icon`,
+    );
+    assert.match(source, /class="bh-arrow"/, `${path}: the primary call to action needs an arrow`);
+    assert.match(source, /class="bh-play"/, `${path}: the secondary call to action needs a play glyph`);
+  }
+  const css = fs.readFileSync('assets/light.css', 'utf8');
+  assert.match(
+    css,
+    /body\.theme-light \.brand-hero-actions \.btn\.primary\{background:linear-gradient\(135deg,var\(--ls-violet\)/,
+    'the primary call to action must be the violet pill',
+  );
+  assert.match(
+    css,
+    /body\.theme-light \.brand-hero-caps\{[^}]*border-top:1px solid var\(--ls-line\)/,
+    'the capability strip must be separated from the copy by a hairline',
+  );
+  assert.match(
+    css,
+    /body\.theme-light \.brand-hero-caps li\{[^}]*border-left:1px solid var\(--ls-line\)/,
+    'capability entries must be divided by a rule rather than boxed as cards',
+  );
+});

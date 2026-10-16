@@ -15,8 +15,13 @@ test('primary navigation is closed before JavaScript runs on both locales', () =
     assert.equal(nav, '<nav id="nav">', `${page}: expected a single primary navigation element`);
     assert.match(
       source,
-      /body:not\(\.menu-ready\) #nav\{display:none!important\}/,
-      `${page}: nav must stay hidden before the menu script is ready`,
+      /@media\(max-width:1100px\)\{body:not\(\.menu-ready\) #nav\{display:none!important\}\}/,
+      `${page}: the menu must stay hidden before the menu script is ready on narrow screens`,
+    );
+    assert.match(
+      source,
+      /@media\(min-width:1101px\)\{[\s\S]*?nav\{display:flex!important;position:static/,
+      `${page}: the primary links must be a static row on desktop`,
     );
     assert.match(
       source,
