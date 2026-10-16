@@ -48,7 +48,7 @@ body.theme-light .page-art::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(242,246,251,.28) 0,rgba(242,246,251,.5) 58%,var(--ls-bg) 100%);
 }
-body.theme-light > header,body.theme-light > main,body.theme-light > footer,
+body.theme-light > main,body.theme-light > footer,
 body.theme-light > .backdrop,body.theme-light > .toast,body.theme-light > .byte-panel,
 body.theme-light > .byte-assistant{position:relative;z-index:1}
 
@@ -65,8 +65,15 @@ body.theme-light .eyebrow::before{background:var(--ls-violet)}
 body.theme-light ::selection{background:var(--ls-violet);color:#fff}
 body.theme-light :focus-visible{outline-color:var(--ls-violet)!important}
 
-/* header */
-body.theme-light header{background:rgba(242,246,251,.86);border-bottom:1px solid var(--ls-line);backdrop-filter:blur(14px)}
+body.theme-light > header{
+  position:sticky!important;top:0!important;z-index:60!important;
+  background:rgba(255,255,255,.9)!important;
+  background-image:none!important;
+  border:0!important;
+  border-bottom:1px solid var(--ls-line)!important;
+  box-shadow:0 8px 24px rgba(19,45,74,.05)!important;
+  backdrop-filter:blur(14px)!important;
+}
 body.theme-light header .brand,body.theme-light header .brand span{color:var(--ls-ink)}
 body.theme-light nav a{color:var(--ls-muted)}
 body.theme-light nav a:hover,body.theme-light nav a[aria-current=page]{color:var(--ls-ink)}
