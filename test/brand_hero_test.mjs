@@ -12,15 +12,15 @@ import test from 'node:test';
 const pages = [
   {
     path: 'index.html',
-    eyebrow: 'CIPTA · MAIN · JELAJAH · BERSAMA',
+    eyebrow: 'CIPTA · MAIN · JELAJAH',
     cta: 'Jelajahi Semesta',
-    tagline: 'Semesta kreatif untuk pemimpi, pembangun, dan pikiran penasaran.',
+    tagline: 'Alat untuk menjaga struktur proyek kreatif tetap konsisten.',
   },
   {
     path: 'en/index.html',
-    eyebrow: 'CREATE · PLAY · EXPLORE · TOGETHER',
+    eyebrow: 'CREATE · PLAY · EXPLORE',
     cta: 'Enter the Universe',
-    tagline: 'A creative universe for dreamers, builders and curious minds.',
+    tagline: 'A tool for keeping creative project structure consistent.',
   },
 ];
 
