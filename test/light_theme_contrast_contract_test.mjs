@@ -35,11 +35,17 @@ test('light theme keeps dark ink tokens for text', () => {
   assert.ok(!/--cloud:#f5f5f7/.test(light), '--cloud must not stay near-white in light theme');
 });
 
-test('light theme keeps the contrast correction block', () => {
-  assert.ok(light.includes('contrast corrections for the light production surface'));
-  assert.ok(light.includes('.docs-facts dd{color:var(--ls-ink)}'));
-  assert.ok(light.includes('body.theme-light.page-home .proof-link'));
-  assert.ok(light.includes('body.theme-light.page-home .proof-stamp'));
+test('light theme hardens compact and dark-palette components', () => {
+  for (const selector of [
+    'body.theme-light .status-primary',
+    'body.theme-light .presentation-switch__tab',
+    'body.theme-light .proof-stamp',
+    'body.theme-light.page-quiz .answer-toggle',
+    'body.theme-light.page-home .gallery-note',
+  ]) {
+    assert.ok(light.includes(selector), `missing contrast rule: ${selector}`);
+  }
+  assert.ok(light.includes('color:#fff!important'), 'light buttons need explicit white text');
 });
 
 test('every page cache-busts the light stylesheet with one shared version', () => {

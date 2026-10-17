@@ -408,3 +408,17 @@ body.theme-light .cardfoot button{
 body.theme-light.page-quiz .answer-toggle,
 body.theme-light.page-quiz .qowner-waitlist-status,
 body.theme-light.page-quiz .qowner-waitlist small{color:#0a6f8c!important}
+
+/* ---------- mobile/compact light-theme contrast hardening ---------- */
+body.theme-light .eyebrow,
+body.theme-light .kicker{color:#5137b5!important}
+body.theme-light .presentation-switch__tab,
+body.theme-light .presentation-switch__tab[aria-selected="true"]{color:var(--ls-ink)!important;background:var(--ls-surface)!important;border-color:var(--ls-line-2)!important}
+body.theme-light .presentation-switch__tab[aria-selected="true"]{background:var(--ls-ink)!important;color:#fff!important}
+body.theme-light .proof-stamp{color:#f5f7ff!important;background:rgba(5,5,7,.92)!important}
+body.theme-light .qowner-card .n,
+body.theme-light .qowner-card .num{color:#07566e!important}
+body.theme-light .form-note{color:var(--ls-muted)!important}
+body.theme-light .report-form button,
+body.theme-light .report-form .button,
+body.theme-light button[data-action="compose"]{color:#fff!important;background:var(--ls-ink)!important;border-color:var(--ls-ink)!important}
