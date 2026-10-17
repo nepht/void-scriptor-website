@@ -358,3 +358,53 @@ body.theme-light.page-home .proof-stamp{color:#f5f7ff!important;background:rgba(
 
 body.theme-light.page-home .status-item a:not(.btn){color:#3f2aa8!important}
 body.theme-light.page-home .status-item a:not(.btn):hover{color:#24176f!important}
+
+body.theme-light.page-home .gallery-note{color:#41556b!important}
+body.theme-light.page-home .brand-hero small,
+body.theme-light.page-home .hero-note{color:#41556b!important}
+
+/* ---------- pages that still ship their own dark palette ---------- */
+body.theme-light.page-legal,
+body.theme-light.page-contact,
+body.theme-light.page-report,
+body.theme-light.page-status,
+body.theme-light.page-quiz,
+body.theme-light.page-dashboard,
+body.theme-light.page-profile{
+  --void:#f2f6fb;--abyss:#f2f6fb;--obsidian:#ffffff;--graphite:#e8eef8;
+  --white:#0b1b2b;--silver:#41556b;--ash:#41556b;--fog:#41556b;--cloud:#0b1b2b;
+  --muted:#41556b;--faint:#5c6f85;
+  --purple:#5a3fc0;--purple-rgb:90,63,192;--purple-soft:#4b32a8;--purple-bright:#3f2aa8;
+  --violet:#4b32a8;--primary:#5a3fc0;--primary-pale:#3f2aa8;
+  --cyan:#0a6f8c;--signal:#0a6f8c;--accent:#0a6f8c;
+  --accent-dim:rgba(10,111,140,.35);--accent-bg:rgba(10,111,140,.08);
+}
+body.theme-light.page-legal main a,
+body.theme-light.page-contact main a,
+body.theme-light.page-quiz main a,
+body.theme-light.page-report main a,
+body.theme-light.page-status main a{color:#3f2aa8}
+body.theme-light.page-legal main a:hover,
+body.theme-light.page-contact main a:hover,
+body.theme-light.page-quiz main a:hover{color:#24176f}
+body.theme-light.page-legal main .card b,
+body.theme-light.page-contact main .card b,
+body.theme-light.page-quiz main .canon b{color:#3f2aa8!important}
+body.theme-light.page-legal main p strong,
+body.theme-light.page-legal main li strong,
+body.theme-light.page-contact main p strong,
+body.theme-light.page-contact main li strong{color:var(--ls-ink)}
+body.theme-light.page-report main strong{color:#8a4a12}
+body.theme-light .status-primary,
+body.theme-light a.status-primary,
+body.theme-light button.status-primary{
+  background:var(--ls-ink)!important;color:#fff!important;border-color:var(--ls-ink)!important}
+body.theme-light .status-pill{
+  color:#0a5c3c!important;background:#dcf7ea!important;border-color:rgba(10,92,60,.28)!important}
+body.theme-light .report-form button,
+body.theme-light .report-actions button,
+body.theme-light .cardfoot button{
+  background:var(--ls-ink)!important;color:#fff!important;border-color:var(--ls-ink)!important}
+body.theme-light.page-quiz .answer-toggle,
+body.theme-light.page-quiz .qowner-waitlist-status,
+body.theme-light.page-quiz .qowner-waitlist small{color:#0a6f8c!important}
