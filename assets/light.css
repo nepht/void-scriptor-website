@@ -524,3 +524,44 @@ body.theme-light.page-dashboard .copy{color:#3f2aa8!important}
 body.theme-light.page-dashboard .badge{color:#3c2a86!important;background:var(--ls-violet-pale)!important}
 body.theme-light.page-dashboard .danger{color:#8a2525!important;border-color:#c77b7b!important}
 body.theme-light.page-dashboard .dash-center-card :is(a,button):focus-visible{outline-color:var(--ls-violet)!important}
+
+/* Round 2 — per-view computed audit findings (local stub-session sweep):
+   sync/activity panels, profile editor, provider marks, statuses. */
+body.theme-light.page-dashboard main.dash::after{content:none!important}
+body.theme-light.page-dashboard .dash-sync-panel,
+body.theme-light.page-dashboard .dash-activity-panel{
+  background:var(--ls-glass)!important;border-color:var(--ls-line-2)!important;
+  color:var(--ls-ink)!important;box-shadow:var(--ls-shadow)!important}
+body.theme-light.page-dashboard .dash-sync-summary b,
+body.theme-light.page-dashboard .dash-sync-state,
+body.theme-light.page-dashboard .dash-activity-state{color:var(--ls-ink)!important}
+body.theme-light.page-dashboard .dash-sync-state.is-ready{color:#075c3f!important;background:#e2f7ed!important;border-color:#75c6a0!important}
+body.theme-light.page-dashboard .dash-sync-state.is-offline{color:#7a3b12!important;background:#fff0e5!important;border-color:#d9a174!important}
+body.theme-light.page-dashboard .dash-activity-state.is-error{color:#7a3b12!important;background:#fff0e5!important;border-color:#d9a174!important}
+body.theme-light.page-dashboard .dash-center-avatar i,
+body.theme-light.page-dashboard .panel.profile .ini{color:#fff!important}
+body.theme-light.page-dashboard .dash-provider-mark{color:#fff!important}
+body.theme-light.page-dashboard .dash-provider-mark.github{background:#24292f!important}
+body.theme-light.page-dashboard .dash-provider-mark:not(.github){background:#1a73e8!important}
+body.theme-light.page-dashboard .profile-field>span,
+body.theme-light.page-dashboard .profile-check,
+body.theme-light.page-dashboard .session-info strong,
+body.theme-light.page-dashboard .connection-info strong{color:var(--ls-ink)!important}
+body.theme-light.page-dashboard .profile-field input,
+body.theme-light.page-dashboard .profile-field textarea,
+body.theme-light.page-dashboard .profile-field select{
+  background:#fff!important;color:var(--ls-ink)!important;
+  border-color:var(--ls-line-2)!important}
+body.theme-light.page-dashboard .profile-summary-action,
+body.theme-light.page-dashboard .filepick,
+body.theme-light.page-dashboard .profile-public-link,
+body.theme-light.page-dashboard .hashrow code{color:#3f2aa8!important}
+body.theme-light.page-dashboard .session-current,
+body.theme-light.page-dashboard .connection-current,
+body.theme-light.page-dashboard .profile-status.ok,
+body.theme-light.page-dashboard .vmsg.ok{color:#075c3f!important}
+body.theme-light.page-dashboard .profile-status.bad,
+body.theme-light.page-dashboard .vmsg.bad{color:#8a2525!important}
+body.theme-light.page-dashboard .profile-status.warn{color:#704b08!important}
+body.theme-light.page-dashboard .dash-local-status{color:#087895!important}
+body.theme-light.page-dashboard .hamb{color:var(--ls-ink)!important}

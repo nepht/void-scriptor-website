@@ -78,3 +78,20 @@ test('dashboard light theme pairs readable ink with readable surfaces', () => {
   assert.ok(light.includes('background:var(--ls-glass)!important'), 'dashboard cards need a light readable surface');
   assert.ok(light.includes('color:var(--ls-ink)!important'), 'dashboard primary text needs dark readable ink');
 });
+
+test('dashboard light theme keeps per-panel surfaces and controls readable', () => {
+  for (const selector of [
+    'body.theme-light.page-dashboard main.dash::after{content:none!important}',
+    'body.theme-light.page-dashboard .dash-sync-panel',
+    'body.theme-light.page-dashboard .dash-activity-panel',
+    'body.theme-light.page-dashboard .profile-field>span',
+    'body.theme-light.page-dashboard .profile-field input',
+    'body.theme-light.page-dashboard .session-info strong',
+    'body.theme-light.page-dashboard .dash-provider-mark:not(.github){background:#1a73e8!important}',
+    'body.theme-light.page-dashboard .dash-center-avatar i',
+    'body.theme-light.page-dashboard .profile-status.ok',
+    'body.theme-light.page-dashboard .dash-local-status',
+  ]) {
+    assert.ok(light.includes(selector), `missing round-2 dashboard contrast rule: ${selector}`);
+  }
+});
