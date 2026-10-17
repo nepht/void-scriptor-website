@@ -25,8 +25,14 @@ body.theme-light{
   --muted:#41556b;
   --faint:#5c6f85;
   --ash:#41556b;
-  --fog:#5c6f85;
-  --silver:#5c6f85;
+  --fog:#41556b;
+  --silver:#41556b;
+  --cloud:#0b1b2b;
+  --white:#0b1b2b;
+  --pure:#0b1b2b;
+  --primary-pale:#3f2aa8;
+  --cyan:#087895;
+  --signal:#087895;
   --line:rgba(19,45,74,.14);
   --quiz-surface:rgba(255,255,255,.72);
   --quiz-surface-strong:rgba(255,255,255,.92);
@@ -322,3 +328,33 @@ body.theme-light.page-home .carousel .caro-nav .caro-dot:focus-visible{outline:2
   body.theme-light.page-home .carousel .caro-art img{filter:brightness(1.48) saturate(.8) contrast(.88)}
   body.theme-light.page-home .carousel .caro-art::before{background:linear-gradient(0deg,rgba(242,246,251,.98) 0%,rgba(242,246,251,.76) 54%,rgba(242,246,251,.22) 100%)}
 }
+
+
+/* ---------- contrast corrections for the light production surface ---------- */
+body.theme-light .docs-card,
+body.theme-light .docs-card p,
+body.theme-light .docs-card strong,
+body.theme-light .docs-card li,
+body.theme-light .docs-card dd,
+body.theme-light .docs-card code,
+body.theme-light .docs-facts dd{color:var(--ls-ink)}
+body.theme-light .docs-card dt,
+body.theme-light .docs-card small,
+body.theme-light .docs-card .muted,
+body.theme-light .docs-card .faint{color:var(--ls-muted)}
+body.theme-light .docnav a,
+body.theme-light .docnav a[aria-current=page]{color:var(--ls-ink)}
+body.theme-light .docs-steps span,
+body.theme-light .docs-steps strong{color:#fff}
+body.theme-light.page-home .caro-arrow{color:#31527a!important}
+body.theme-light.page-home .proof-link,
+body.theme-light.page-home .release-link,
+body.theme-light .page-home a:not(.btn):not(.caro-cta){color:#3f2aa8!important}
+body.theme-light.page-home .tag,
+body.theme-light.page-home .label{color:#006b84!important}
+body.theme-light.page-home .status-state,
+body.theme-light.page-home .status-item--live .status-state{color:#3f2aa8!important}
+body.theme-light.page-home .proof-stamp{color:#f5f7ff!important;background:rgba(5,5,7,.88)}
+
+body.theme-light.page-home .status-item a:not(.btn){color:#3f2aa8!important}
+body.theme-light.page-home .status-item a:not(.btn):hover{color:#24176f!important}
