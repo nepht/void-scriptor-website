@@ -127,6 +127,8 @@ body.theme-light footer{border-top:1px solid var(--ls-line);background:rgba(255,
 body.theme-light .foot,body.theme-light .foot a,body.theme-light .copyline{color:var(--ls-muted)}
 body.theme-light .foot a:hover{color:var(--ls-ink)}
 body.theme-light .footbrand span,body.theme-light .copyline,body.theme-light .footlinks{color:var(--ls-muted)}
+.social-link{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.social-logo{width:17px;height:17px;display:block;flex:none}.social-link:hover .social-logo{transform:translateY(-1px)}
+@media (prefers-reduced-motion:reduce){.social-link:hover .social-logo{transform:none}}
 body.theme-light .copyline{color:var(--ls-muted)}
 
 /* kill the legacy dark page washes on read surfaces */
