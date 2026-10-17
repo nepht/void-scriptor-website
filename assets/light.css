@@ -424,3 +424,103 @@ body.theme-light .form-note{color:var(--ls-muted)!important}
 body.theme-light .report-form button,
 body.theme-light .report-form .button,
 body.theme-light button[data-action="compose"]{color:#fff!important;background:var(--ls-ink)!important;border-color:var(--ls-ink)!important}
+
+/* ---------- dashboard light-theme contrast contract ----------
+   The dashboard owns a large legacy dark component palette in site.css. Keep
+   its readable light surfaces and dark ink together; otherwise retuned navy
+   tokens can land on inherited near-black cards. */
+body.theme-light.page-dashboard .dash-center-tabs,
+body.theme-light.page-dashboard .dash-center-card,
+body.theme-light.page-dashboard .dash-op,
+body.theme-light.page-dashboard .dash-readiness,
+body.theme-light.page-dashboard .dash-settings-panel,
+body.theme-light.page-dashboard .dash-command,
+body.theme-light.page-dashboard .panel,
+body.theme-light.page-dashboard .dash-center-provider-tile,
+body.theme-light.page-dashboard .dash-provider-tile,
+body.theme-light.page-dashboard .dash-advanced,
+body.theme-light.page-dashboard .dash-profile-editor{
+  background:var(--ls-glass)!important;
+  border-color:var(--ls-line-2)!important;
+  color:var(--ls-ink)!important;
+  box-shadow:var(--ls-shadow)!important;
+}
+body.theme-light.page-dashboard .dash-center-auth,
+body.theme-light.page-dashboard .dash-center-summary{
+  background:linear-gradient(145deg,#fff,#eef4fb)!important;
+  color:var(--ls-ink)!important;
+}
+body.theme-light.page-dashboard .dash-command,
+body.theme-light.page-dashboard .dash-settings-panel{
+  background:linear-gradient(120deg,#fff,#f1f5fb)!important;
+}
+body.theme-light.page-dashboard .dash-center-tabs a,
+body.theme-light.page-dashboard .dash-center-live,
+body.theme-light.page-dashboard .dash-center-state,
+body.theme-light.page-dashboard .dash-center-card h2,
+body.theme-light.page-dashboard .dash-center-card h3,
+body.theme-light.page-dashboard .dash-center-stats b,
+body.theme-light.page-dashboard .dash-center-cloud-facts b,
+body.theme-light.page-dashboard .dash-center-summary dd,
+body.theme-light.page-dashboard .dash-provider-tile strong,
+body.theme-light.page-dashboard .dash-center-usage b,
+body.theme-light.page-dashboard .dash-workspace-facts b,
+body.theme-light.page-dashboard .dash-workspace-list li,
+body.theme-light.page-dashboard .dash-settings-head h2,
+body.theme-light.page-dashboard .dash-command-copy h2,
+body.theme-light.page-dashboard .dash-bridge-help strong,
+body.theme-light.page-dashboard .dash-readiness-head h2,
+body.theme-light.page-dashboard .dash-op h2,
+body.theme-light.page-dashboard .panel h2,
+body.theme-light.page-dashboard .panel h3,
+body.theme-light.page-dashboard .panel dt,
+body.theme-light.page-dashboard .panel dd,
+body.theme-light.page-dashboard .dash-profile-editor>summary strong{
+  color:var(--ls-ink)!important;
+}
+body.theme-light.page-dashboard .dash-center-copy,
+body.theme-light.page-dashboard .dash-center-identity p,
+body.theme-light.page-dashboard .dash-center-stats small,
+body.theme-light.page-dashboard .dash-center-cloud-facts small,
+body.theme-light.page-dashboard .dash-center-note,
+body.theme-light.page-dashboard .dash-provider-tile small,
+body.theme-light.page-dashboard .dash-center-usage small,
+body.theme-light.page-dashboard .dash-workspace-facts small,
+body.theme-light.page-dashboard .dash-workspace-note,
+body.theme-light.page-dashboard .dash-workspace-list li small,
+body.theme-light.page-dashboard .dash-settings-note,
+body.theme-light.page-dashboard .dash-command-copy p,
+body.theme-light.page-dashboard .dash-bridge-help p,
+body.theme-light.page-dashboard .dash-op p,
+body.theme-light.page-dashboard .dash-op small,
+body.theme-light.page-dashboard .dash-readiness p,
+body.theme-light.page-dashboard .panel p,
+body.theme-light.page-dashboard .panel small,
+body.theme-light.page-dashboard .panel .note,
+body.theme-light.page-dashboard .dash-profile-editor>summary small,
+body.theme-light.page-dashboard .lead{
+  color:var(--ls-muted)!important;
+}
+body.theme-light.page-dashboard .dash-center-tabs a{color:var(--ls-muted)!important}
+body.theme-light.page-dashboard .dash-center-tabs a:hover,
+body.theme-light.page-dashboard .dash-center-tabs a:focus-visible,
+body.theme-light.page-dashboard .dash-center-tabs a.is-active{color:var(--ls-ink)!important;background:#fff!important}
+body.theme-light.page-dashboard .dash-center-link,
+body.theme-light.page-dashboard .panel a,
+body.theme-light.page-dashboard .dash-workspace-plan h3{color:#3f2aa8!important}
+body.theme-light.page-dashboard .dash-center-state.is-ready{color:#075c3f!important;background:#e2f7ed!important;border-color:#75c6a0!important}
+body.theme-light.page-dashboard .dash-center-state.is-offline{color:#7a3b12!important;background:#fff0e5!important;border-color:#d9a174!important}
+body.theme-light.page-dashboard .dash-op-diagnostics pre{background:#eef4fb!important;color:#164b5c!important;border-color:var(--ls-line-2)!important}
+body.theme-light.page-dashboard .dash-download-warning{color:#704b08!important;background:#fff7df!important;border-color:#d6b45a!important}
+body.theme-light.page-dashboard .step .txt b{color:var(--ls-ink)!important}
+body.theme-light.page-dashboard .step .txt small,
+body.theme-light.page-dashboard .onboard-note,
+body.theme-light.page-dashboard dt{color:var(--ls-muted)!important}
+body.theme-light.page-dashboard .step .txt a,
+body.theme-light.page-dashboard .onboard-note button,
+body.theme-light.page-dashboard .plinks a,
+body.theme-light.page-dashboard .ghost,
+body.theme-light.page-dashboard .copy{color:#3f2aa8!important}
+body.theme-light.page-dashboard .badge{color:#3c2a86!important;background:var(--ls-violet-pale)!important}
+body.theme-light.page-dashboard .danger{color:#8a2525!important;border-color:#c77b7b!important}
+body.theme-light.page-dashboard .dash-center-card :is(a,button):focus-visible{outline-color:var(--ls-violet)!important}

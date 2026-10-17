@@ -60,3 +60,21 @@ test('every page cache-busts the light stylesheet with one shared version', () =
   const [version] = [...versions];
   assert.match(version, /^light-cosmic-\d{8}[a-z]$/, `unexpected cache version ${version}`);
 });
+
+test('dashboard light theme pairs readable ink with readable surfaces', () => {
+  for (const selector of [
+    'body.theme-light.page-dashboard .dash-center-card',
+    'body.theme-light.page-dashboard .dash-center-auth',
+    'body.theme-light.page-dashboard .dash-center-summary',
+    'body.theme-light.page-dashboard .dash-command',
+    'body.theme-light.page-dashboard .dash-settings-panel',
+    'body.theme-light.page-dashboard .dash-center-card h2',
+    'body.theme-light.page-dashboard .dash-center-copy',
+    'body.theme-light.page-dashboard .dash-center-tabs a',
+    'body.theme-light.page-dashboard .dash-op-diagnostics pre',
+  ]) {
+    assert.ok(light.includes(selector), `missing dashboard contrast rule: ${selector}`);
+  }
+  assert.ok(light.includes('background:var(--ls-glass)!important'), 'dashboard cards need a light readable surface');
+  assert.ok(light.includes('color:var(--ls-ink)!important'), 'dashboard primary text needs dark readable ink');
+});
