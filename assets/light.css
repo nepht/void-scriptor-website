@@ -425,6 +425,27 @@ body.theme-light .report-form button,
 body.theme-light .report-form .button,
 body.theme-light button[data-action="compose"]{color:#fff!important;background:var(--ls-ink)!important;border-color:var(--ls-ink)!important}
 
+/* Account dropdown: override the legacy dark menu on the light dashboard. */
+body.theme-light.page-dashboard .profile-menu{
+  background:#fff!important;
+  border-color:var(--ls-line-2)!important;
+  box-shadow:0 18px 45px rgba(35,53,82,.22)!important;
+}
+body.theme-light.page-dashboard .profile-menu a,
+body.theme-light.page-dashboard .profile-menu button{
+  color:var(--ls-ink)!important;
+  background:transparent!important;
+}
+body.theme-light.page-dashboard .profile-menu a:hover,
+body.theme-light.page-dashboard .profile-menu button:hover,
+body.theme-light.page-dashboard .profile-menu a:focus-visible,
+body.theme-light.page-dashboard .profile-menu button:focus-visible{
+  color:var(--ls-ink)!important;
+  background:var(--ls-violet-pale)!important;
+}
+/* The dashboard art is intentionally kept intact: the requested purple
+   square/dots are not separate DOM layers or part of dashboard.webp. */
+
 /* ---------- dashboard light-theme contrast contract ----------
    The dashboard owns a large legacy dark component palette in site.css. Keep
    its readable light surfaces and dark ink together; otherwise retuned navy
