@@ -14,6 +14,11 @@ on:
       - 'package-lock.json'
       - '.github/workflows/release-integrity.yml'
   workflow_dispatch:
+    inputs:
+      installer_url:
+        description: 'URL installer RC yang akan diverifikasi (harus menunjuk ke artefak release yang dipublikasikan)'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -25,7 +30,7 @@ concurrency:
 jobs:
   verify:
     name: Verify release metadata
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.installer_url && 'windows-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
       - name: Check out source
@@ -42,6 +47,18 @@ jobs:
 
       - name: Run release and regression tests
         run: node --test test/*.mjs
+
+      - name: Verify published installer
+        if: ${{ inputs.installer_url != '' }}
+        shell: pwsh
+        env:
+          INSTALLER_URL: ${{ inputs.installer_url }}
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP 'VoidScriptor-installer.exe'
+          Invoke-WebRequest -Uri $env:INSTALLER_URL -OutFile $destination
+          ./tools/verify-release.ps1 `
+            -InstallerPath $destination `
+            -ManifestPath './release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256'
 
       - name: Check whitespace errors
         run: git diff --check --exit-code
