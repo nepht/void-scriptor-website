@@ -1,7 +1,7 @@
 {
   "product": "Void Scriptor Studio",
-  "version": "1.2.0-rc.1",
-  "sourceCommit": "bf300ce6e95a53d6cc657787eb8dbc8db194e042",
+  "version": "1.2.0-rc.2",
+  "sourceCommit": "1460240f7b1bef09126f43571d3177c0289b0325",
   "baseHref": "/app/",
   "buildCommand": "flutter build web --release --base-href=/app/",
   "sha256": {
