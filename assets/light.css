@@ -522,7 +522,31 @@ body.theme-light.page-dashboard .plinks a,
 body.theme-light.page-dashboard .ghost,
 body.theme-light.page-dashboard .copy{color:#3f2aa8!important}
 body.theme-light.page-dashboard .badge{color:#3c2a86!important;background:var(--ls-violet-pale)!important}
-body.theme-light.page-dashboard .danger{color:#8a2525!important;border-color:#c77b7b!important}
+body.theme-light.page-dashboard .primary,
+body.theme-light.page-dashboard .status-primary,
+body.theme-light.page-dashboard .cardfoot button,
+body.theme-light.page-dashboard .form button{
+  background:linear-gradient(135deg,var(--ls-violet),var(--ls-violet-2))!important;
+  color:#fff!important;border-color:var(--ls-violet)!important;
+  box-shadow:0 10px 24px rgba(107,75,214,.22)!important}
+body.theme-light.page-dashboard .primary:hover,
+body.theme-light.page-dashboard .status-primary:hover,
+body.theme-light.page-dashboard .cardfoot button:hover,
+body.theme-light.page-dashboard .form button:hover{
+  background:linear-gradient(135deg,#5a3bc4,#7b5ae8)!important;color:#fff!important}
+body.theme-light.page-dashboard .secondary,
+body.theme-light.page-dashboard .ghost,
+body.theme-light.page-dashboard .filepick{
+  background:rgba(255,255,255,.86)!important;color:var(--ls-ink)!important;
+  border-color:var(--ls-line-2)!important}
+body.theme-light.page-dashboard .secondary:hover,
+body.theme-light.page-dashboard .ghost:hover,
+body.theme-light.page-dashboard .filepick:hover{
+  background:#fff!important;color:var(--ls-ink)!important;border-color:var(--ls-violet)!important}
+body.theme-light.page-dashboard .danger{
+  color:#8a2525!important;background:#fff1f1!important;border-color:#c77b7b!important}
+body.theme-light.page-dashboard .danger:hover{
+  color:#721c24!important;background:#ffe4e4!important;border-color:#a94b55!important}
 body.theme-light.page-dashboard .dash-center-card :is(a,button):focus-visible{outline-color:var(--ls-violet)!important}
 
 /* Round 2 — per-view computed audit findings (local stub-session sweep):
