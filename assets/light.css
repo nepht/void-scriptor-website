@@ -83,6 +83,26 @@ body.theme-light > header{
 body.theme-light header .brand,body.theme-light header .brand span{color:var(--ls-ink)}
 body.theme-light nav a{color:var(--ls-muted)}
 body.theme-light nav a:hover,body.theme-light nav a[aria-current=page]{color:var(--ls-ink)}
+@media(max-width:1100px){
+  body.theme-light header nav.open{
+    background:#fff!important;
+    border-color:var(--ls-line-2)!important;
+    box-shadow:0 18px 45px rgba(35,53,82,.22)!important;
+  }
+  body.theme-light header:has(nav.open) nav.open{
+    background:#fff!important;
+    border-top-color:var(--ls-line-2)!important;
+  }
+  body.theme-light header nav.open a{
+    color:var(--ls-ink)!important;
+    background:transparent!important;
+  }
+  body.theme-light header nav.open a:hover,
+  body.theme-light header nav.open a:focus-visible{
+    color:var(--ls-ink)!important;
+    background:var(--ls-violet-pale)!important;
+  }
+}
 body.theme-light .btn-lang,body.theme-light .back,body.theme-light .outline,body.theme-light .btn-out,body.theme-light .outline-gate,body.theme-light .plain,body.theme-light .plain-gate{
   background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
 body.theme-light .btn-lang:hover,body.theme-light .back:hover,body.theme-light .outline:hover,body.theme-light .btn-out:hover{background:#fff;border-color:var(--ls-violet);color:var(--ls-ink)}
