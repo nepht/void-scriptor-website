@@ -45,6 +45,10 @@ The current installer and its SHA-256 manifest are linked from the download page
 
 Release promotion is separate from local verification: confirm the exact commit, run the local suite, inspect the artifact checksum, deploy only through the authorized Cloudflare path, and re-check the exact production URL afterward.
 
+## Release readiness
+
+Use docs/release-readiness.md for evidence gates covering development, integration, release promotion, recovery, and operations. Re-check the live repository and target URL for each candidate; the checklist is not a substitute for current evidence.
+
 ## Deployment note
 
 Production is served from `https://voidscriptor.com`. The Pages deployment check and direct production probes are separate evidence from the local test suite. GitHub Actions may be unavailable if the repository account billing gate prevents a runner from starting; in that case report the hosted CI result as blocked rather than treating local tests as hosted CI evidence.
