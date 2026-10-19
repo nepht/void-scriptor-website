@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Void Scriptor service health, limitations, and public evidence.">
+<title>Void Scriptor service health</title>
+<link rel="stylesheet" href="/assets/site.css?v=light-stage-20261019a"><link rel="stylesheet" href="/assets/light.css?v=light-cosmic-20261019c">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-20261019b-48.png?v=icon-20261019b">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f2f6fb">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voidscriptor.com/en/technical">
+<link rel="alternate" hreflang="en" href="https://voidscriptor.com/en/technical">
+<link rel="alternate" hreflang="id" href="https://voidscriptor.com/technical">
+<link rel="alternate" hreflang="x-default" href="https://voidscriptor.com/technical">
+<meta property="og:site_name" content="Void Scriptor"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="id_ID"><meta property="og:url" content="https://voidscriptor.com/en/technical"><meta property="og:title" content="Void Scriptor service health"><meta property="og:description" content="Void Scriptor service health, limitations, and public evidence."><meta property="og:image" content="https://voidscriptor.com/assets/og-image.webp"><meta property="og:image:secure_url" content="https://voidscriptor.com/assets/og-image.webp"><meta property="og:image:type" content="image/webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Void Scriptor — Real tools. Honest technical.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Void Scriptor service health"><meta name="twitter:description" content="Known service health and limitations."><meta name="twitter:image" content="https://voidscriptor.com/assets/og-image.webp">
+<meta name="twitter:image:alt" content="Void Scriptor — Real tools. Honest technical.">
+</head>
+<body class="page-legal page-technical theme-light" style="--page-art:url('/assets/scenes/status.webp');--page-art-sm:url('/assets/scenes/status-1280.webp')">
+<div class="page-art" aria-hidden="true"></div>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header><div class="shell navrow"><a class="brand" href="/en/"><img class="logo" src="/assets/void_scriptor_emblem.webp" alt="Void Scriptor"><span>VOID SCRIPTOR</span></a><a class="back" href="/en/">← Back to home</a><a class="btn-lang" href="/technical" hreflang="id" lang="id" aria-label="Ganti ke bahasa Indonesia">ID</a></div></header>
+<main id="main-content"><div class="shell">
+<div class="eyebrow">SERVICE HEALTH · DOCUMENTATION SUMMARY</div>
+<h1>What is available and being monitored.</h1>
+<p class="lede">This page is a static release note, not a live uptime monitor. The latest evidence referenced here is dated <time datetime="2026-10-10">October 10, 2026</time>; local changes become live only after deployment and another audit.</p>
+<nav class="docnav" aria-label="Technical evidence and release limits navigation"><a href="/en/technical" aria-current="page">Technical evidence and release limits</a><a href="/en/docs/getting-started">Getting started</a><a href="/en/changelog">Release notes</a><a href="/en/report-bug">Report a bug</a></nav>
+<section class="technical-board" aria-labelledby="board-title"><h2 id="board-title" class="sr-only">Product and service technical</h2>
+<article class="technical-row technical-row--ready"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">AVAILABLE · AUDITED</span><h2>Public website</h2><p><code>https://voidscriptor.com/</code> is the canonical domain. <code>voidscriptor.pages.dev</code> redirects to the primary domain.</p></div><span class="technical-pill">READY</span></article>
+<article class="technical-row technical-row--ready"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">AVAILABLE · PREVIEW</span><h2>Void Scriptor Studio 1.2.0-rc.2</h2><p>The Windows x64 installer is measured at <strong>32,746,152 bytes</strong>; the signed installer hash is <code>f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</code>. <a href="/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe" download>Download the installer</a></p></div><span class="technical-pill">RC.2</span></article>
+<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">CONFIGURATION-DEPENDENT</span><h2>Google/GitHub sign-in</h2><p>The website provides Google and GitHub sign-in buttons with protected sessions. Availability still depends on production settings; this page never displays secret login data.</p></div><span class="technical-pill">DEPENDENT</span></article>
+<article class="technical-row technical-row--partial" id="live-health"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">CURRENT CHECK</span><h2>Website response</h2><p>This check tests the website server and main files when the button is pressed. It is not uptime history and does not check third-party services.</p><button class="technical-primary" id="healthCheck" type="button">Check now</button> <span id="healthState" role="technical" aria-live="polite">Not checked yet.</span><p><small id="healthCheckedAt">No check in this session.</small></p></div><span class="technical-pill">CHECK</span></article>
+<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">OPTIONAL · LOCAL</span><h2>Byte connection on your computer</h2><p>This local connection uses <code>127.0.0.1:8766</code> and accepts only allowed origins. The homepage can still use a remote connection or offline mode; this is not a public service.</p></div><span class="technical-pill">LOCAL</span></article>
+<article class="technical-row technical-row--pending"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">NOT RELEASED</span><h2>QOWNER mobile, Linux, and macOS</h2><p>There is no public installer for these platforms in this release. Do not interpret the label “coming soon” as a release date.</p></div><span class="technical-pill">PENDING</span></article>
+</section>
+<section class="technical-proof" aria-labelledby="proof-title"><span class="eyebrow">EVIDENCE &amp; LIMITS</span><h2 id="proof-title">Technical evidence you can check now.</h2><div class="technical-proof-grid"><article><h3>File fingerprint (SHA-256)</h3><p>The SHA-256 value is available as static text in the <a href="/release-manifests/VoidScriptor-1.2.0-rc.2-windows-x64.sha256">local manifest</a>. A matching value means the file contents are the same as the published file; it does not prove the file’s origin.</p></article><article><h3>Tested configuration</h3><p>The available tested configuration is Windows 11 Pro 64-bit, Intel Core i5-4570, 32 GiB RAM, and AMD Radeon RX590 GME. This is not an official minimum requirement; minimum CPU, RAM, GPU, and disk space have not been set. Read the <a href="/en/docs/getting-started">tested configuration</a>.</p></article><article><h3>File signature</h3><p>The local RC.2 check returned <code>Status: Valid</code> with a signing time. The certificate is self-issued, so signature integrity can be checked, but the publisher identity is not yet trusted by SmartScreen.</p></article><article><h3>Security</h3><p>The website API does not freely accept requests from every origin. The local Byte connection has an allowlist of origins. Browser isolation settings are not claimed to be fully compatible without verifying OAuth login and the local connection; security reports are listed in <a href="/.well-known/security.txt">security.txt</a>.</p></article></div></section>
+<section class="docs-section docs-next" aria-labelledby="technical-next-title"><span class="eyebrow">OFFICIAL LINKS</span><h2 id="technical-next-title">Continue from the evidence.</h2><p>Read the <a href="/en/docs/getting-started">getting started guide</a>, <a href="/en/changelog">release notes</a>, or <a href="/en/report-bug">report a discrepancy</a> with reproduction steps. Production technical does not change just because a local file was fixed.</p></section>
+</div></main>
+<script>
+(function(){
+  var button=document.getElementById('healthCheck');
+  var state=document.getElementById('healthState');
+  var checked=document.getElementById('healthCheckedAt');
+  if(!button||!state||!checked)return;
+  button.addEventListener('click',async function(){
+    button.disabled=true;
+    state.textContent='Checking…';
+    checked.textContent='';
+    try{
+      var response=await fetch('/api/health',{credentials:'same-origin',cache:'no-store'});
+      var body=await response.json();
+      if(!response.ok||!body.ok)throw new Error('health_not_ok');
+      state.textContent='Website responding; main assets are available.';
+      if(body.checkedAt){
+        checked.dateTime=body.checkedAt;
+        checked.textContent='Checked '+new Date(body.checkedAt).toLocaleString('en-US');
+      }
+    }catch(error){
+      state.textContent='Probe failed; check again or report the issue.';
+      checked.textContent='The check was unsuccessful.';
+    }finally{button.disabled=false;}
+  });
+})();
+</script>
+<footer><div class="shell foot"><a href="/en/">Home</a><a href="/en/docs/getting-started">Getting started</a><a href="/en/changelog">Release notes</a><a href="/en/report-bug">Report a bug</a><a href="/en/privacy">Privacy</a><a href="/en/terms">Terms</a><a href="/en/contact">Contact</a><span class="copyline">© 2026 Void Scriptor Studio · Choirudin</span></div></footer>
+</body>
+</html>
