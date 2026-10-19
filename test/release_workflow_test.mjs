@@ -9,6 +9,7 @@ test('release integrity workflow runs on main release changes and manual dispatc
   const workflow = fs.readFileSync(workflowPath, 'utf8');
 
   assert.match(workflow, /name:\s*Release integrity/i);
+  assert.match(workflow, /pull_request:[\s\S]*?branches:\s*\[main\]/);
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /branches:\s*\[main\]/);
   assert.match(workflow, /release-manifests\//);
