@@ -16,6 +16,7 @@ test('release integrity workflow runs on main release changes and manual dispatc
   assert.match(workflow, /installer_url:/);
   assert.match(workflow, /runs-on: \${\{ inputs\.installer_url/);
   assert.match(workflow, /Invoke-WebRequest -Uri \$env:INSTALLER_URL/);
+  assert.match(workflow, /VoidScriptor-1\.2\.0-rc\.2-windows-x64-setup\.exe/);
   assert.match(workflow, /-ManifestPath .*VoidScriptor-1\.2\.0-rc\.2-windows-x64\.sha256/);
   assert.match(workflow, /permissions:\s*\n\s+contents:\s+read/);
   assert.match(workflow, /npm ci --ignore-scripts/);

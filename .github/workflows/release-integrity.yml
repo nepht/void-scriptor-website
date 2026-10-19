@@ -54,7 +54,7 @@ jobs:
         env:
           INSTALLER_URL: ${{ inputs.installer_url }}
         run: |
-          $destination = Join-Path $env:RUNNER_TEMP 'VoidScriptor-installer.exe'
+          $destination = Join-Path $env:RUNNER_TEMP 'VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe'
           Invoke-WebRequest -Uri $env:INSTALLER_URL -OutFile $destination
           ./tools/verify-release.ps1 `
             -InstallerPath $destination `
