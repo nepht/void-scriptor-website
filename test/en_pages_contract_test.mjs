@@ -81,10 +81,10 @@ test('English QOWNER page roots every site asset at the origin', () => {
   const html = read('en/quiz.html');
   for (const asset of [
     '/assets/void_scriptor_emblem.webp',
-    '/assets/favicon-20261019bb.ico',
-    '/assets/favicon-20261019bb-32.png',
-    '/assets/favicon-20261019bb-16.png',
-    '/assets/apple-touch-icon-20261019bb.png',
+    '/assets/favicon-20261019b.ico',
+    '/assets/favicon-20261019b-32.png',
+    '/assets/favicon-20261019b-16.png',
+    '/assets/apple-touch-icon-20261019b.png',
     '/site.webmanifest',
   ]) {
     assert.ok(
