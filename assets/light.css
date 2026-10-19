@@ -109,6 +109,9 @@ body.theme-light .btn-lang:hover,body.theme-light .back:hover,body.theme-light .
 body.theme-light .brand img{filter:none}
 body.theme-light .hamb i{background:var(--ls-ink)}
 body.theme-light .hamb::after{background:transparent;color:var(--ls-ink)}
+@media(max-width:1100px){
+  body.page-dashboard.theme-light .footlinks{max-width:100%;min-width:0;overflow-wrap:anywhere}
+}
 
 /* generic cards / read surfaces used across pages */
 body.theme-light .card,body.theme-light .hero-card,body.theme-light .grid article,
