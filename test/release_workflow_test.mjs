@@ -13,6 +13,9 @@ test('release integrity workflow runs on main release changes and manual dispatc
   assert.match(workflow, /branches:\s*\[main\]/);
   assert.match(workflow, /release-manifests\//);
   assert.match(workflow, /tools\/verify-release\.ps1/);
+  assert.match(workflow, /'\*\*\/\*\.html'/);
+  assert.match(workflow, /'assets\/\*\*'/);
+  assert.match(workflow, /'_worker\.js'/);
   assert.match(workflow, /installer_url:/);
   assert.match(workflow, /runs-on: \${\{ inputs\.installer_url/);
   assert.match(workflow, /Invoke-WebRequest -Uri \$env:INSTALLER_URL/);

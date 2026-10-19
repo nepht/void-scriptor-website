@@ -12,6 +12,13 @@ on:
       - 'test/**'
       - 'package.json'
       - 'package-lock.json'
+      - '**/*.html'
+      - 'assets/**'
+      - '_worker.js'
+      - 'wrangler.toml'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'site.webmanifest'
       - '.github/workflows/release-integrity.yml'
   workflow_dispatch:
     inputs:
