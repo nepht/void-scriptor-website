@@ -107,7 +107,8 @@ body.theme-light .btn-lang,body.theme-light .back,body.theme-light .outline,body
   background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
 body.theme-light .btn-lang:hover,body.theme-light .back:hover,body.theme-light .outline:hover,body.theme-light .btn-out:hover{background:#fff;border-color:var(--ls-violet);color:var(--ls-ink)}
 body.theme-light .brand img{filter:none}
-body.theme-light .hamb i,body.theme-light .hamb::after{background:var(--ls-ink)}
+body.theme-light .hamb i{background:var(--ls-ink)}
+body.theme-light .hamb::after{background:transparent;color:var(--ls-ink)}
 
 /* generic cards / read surfaces used across pages */
 body.theme-light .card,body.theme-light .hero-card,body.theme-light .grid article,
