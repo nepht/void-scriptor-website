@@ -298,6 +298,9 @@ body.theme-light .brand-hero-title{margin:10px 0 0;font-size:clamp(44px,7.4vw,88
 body.theme-light .brand-hero-tagline{margin:14px 0 0;max-width:520px;font-size:clamp(17px,1.6vw,21px);
   line-height:1.5;color:var(--ls-ink);font-weight:600}
 body.theme-light .brand-hero-body{margin:10px 0 0;max-width:540px;font-size:15px;line-height:1.7;color:var(--ls-muted)}
+body.theme-light .brand-hero-start{margin:16px 0 0;max-width:540px;font-size:13px;line-height:1.6;color:var(--ls-ink)}
+body.theme-light .brand-hero-start strong{font-weight:750}
+body.theme-light .brand-hero-start a{color:var(--ls-violet);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 body.theme-light .brand-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0}
 body.theme-light .brand-hero-actions .btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;
   padding:0 22px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none}
