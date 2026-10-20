@@ -17,12 +17,14 @@ test('homepage uses a full-bleed cinematic stage without horizontal viewport hac
 
 test('technical documentation explains internal terms in plain language', () => {
   const docs = fs.readFileSync('docs/getting-started.html', 'utf8');
+  const technical = fs.readFileSync('technical.html', 'utf8');
   const status = fs.readFileSync('status.html', 'utf8');
   const privacy = fs.readFileSync('privacy.html', 'utf8');
   const terms = fs.readFileSync('terms.html', 'utf8');
 
-  assert.match(docs, /Status masuk dan laporan kesalahan/);
-  assert.match(docs, /Cara masuk &amp; koneksi Byte/);
+  assert.doesNotMatch(docs, /Status masuk dan laporan kesalahan|Cara masuk &amp; koneksi Byte|127\.0\.0\.1:8766/);
+  assert.match(technical, /Status masuk dan laporan kesalahan/);
+  assert.match(technical, /Cara masuk dan koneksi Byte/);
   assert.doesNotMatch(docs, /State autentikasi dan artefak diagnostik menggunakan direktori application-support/);
   assert.match(status, /Cara masuk Google\/GitHub/);
   assert.match(status, /server website dan file utama/);
