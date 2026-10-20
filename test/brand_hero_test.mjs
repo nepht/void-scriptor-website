@@ -13,13 +13,13 @@ const pages = [
   {
     path: 'index.html',
     eyebrow: 'CIPTA · MAIN · JELAJAH',
-    cta: 'Mulai dalam 5 menit',
+    cta: 'Buat proyek pertama',
     tagline: 'Alat untuk menjaga struktur proyek kreatif tetap konsisten.',
   },
   {
     path: 'en/index.html',
     eyebrow: 'CREATE · PLAY · EXPLORE',
-    cta: 'Start in 5 minutes',
+    cta: 'Make a first project',
     tagline: 'A tool for keeping creative project structure consistent.',
   },
 ];
