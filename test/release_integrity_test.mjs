@@ -24,10 +24,14 @@ test('release verifier checks both checksum and Authenticode without claiming pu
   assert.doesNotMatch(verifier, /BEGIN (?:RSA |EC )?PRIVATE KEY|password\s*=|token\s*=/i);
 });
 
-test('getting started docs expose the local release verification command', () => {
+test('technical evidence exposes the local release verification command', () => {
   const docs = fs.readFileSync(docsPath, 'utf8');
+  const technical = fs.readFileSync('technical.html', 'utf8');
+  const englishTechnical = fs.readFileSync('en/technical.html', 'utf8');
 
-  assert.match(docs, /tools\/verify-release\.ps1/);
-  assert.match(docs, /self-issued|self issued/i);
-  assert.match(docs, /publisher.*(?:tepercaya|trusted)/i);
+  assert.match(technical, /tools\/verify-release\.ps1/);
+  assert.match(technical, /self-issued|self issued/i);
+  assert.match(technical, /publisher.*tepercaya/i);
+  assert.match(englishTechnical, /publisher.*trusted/i);
+  assert.doesNotMatch(docs, /tools\/verify-release\.ps1/);
 });
