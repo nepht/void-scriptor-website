@@ -3678,6 +3678,16 @@ export default {
     if (url.pathname.startsWith('/api/auth/')) {
       return handleAuth(request, url, env);
     }
+    const publicPageAliases = new Map([
+      ['/technical', '/technical.html'],
+      ['/en/technical', '/en/technical.html'],
+    ]);
+    const pageAlias = publicPageAliases.get(url.pathname);
+    if (pageAlias) {
+      const page = await env.ASSETS.fetch(new URL(pageAlias, url).toString());
+      if (!page.ok) return harden(page, url.pathname, true);
+      return harden(new Response(page.body, { status: 200, headers: page.headers }), url.pathname, true);
+    }
     if (url.pathname === '/downloads' || url.pathname === '/downloads/'
       || url.pathname === '/en/downloads' || url.pathname === '/en/downloads/') {
       const downloadIndex = url.pathname.startsWith('/en/') ? '/en/downloads.html' : '/downloads.html';
