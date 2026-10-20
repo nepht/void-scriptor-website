@@ -281,7 +281,7 @@ p,li{color:var(--ash)}
 .page-changelog .status-notes ul{max-width:720px;margin:20px 0 0;padding-left:20px;color:var(--cloud);line-height:1.75}
 .page-changelog .status-notes li+li{margin-top:8px}
 .page-changelog .status-roadmap,.page-changelog .status-proof{padding:36px 0;border-top:1px solid rgba(217,207,255,.13)}
-.page-changelog .roadmap-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
+.page-changelog .roadmap-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px}
 .page-changelog .roadmap-list span{display:flex;justify-content:space-between;gap:14px;padding:14px;border:1px solid rgba(217,207,255,.14);border-radius:var(--radius-control);color:var(--cloud);font-size:13px}
 .page-changelog .roadmap-list b{color:var(--faint);font-size:10px;font-weight:500}
 .page-changelog .status-actions{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px}
