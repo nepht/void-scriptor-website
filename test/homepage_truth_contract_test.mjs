@@ -16,7 +16,7 @@ test('homepage keeps concrete product proof and honest status copy', () => {
     assert.doesNotMatch(source, /id="creative-flow"/, `${page.path}: repeated creative-flow section returned`);
     assert.match(source, new RegExp(page.byteOffline), `${page.path}: Byte offline state is not explained`);
     assert.match(source, new RegExp(page.retry), `${page.path}: Byte retry action is not explained`);
-    assert.match(source, /self-issued signature|bertanda tangan self-issued/i, `${page.path}: RC signature warning missing`);
+    assert.match(source, /Baca bukti teknis dan checksum|Read the technical evidence and checksum/i, `${page.path}: RC signature warning missing`);
     assert.match(source, /Detail verifikasi|Verification details/, `${page.path}: verification details link missing`);
   }
 });

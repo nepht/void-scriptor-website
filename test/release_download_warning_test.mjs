@@ -7,7 +7,7 @@ test('installer download surfaces preview status and SmartScreen warning beside 
     const source = fs.readFileSync(page, 'utf8');
     assert.match(source, /data-i18n="hero-cta"[^>]*>[^<]*pratinjau|data-i18n="hero-cta"[^>]*>[^<]*preview/i);
     assert.match(source, /id="hero-release-warning"[^>]*role="note"/);
-    assert.match(source, /data-i18n="hero-release-warning"[^>]*>[^<]*SmartScreen/i);
+    assert.match(source, /data-i18n="hero-release-warning"[^>]*>[^<]*(?:bukti teknis dan checksum|technical evidence and checksum)/i);
   }
 
   const dashboard = fs.readFileSync('dashboard.html', 'utf8');
