@@ -28,6 +28,7 @@ test('English homepage has English static navigation before JavaScript runs', ()
   assert.match(source, /data-i18n="hero-products-link">Explore Studio, QOWNER &amp; Byte<\/a>/);
   assert.match(source, /data-i18n="prod-kicker">THREE PRODUCTS<\/span>/);
   assert.match(source, /data-i18n="prod-h2">One creative flow, from structure to the next step\.<\/h2>/);
+  assert.match(source, /data-i18n="release-copy">Preview release for Windows x64, not a stable release\. Start with the tested Studio flow to see what you can create, then read the technical notes for file evidence and limits\.<\/p>/);
   assert.match(source, /aria-label="Product highlights"/);
   assert.match(source, /data-i18n="modal-title">Welcome back\.<\/h2>/);
   assert.match(source, /data-i18n="modal-desc">Sign in to access your profile/);
