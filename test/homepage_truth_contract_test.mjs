@@ -18,5 +18,6 @@ test('homepage keeps concrete product proof and honest status copy', () => {
     assert.match(source, new RegExp(page.retry), `${page.path}: Byte retry action is not explained`);
     assert.match(source, /Baca bukti teknis dan checksum|Read the technical evidence and checksum/i, `${page.path}: RC signature warning missing`);
     assert.match(source, /Detail verifikasi|Verification details/, `${page.path}: verification details link missing`);
+    assert.doesNotMatch(source, /prod-studio-plat[^\r\n]*?(?:tersedia kini|available now)/i, `${page.path}: Studio must not claim current availability`);
   }
 });
