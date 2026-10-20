@@ -13,13 +13,13 @@ const pages = [
   {
     path: 'index.html',
     eyebrow: 'CIPTA · MAIN · JELAJAH',
-    cta: 'Jelajahi Semesta',
+    cta: 'Mulai dalam 5 menit',
     tagline: 'Alat untuk menjaga struktur proyek kreatif tetap konsisten.',
   },
   {
     path: 'en/index.html',
     eyebrow: 'CREATE · PLAY · EXPLORE',
-    cta: 'Enter the Universe',
+    cta: 'Start in 5 minutes',
     tagline: 'A tool for keeping creative project structure consistent.',
   },
 ];
@@ -122,7 +122,7 @@ test('the brand hero keeps the reference composition for actions and capabilitie
     const source = fs.readFileSync(path, 'utf8');
     assert.match(
       source,
-      /class="btn primary" href="#products"><span data-i18n="hero-cta-enter">/,
+      /class="btn primary" href="(?:\/en)?\/docs\/getting-started"><span data-i18n="hero-cta-enter">/,
       `${path}: the primary call to action must keep its label beside an icon`,
     );
     assert.match(source, /class="bh-arrow"/, `${path}: the primary call to action needs an arrow`);
