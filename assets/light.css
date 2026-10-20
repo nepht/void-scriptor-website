@@ -159,6 +159,11 @@ body.theme-light .copyline{color:var(--ls-muted)}
 body.theme-light.page-legal::before,body.theme-light.page-legal::after,
 body.theme-light.page-quiz::before,body.theme-light.page-quiz::after,
 body.theme-light.page-home::before,body.theme-light.page-home::after{background:none;content:none}
+/* profile ships the site's only dark body scrim plus near-white copy literals */
+body.theme-light.page-profile::before,
+body.theme-light.page-profile::after{background:none;content:none}
+body.theme-light.page-profile .bio,
+body.theme-light.page-profile .qowner{color:var(--ls-ink)}
 body.theme-light.page-quiz .hero{background:transparent}
 body.theme-light.page-quiz .hero::before,body.theme-light.page-quiz .hero::after{background:none;content:none}
 /* neutralize the legacy dark scrim painted on the main column (site.css:440/443) */
