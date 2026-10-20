@@ -5,14 +5,10 @@ import fs from 'node:fs';
 test('status page uses Indonesian labels for technical evidence', () => {
   const source = fs.readFileSync('status.html', 'utf8');
 
-  assert.match(source, /<span class="eyebrow">BUKTI &amp; BATAS<\/span>/);
-  assert.match(source, /<h3>Sidik jari file \(SHA-256\)<\/h3>/);
-  assert.match(source, /<h3>Konfigurasi uji<\/h3>/);
-  assert.match(source, /<h3>Tanda tangan file<\/h3>/);
-  assert.match(source, /<h3>Keamanan<\/h3>/);
-  assert.match(source, /asal file/);
-  assert.match(source, /diterbitkan sendiri/);
-  assert.match(source, /tidak menerima permintaan dari semua asal secara bebas/);
+  assert.match(source, /<span class="eyebrow">BUKTI TEKNIS<\/span>/);
+  assert.match(source, /<h2 id="proof-title">Status produk dipisahkan dari bukti teknis\.<\/h2>/);
+  assert.match(source, /href="\/technical">Bukti teknis dan batas rilis<\/a>/);
+  assert.doesNotMatch(source, /Sidik jari file|Konfigurasi uji|Tanda tangan file|<h3>Keamanan<\/h3>/);
   assert.doesNotMatch(source, />EVIDENCE &amp; BATAS</);
   assert.doesNotMatch(source, /<h3>Requirements<\/h3>/);
   assert.doesNotMatch(source, /<h3>Signing<\/h3>/);
