@@ -7,10 +7,11 @@ const idPage = fs.readFileSync('downloads.html', 'utf8');
 const enPage = fs.readFileSync('en/downloads.html', 'utf8');
 const sitemap = fs.readFileSync('sitemap.xml', 'utf8');
 
-test('download index pages exist in both locales and expose the verified installer', () => {
+test('download index pages exist in both locales and keep unverified installers gated', () => {
   for (const [page, language, link] of [[idPage, 'lang="id"', '/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe'], [enPage, 'lang="en"', '/downloads/VoidScriptor-1.2.0-rc.2-windows-x64-setup.exe']]) {
     assert.match(page, new RegExp(`<html ${language.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
-    assert.match(page, new RegExp(`href="${link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+    assert.doesNotMatch(page, /href="\/downloads\/VoidScriptor-1\.2\.0-rc\.2-windows-x64-setup\.exe"/);
+    assert.match(page, /Installer .*belum tersedia|Installer .*not available|belum diverifikasi|not been verified/i);
     assert.match(page, /f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6/);
   }
 });
