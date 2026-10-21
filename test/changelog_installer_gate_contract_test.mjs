@@ -7,11 +7,11 @@ const enPage = fs.readFileSync('en/changelog.html', 'utf8');
 const downloads = fs.readFileSync('downloads.html', 'utf8');
 const enDownloads = fs.readFileSync('en/downloads.html', 'utf8');
 
-test('changelog pages expose the live-verified installer', () => {
+test('changelog pages disclose pending installer verification', () => {
   for (const page of [idPage, enPage]) {
-    assert.match(page, /<a[^>]*href="\/downloads\/VoidScriptor-1\.2\.0-rc\.2-windows-x64-setup\.exe"[^>]*>/);
+    assert.match(page, /verifikasi live belum tersedia|live verification pending/);
     const currentCard = page.split("status-item status-item--current")[1].split("</article>")[0];
-    assert.doesNotMatch(currentCard, /belum tersedia untuk diunduh|not available for download/);
+    assert.match(currentCard, /is-unavailable/);
   }
 });
 
