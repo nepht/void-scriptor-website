@@ -2,12 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 
-// The homepage used to open straight into a product stage, so the first thing a
-// visitor met was a single product rather than the universe it belongs to. The
-// brand hero now opens <main> with the Void Scriptor wordmark, a tagline, two
-// calls to action and four capability entries, and the product presentation
-// switch follows underneath. These assertions lock that order, the artwork
-// contract, and the honesty rules the copy has to keep.
+// The hero leads with a concrete first-project path while retaining the product
+// presentation and its evidence boundaries.
 
 const pages = [
   {
@@ -84,6 +80,18 @@ test('the homepage opens with a brand hero before the product presentation', () 
       `${path}: the three-product switch must remain`,
     );
   }
+});
+
+test('the English homepage keeps the Indonesian fallback creator-first copy aligned', () => {
+  const source = fs.readFileSync('en/index.html', 'utf8');
+  for (const copy of [
+    'CIPTA · MAIN · JELAJAH',
+    'Alat untuk menjaga struktur proyek kreatif tetap konsisten.',
+    'Buat proyek pertama',
+  ]) {
+    assert.match(source, new RegExp(`hero-(?:eyebrow|tagline|cta-enter)[^}]*${copy}`), `en/index.html: missing fallback copy ${copy}`);
+  }
+  assert.doesNotMatch(source, /'hero-cta-enter':'Jelajahi Semesta'/, 'en/index.html: stale fallback CTA remains');
 });
 
 test('the brand hero claims only what the products actually do', () => {
