@@ -2,3 +2,6 @@
 node_modules/
 crawl.pkl
 NUL
+
+# Local audit scripts and evidence; preserved on disk, not committed
+/work/
