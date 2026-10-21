@@ -7,6 +7,7 @@ const pages = [
   ['byte.html', 'en/byte.html'],
   ['qowner.html', 'en/qowner.html'],
   ['studio.html', 'en/studio.html'],
+  ['quiz.html', 'en/quiz.html'],
 ];
 
 async function title(file) {
@@ -20,7 +21,7 @@ test('ID/EN product titles are distinct and retain product identity', async () =
   for (const [idPage, enPage] of pages) {
     const [idTitle, enTitle] = await Promise.all([title(idPage), title(enPage)]);
     assert.notEqual(idTitle, enTitle, `${idPage} and ${enPage} must not duplicate title text`);
-    assert.match(idTitle, /Void Scriptor|Byte Assistant|QOWNER Quiz Maker/i, `${idPage} title should identify its product`);
-    assert.match(enTitle, /Void Scriptor|Byte Assistant|QOWNER Quiz Maker/i, `${enPage} title should identify its product`);
+    assert.match(idTitle, /Void Scriptor|Byte Assistant|QOWNER/i, `${idPage} title should identify its product`);
+    assert.match(enTitle, /Void Scriptor|Byte Assistant|QOWNER/i, `${enPage} title should identify its product`);
   }
 });
