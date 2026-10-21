@@ -289,6 +289,7 @@ p,li{color:var(--ash)}
 @media(max-width:850px){.page-changelog .changelog-grid{grid-template-columns:1fr 1fr}.page-changelog .status-item:first-child{grid-column:1/-1}}
 @media(max-width:600px){.page-changelog .changelog-grid,.page-changelog .roadmap-list{grid-template-columns:1fr}.page-changelog .status-item:first-child{grid-column:auto}.page-changelog .status-item{padding:21px}}
 .page-legal .docnav a{min-height:44px;display:inline-flex;align-items:center;border-radius:var(--radius-control)}
+.page-about .hero-card p a,.page-legal p a,.page-legal li a,.page-contact p a,.page-contact li a{text-decoration:underline;text-underline-offset:3px}
 .page-privacy{--accent:#00b3dd;--accent-dim:rgba(0,179,221,.48);--accent-bg:rgba(0,179,221,.1)}
 .page-terms{--accent:#7c5cff;--accent-dim:rgba(124,92,255,.52);--accent-bg:rgba(124,92,255,.11)}
 
