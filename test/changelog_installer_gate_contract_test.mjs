@@ -16,8 +16,8 @@ test('changelog pages expose the live-verified installer', () => {
 });
 
 test('live availability wording stays aligned with the downloads pages', () => {
-  assert.match(downloads, /Unduh installer/);
-  assert.match(enDownloads, /Download installer/);
+  assert.match(downloads, /verifikasi target publik belum tersedia/);
+  assert.match(enDownloads, /public-target verification is not available yet/);
 });
 
 test('changelog checksum link to the tracked manifest remains', () => {
