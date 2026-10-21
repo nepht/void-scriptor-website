@@ -4,6 +4,38 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Bukti teknis dan batas rilis, batasan, dan bukti publik Void Scriptor.">
 <title>Bukti teknis dan batas rilis Void Scriptor</title>
+<style>
+/* Technical evidence board.
+   This component mirrors the service health board: every row is a card that
+   carries a recorded-state chip and a separate availability pill. Without
+   these rules both labels fell back to 16px body text, so a recorded state
+   and a verified one looked identical. */
+body.page-technical .technical-board{display:grid;gap:22px;margin-top:25px}
+body.page-technical .technical-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:start;gap:15px;padding:20px;border:1px solid var(--ls-line);border-radius:var(--radius-card);background:var(--ls-glass)}
+body.page-technical .technical-row--partial{border-color:rgba(180,83,9,.26)}
+body.page-technical .technical-row--pending{border-color:var(--ls-line-2)}
+body.page-technical .technical-light{width:10px;height:10px;margin-top:6px;border-radius:50%;background:#b45309}
+body.page-technical .technical-row--pending .technical-light{background:var(--ls-faint)}
+body.page-technical .technical-row h2{margin:6px 0 6px;font-size:22px;line-height:1.1;color:var(--ls-ink)}
+body.page-technical .technical-row p{margin:0;font-size:13px;line-height:1.65;color:var(--ls-muted)}
+body.page-technical .technical-row code{background:#fff;border:1px solid var(--ls-line);border-radius:5px;padding:1px 5px;color:#173a5e;word-break:break-all}
+body.page-technical .technical-state{display:inline-block;padding:4px 8px;border:1px solid rgba(107,75,214,.28);border-radius:999px;background:var(--ls-violet-pale);color:#3c2a86;font:700 9px var(--font-mono);letter-spacing:.08em}
+body.page-technical .technical-pill{align-self:start;padding:6px 10px;border:1px solid var(--ls-line-2);border-radius:999px;background:var(--ls-surface);color:var(--ls-muted);font:700 9px var(--font-mono);letter-spacing:.08em;white-space:nowrap}
+body.page-technical .technical-pill--warn{border-color:rgba(180,83,9,.3);background:#fff3d6;color:#7a4a00}
+body.page-technical .technical-primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:8px;padding:0 14px;border:1px solid var(--ls-ink);border-radius:var(--radius-control);background:var(--ls-ink);color:#fff;font-size:11px;cursor:pointer}
+body.page-technical .technical-primary:hover{background:#16324d}
+body.page-technical .technical-proof{margin-top:38px;padding-top:38px;border-top:1px solid var(--ls-line)}
+body.page-technical .technical-proof h2{margin:12px 0 10px;font-size:clamp(27px,3.2vw,42px);line-height:1.08;color:var(--ls-ink)}
+body.page-technical .technical-proof-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+body.page-technical .technical-proof-grid article{padding:18px;border:1px solid var(--ls-line);border-radius:var(--radius-card);background:var(--ls-glass-2)}
+body.page-technical .technical-proof-grid h3{margin:0 0 6px;font-size:19px;color:var(--ls-ink)}
+body.page-technical .technical-proof-grid p{margin:0;font-size:12px;line-height:1.65;color:var(--ls-muted)}
+@media (max-width:700px){
+  body.page-technical .technical-row{grid-template-columns:10px minmax(0,1fr)}
+  body.page-technical .technical-pill{grid-column:2;justify-self:start}
+  body.page-technical .technical-proof-grid{grid-template-columns:1fr}
+}
+</style>
 <link rel="stylesheet" href="/assets/site.css?v=light-stage-20261019a"><link rel="stylesheet" href="/assets/light.css?v=light-cosmic-20261021a">
 <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-20261019b-48.png?v=icon-20261019b">
 <link rel="manifest" href="/site.webmanifest">
@@ -25,8 +57,8 @@
 <p class="lede">Halaman ini merangkum checksum, tanda tangan, konfigurasi uji, dan batas rilis yang tersedia. Bukti ini bersifat statis; perubahan lokal baru menjadi live setelah deploy dan audit ulang.</p>
 <nav class="docnav" aria-label="Navigasi bukti teknis"><a href="/technical" aria-current="page">Bukti teknis dan batas rilis</a><a href="/docs/getting-started">Mulai</a><a href="/changelog">Catatan rilis</a><a href="/report-bug">Laporkan bug</a></nav>
 <section class="technical-board" aria-labelledby="board-title"><h2 id="board-title" class="sr-only">Bukti teknis</h2>
-<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">TERCATAT · BELUM DIVERIFIKASI</span><h2>Website publik</h2><p><code>https://voidscriptor.com/</code> adalah domain kanonik yang tercatat. Respons live hanya ditetapkan oleh pemeriksaan saat tombol ditekan; audit lokal ini tidak membuktikan redirect atau ketersediaan publik.</p></div><span class="technical-pill">BELUM DIVERIFIKASI</span></article>
-<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">TERCATAT · BELUM DIVERIFIKASI</span><h2>Void Scriptor Studio 1.2.0-rc.2</h2><p>Catatan lokal mencantumkan installer Windows x64 berukuran <strong>32.746.152 byte</strong> dan hash bertanda tangan <code>f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</code>. Ketersediaan file publik harus diperiksa live; audit lokal ini tidak membuktikannya.</p></div><span class="technical-pill">BELUM DIVERIFIKASI</span></article>
+<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">TERCATAT · BELUM DIVERIFIKASI</span><h2>Website publik</h2><p><code>https://voidscriptor.com/</code> adalah domain kanonik yang tercatat. Respons live hanya ditetapkan oleh pemeriksaan saat tombol ditekan; audit lokal ini tidak membuktikan redirect atau ketersediaan publik.</p></div><span class="technical-pill technical-pill--warn">BELUM DIVERIFIKASI</span></article>
+<article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">TERCATAT · BELUM DIVERIFIKASI</span><h2>Void Scriptor Studio 1.2.0-rc.2</h2><p>Catatan lokal mencantumkan installer Windows x64 berukuran <strong>32.746.152 byte</strong> dan hash bertanda tangan <code>f53402cc84ab3e1e15d7870d4c408cb4f4eef7ebdb0487b79f56e56cddfe5ae6</code>. Ketersediaan file publik harus diperiksa live; audit lokal ini tidak membuktikannya.</p></div><span class="technical-pill technical-pill--warn">BELUM DIVERIFIKASI</span></article>
 <article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">TERGANTUNG KONFIGURASI</span><h2>Cara masuk Google/GitHub</h2><p>Website menyediakan tombol masuk Google dan GitHub dengan sesi terlindungi. Ketersediaannya tetap bergantung pada pengaturan produksi; halaman ini tidak pernah menampilkan data login rahasia.</p></div><span class="technical-pill">TERGANTUNG</span></article>
 <article class="technical-row technical-row--partial" id="live-health"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">PEMERIKSAAN SAAT INI</span><h2>Respons website</h2><p>Pemeriksaan ini mengecek server website dan file utama saat tombol ditekan. Hasilnya bukan riwayat uptime dan tidak memeriksa layanan pihak ketiga.</p><button class="technical-primary" id="healthCheck" type="button">Periksa sekarang</button> <span id="healthState" role="status" aria-live="polite">Belum diperiksa.</span><p><small id="healthCheckedAt">Tidak ada pemeriksaan pada sesi ini.</small></p></div><span class="technical-pill">PEMERIKSAAN</span></article>
 <article class="technical-row technical-row--partial"><div class="technical-light" aria-hidden="true"></div><div><span class="technical-state">OPSIONAL · LOKAL</span><h2>Koneksi Byte di komputer</h2><p>Koneksi lokal ini memakai <code>127.0.0.1:8766</code> dan hanya menerima alamat yang diizinkan. Homepage tetap dapat memakai koneksi jarak jauh atau mode offline; ini bukan layanan publik.</p></div><span class="technical-pill">LOKAL</span></article>

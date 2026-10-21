@@ -22,9 +22,13 @@ test('technical status pills do not overstate unverified availability', () => {
       .map(([row]) => row);
     assert.ok(rows.length >= 2, `${page} should have website and Studio partial rows`);
     for (const row of rows.slice(0, 2)) {
-      assert.match(row, new RegExp(state.replace(/[·]/g, '·')));
-      assert.match(row, new RegExp(`<span class="technical-pill">${pill}</span>`));
-      assert.doesNotMatch(row, /<span class="technical-pill">(?:TERSEDIA|AVAILABLE)<\/span>/);
+      assert.ok(row.includes(state), `${page} should record the state ${state}`);
+      assert.match(
+        row,
+        new RegExp(`<span class="technical-pill[^"]*">${pill}</span>`),
+        `${page} should label the availability pill ${pill}`,
+      );
+      assert.doesNotMatch(row, /<span class="technical-pill[^"]*">(?:TERSEDIA|AVAILABLE)<\/span>/);
     }
   }
 });
