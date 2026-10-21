@@ -5,10 +5,10 @@ import fs from 'node:fs';
 test('Studio product pages reflect live installer availability', () => {
   const id = fs.readFileSync('studio.html', 'utf8');
   const en = fs.readFileSync('en/studio.html', 'utf8');
-  assert.match(id, /yang tercatat untuk release candidate ini dan tersedia dari target publik/);
-  assert.match(en, /recorded for this release candidate is available from the public target/);
-  assert.doesNotMatch(id, /Installer belum tersedia untuk diunduh/);
-  assert.doesNotMatch(en, /Installer is not available for download/);
-  assert.doesNotMatch(id, /status-primary is-unavailable/);
-  assert.doesNotMatch(en, /status-primary is-unavailable/);
+  assert.match(id, /yang tercatat untuk release candidate ini, tetapi verifikasi target publik belum tersedia/);
+  assert.match(en, /recorded for this release candidate is not yet available from a verified public target/);
+  assert.match(id, /Installer belum tersedia untuk diunduh/);
+  assert.match(en, /Installer is not available for download/);
+  assert.match(id, /status-primary is-unavailable/);
+  assert.match(en, /status-primary is-unavailable/);
 });
