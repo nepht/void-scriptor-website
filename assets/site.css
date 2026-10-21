@@ -139,6 +139,7 @@ p,li{color:var(--ash)}
 .page-home .release-facts code{font-family:var(--font-mono);font-size:10px}
 .page-home .release-link{min-height:44px;display:inline-flex;align-items:center;color:var(--primary-pale);font-size:12px;white-space:nowrap}
 .page-home .release-link:hover{text-decoration:underline;text-underline-offset:4px}
+.page-home .release-actions{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 @media(max-width:1020px){.page-home .release-strip{grid-template-columns:1fr;align-items:start}.page-home .release-link{justify-self:start}}
 @media(max-width:600px){.page-home .release-strip{gap:18px;padding-top:26px}.page-home .release-facts{grid-template-columns:1fr}.page-home .release-link{width:100%;justify-content:flex-start}}
 @media(max-width:720px){.page-home .product-intro{align-items:start;flex-direction:column;gap:12px}.page-home .caro-copy{min-height:clamp(500px,132vw,620px);padding:28px 24px 34px}.page-home .caro-copy h2{max-width:13ch}.page-home .caro-art::before{background:linear-gradient(0deg,rgba(5,5,7,.94) 0%,rgba(5,5,7,.6) 46%,rgba(5,5,7,.18) 86%),linear-gradient(90deg,rgba(5,5,7,.3),transparent)}}
