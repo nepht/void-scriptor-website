@@ -35,6 +35,19 @@ test('light theme keeps dark ink tokens for text', () => {
   assert.ok(!/--cloud:#f5f5f7/.test(light), '--cloud must not stay near-white in light theme');
 });
 
+test('light theme preserves docs hierarchy and preview accent', () => {
+  for (const selector of [
+    'body.theme-light .docs-muted',
+    'body.theme-light .docs-card--accent',
+  ]) {
+    assert.ok(light.includes(selector), `missing docs contrast rule: ${selector}`);
+  }
+  assert.match(light, /body\.theme-light \.docs-muted\{color:var\(--ls-muted\)\}/,
+    'docs-muted needs subdued readable ink');
+  assert.match(light, /body\.theme-light \.docs-card--accent\{[^}]*background:/,
+    'accent preview cards need a distinct light surface');
+});
+
 test('light theme hardens compact and dark-palette components', () => {
   for (const selector of [
     'body.theme-light .status-primary',
