@@ -5,7 +5,7 @@ import test from 'node:test';
 // The English homepage translates its visible copy and <meta> tags, but the
 // JSON-LD structured data was left in Indonesian. Search engines and social
 // crawlers read those `description` fields, so an English page advertising
-// "Studio teknologi independen ..." in its Organization/SoftwareApplication
+// "Website dan platform ..." in its Organization/SoftwareApplication
 // schema is a real bilingual/SEO defect (verified live on /en/). The WebSite
 // `inLanguage` array also listed "id" first on the English page.
 //
@@ -30,7 +30,7 @@ test('English homepage JSON-LD blocks are valid JSON', () => {
 test('English homepage structured data contains no Indonesian copy', () => {
   const schema = jsonLdBlocks('en/index.html').join('\n');
   const indonesian = [
-    'Studio teknologi independen',
+    'Website dan platform yang berfokus',
     'Studio kreatif untuk',
     'perangkat lunak kreatif',
     'basis data proyek',
@@ -50,7 +50,7 @@ test('English homepage WebSite schema declares English before Indonesian', () =>
 
 test('Indonesian homepage keeps its Indonesian structured data (control)', () => {
   const schema = jsonLdBlocks('index.html').join('\n');
-  assert.match(schema, /Studio teknologi independen/);
+  assert.match(schema, /Website dan platform yang berfokus/);
   const blocks = jsonLdBlocks('index.html').map((raw) => JSON.parse(raw));
   const website = blocks.find((b) => b['@type'] === 'WebSite');
   assert.ok(website, 'WebSite block must exist');

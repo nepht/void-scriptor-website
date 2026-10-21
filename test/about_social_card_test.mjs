@@ -17,10 +17,10 @@ test('about page exposes complete Twitter/X social card metadata', () => {
   const html = fs.readFileSync('about.html', 'utf8');
 
   assert.equal(meta(html, 'name', 'twitter:card'), 'summary_large_image');
-  assert.equal(meta(html, 'name', 'twitter:title'), 'Tentang studio : Void Scriptor');
+  assert.equal(meta(html, 'name', 'twitter:title'), 'Tentang platform : Void Scriptor');
   assert.equal(
     meta(html, 'name', 'twitter:description'),
-    'Studio teknologi independen yang dikelola oleh Choirudin.',
+    'Website dan platform yang dikelola oleh Choirudin.',
   );
   assert.equal(meta(html, 'name', 'twitter:image'), OG_IMAGE);
 });
@@ -29,6 +29,6 @@ test('about page keeps its Open Graph tags alongside the Twitter card', () => {
   const html = fs.readFileSync('about.html', 'utf8');
 
   assert.equal(meta(html, 'property', 'og:url'), 'https://voidscriptor.com/about');
-  assert.equal(meta(html, 'property', 'og:title'), 'Tentang studio : Void Scriptor');
+  assert.equal(meta(html, 'property', 'og:title'), 'Tentang platform : Void Scriptor');
   assert.equal(meta(html, 'property', 'og:image'), OG_IMAGE);
 });
