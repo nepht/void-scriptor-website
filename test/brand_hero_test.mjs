@@ -139,8 +139,8 @@ test('the brand hero keeps the reference composition for actions and capabilitie
   const css = fs.readFileSync('assets/light.css', 'utf8');
   assert.match(
     css,
-    /body\.theme-light \.brand-hero-actions \.btn\.primary\{background:linear-gradient\(135deg,var\(--ls-violet\)/,
-    'the primary call to action must be the violet pill',
+    /body\.theme-light \.brand-hero-actions \.btn\.primary\{background:linear-gradient\(135deg,var\(--ls-violet[a-z0-9-]*\),var\(--ls-violet[a-z0-9-]*\)\)/,
+    'the primary call to action must be the violet pill, painted from the violet token family',
   );
   assert.match(
     css,

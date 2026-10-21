@@ -40,7 +40,7 @@ test('.eco-cta in light.css declares an accessible touch target height (>= 44px)
 });
 
 test('all HTML pages referencing light.css use the updated cache version token', () => {
-  const expectedToken = 'light.css?v=light-cosmic-20261022a';
+  const expectedToken = 'light.css?v=light-cosmic-20261022b';
   const htmlFiles = walkHtml(siteRoot);
   let checked = 0;
   for (const file of htmlFiles) {

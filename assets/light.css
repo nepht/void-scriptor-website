@@ -15,7 +15,8 @@ body.theme-light{
   --ls-line:rgba(19,45,74,.12);
   --ls-line-2:rgba(19,45,74,.2);
   --ls-violet:#6b4bd6;
-  --ls-violet-2:#8a6bf0;
+  --ls-violet-deep:#5a3bc4;
+  --ls-violet-2:#704ce6;
   --ls-violet-pale:#e6ddff;
   --ls-cyan:#0e8fb8;
   --ls-cyan-pale:#d6f1fb;
@@ -309,8 +310,8 @@ body.theme-light .brand-hero-start a{color:var(--ls-violet);font-weight:700;text
 body.theme-light .brand-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0}
 body.theme-light .brand-hero-actions .btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;
   padding:0 22px;border-radius:999px;font-size:13px;font-weight:700;text-decoration:none}
-body.theme-light .brand-hero-actions .btn.primary{background:linear-gradient(135deg,var(--ls-violet),var(--ls-violet-2));border:1px solid transparent;color:#fff;box-shadow:0 12px 26px rgba(107,75,214,.3)}
-body.theme-light .brand-hero-actions .btn.primary:hover{background:linear-gradient(135deg,#5a3bc4,#7b5ae8);color:#fff}
+body.theme-light .brand-hero-actions .btn.primary{background:linear-gradient(135deg,var(--ls-violet-deep),var(--ls-violet-2));border:1px solid transparent;color:#fff;box-shadow:0 12px 26px rgba(107,75,214,.3)}
+body.theme-light .brand-hero-actions .btn.primary:hover{background:linear-gradient(135deg,#4a2fb4,#6a48d8);color:#fff}
 body.theme-light .bh-arrow{width:17px;height:17px;flex:0 0 auto}
 body.theme-light .brand-hero-actions .btn.ghost{background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
 body.theme-light .brand-hero-actions .btn.ghost:hover{background:#fff;border-color:var(--ls-cyan);color:var(--ls-ink)}
@@ -335,8 +336,8 @@ body.theme-light .brand-hero-caps small{font-size:11.5px;line-height:1.42;color:
   body.theme-light .brand-hero-title{font-size:clamp(38px,11vw,54px)}
 }
 @media(max-width:520px){body.theme-light .brand-hero-caps{grid-template-columns:1fr}body.theme-light .brand-hero-caps li{border-left:0;padding-left:0}}
-body.theme-light header .account .outline{background:linear-gradient(135deg,var(--ls-violet),var(--ls-violet-2));border-color:transparent;color:#fff}
-body.theme-light header .account .outline:hover{background:linear-gradient(135deg,#5a3bc4,#7b5ae8);color:#fff}
+body.theme-light header .account .outline{background:linear-gradient(135deg,var(--ls-violet-deep),var(--ls-violet-2));border-color:transparent;color:#fff}
+body.theme-light header .account .outline:hover{background:linear-gradient(135deg,#4a2fb4,#6a48d8);color:#fff}
 
 /* Keep the product showcase cinematic without reintroducing a dark half-page.
    The source art stays intact; this light-theme treatment lifts its luminance
@@ -581,14 +582,14 @@ body.theme-light.page-dashboard .primary,
 body.theme-light.page-dashboard .status-primary,
 body.theme-light.page-dashboard .cardfoot button,
 body.theme-light.page-dashboard .form button{
-  background:linear-gradient(135deg,var(--ls-violet),var(--ls-violet-2))!important;
+  background:linear-gradient(135deg,var(--ls-violet-deep),var(--ls-violet-2))!important;
   color:#fff!important;border-color:var(--ls-violet)!important;
   box-shadow:0 10px 24px rgba(107,75,214,.22)!important}
 body.theme-light.page-dashboard .primary:hover,
 body.theme-light.page-dashboard .status-primary:hover,
 body.theme-light.page-dashboard .cardfoot button:hover,
 body.theme-light.page-dashboard .form button:hover{
-  background:linear-gradient(135deg,#5a3bc4,#7b5ae8)!important;color:#fff!important}
+  background:linear-gradient(135deg,#4a2fb4,#6a48d8)!important;color:#fff!important}
 body.theme-light.page-dashboard .secondary,
 body.theme-light.page-dashboard .ghost,
 body.theme-light.page-dashboard .filepick{
