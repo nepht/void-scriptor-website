@@ -188,7 +188,7 @@ body.theme-light .eco-body .tag{font:700 10px var(--font-mono);letter-spacing:.1
 body.theme-light .eco-body h3{font-family:var(--font-display);font-size:22px;margin:8px 0 8px}
 body.theme-light .eco-body p{font-size:14px;margin:0 0 14px}
 body.theme-light .eco-state{display:inline-block;font:700 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:var(--ls-violet-pale);color:#3c2a86;margin-bottom:14px}
-body.theme-light .eco-cta{display:inline-block;font-weight:650;font-size:13px;color:var(--ls-violet)}
+body.theme-light .eco-cta{display:inline-flex;align-items:center;min-height:44px;font-weight:650;font-size:13px;color:var(--ls-violet)}
 
 body.theme-light .flow-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;counter-reset:flow}
 body.theme-light .flow-step{background:var(--ls-glass);border:1px solid var(--ls-line);border-radius:18px;padding:14px;box-shadow:var(--ls-shadow)}
