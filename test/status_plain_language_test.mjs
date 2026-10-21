@@ -15,4 +15,6 @@ test('status page uses Indonesian labels for technical evidence', () => {
   assert.doesNotMatch(source, /<h3>Security<\/h3>/);
   assert.doesNotMatch(source, /provenance/);
   assert.doesNotMatch(source, /CORS wildcard/);
+  assert.match(source, /TERCATAT · BELUM DIVERIFIKASI/);
+  assert.match(source, /Ketersediaan publik installer Windows x64 belum diverifikasi lewat pemeriksaan live/);
 });
