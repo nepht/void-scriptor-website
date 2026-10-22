@@ -310,11 +310,11 @@ The palette is anchored by a high-contrast ink layer paired with energetic indig
 
 ## Typography
 
-Typography balances clean structural sans-serif for reading comfort with technical monospace accents for data precision:
+Typography balances clean structural sans-serif for reading comfort with technical monospace accents for data precision, harmonizing editorial distinction with robust geometric fallbacks:
 
-- **Headlines:** Clean geometric sans-serif (`Inter`) with tight line height (1.05 - 1.25) and subtle negative tracking (`-0.025em` to `-0.035em`) for monumental presentation.
-- **Body Text:** Set at 15px with generous line height (1.7) for continuous readability on long documentation, release notes, and legal copy.
-- **Technical Labels & Badges:** Monospace uppercase with deliberate wide letter-spacing (`0.14em` to `0.18em`) for metadata, timestamps, version identifiers, and architectural tags.
+- **Headlines / Display:** `Sora` with `Albert Sans` and `Inter` (`Sora, 'Albert Sans', Inter, system-ui, sans-serif`), anchored by tight line height (1.05 - 1.25) and subtle negative tracking (`-0.025em` to `-0.035em`) for monumental presentation. `Inter` acts as the reliable geometric core.
+- **Body Text:** `Albert Sans` with `Inter` (`'Albert Sans', Inter, system-ui, sans-serif`), set at 15px with generous line height (1.7) for continuous readability on long documentation, release notes, and legal copy.
+- **Technical Labels & Badges:** Monospace uppercase (`JetBrains Mono`, `Roboto Mono`, `ui-monospace`) with deliberate wide letter-spacing (`0.14em` to `0.18em`) for metadata, timestamps, version identifiers, and architectural tags.
 
 ## Layout
 
