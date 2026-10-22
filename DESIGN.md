@@ -51,57 +51,57 @@ colors:
   hero-title-mid: "#3B23A8"
 typography:
   headline-display:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Sora, 'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 64px
     fontWeight: 700
     lineHeight: 1.05
     letterSpacing: "-0.035em"
   headline-lg:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Sora, 'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 36px
     fontWeight: 700
     lineHeight: 1.15
     letterSpacing: "-0.025em"
   headline-md:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Sora, 'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 24px
     fontWeight: 650
     lineHeight: 1.25
     letterSpacing: "-0.02em"
   headline-sm:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "Sora, 'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 18px
     fontWeight: 600
     lineHeight: 1.35
   body-lg:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 18px
     fontWeight: 400
     lineHeight: 1.6
   body-md:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 15px
     fontWeight: 400
     lineHeight: 1.7
   body-sm:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Albert Sans', Inter, system-ui, sans-serif"
     fontSize: 13px
     fontWeight: 400
     lineHeight: 1.6
   label-caps:
-    fontFamily: "ui-monospace, monospace"
+    fontFamily: "'JetBrains Mono', ui-monospace, monospace"
     fontSize: 10px
     fontWeight: 700
     lineHeight: 1.4
     letterSpacing: "0.14em"
   label-tag:
-    fontFamily: "ui-monospace, monospace"
+    fontFamily: "'JetBrains Mono', ui-monospace, monospace"
     fontSize: 10px
     fontWeight: 800
     lineHeight: 1.2
     letterSpacing: "0.18em"
   code-snippet:
-    fontFamily: "ui-monospace, monospace"
+    fontFamily: "'JetBrains Mono', ui-monospace, monospace"
     fontSize: 12.5px
     fontWeight: 500
     lineHeight: 1.5

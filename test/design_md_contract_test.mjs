@@ -69,6 +69,21 @@ test('DESIGN.md contract: frontmatter colors sync with assets/light.css runtime 
   }
 });
 
+test('DESIGN.md contract: typography scale harmonizes with assets/site.css font stacks', () => {
+  const mdContent = readFileSync(IN_REPO_DESIGN_MD, 'utf8');
+  const siteCss = readFileSync(resolve(process.cwd(), 'assets/site.css'), 'utf8');
+
+  // Verify site.css defines the canonical font variables
+  assert.match(siteCss, /--font-display\s*:\s*Sora,\s*'Albert Sans',\s*Inter/i);
+  assert.match(siteCss, /--font-body\s*:\s*'Albert Sans',\s*Inter/i);
+  assert.match(siteCss, /--font-mono\s*:\s*'JetBrains Mono'/i);
+
+  // Verify DESIGN.md tokens specify these font stacks
+  assert.match(mdContent, /headline-display:\s*\r?\n\s*fontFamily:\s*["']Sora,\s*'Albert Sans',\s*Inter,\s*system-ui,\s*sans-serif["']/i);
+  assert.match(mdContent, /body-md:\s*\r?\n\s*fontFamily:\s*["']'Albert Sans',\s*Inter,\s*system-ui,\s*sans-serif["']/i);
+  assert.match(mdContent, /code-snippet:\s*\r?\n\s*fontFamily:\s*["']'JetBrains Mono',\s*ui-monospace,\s*monospace["']/i);
+});
+
 test('DESIGN.md contract: linter passes with 0 errors and 0 warnings', async () => {
   const { execFile } = await import('node:child_process');
   const { promisify } = await import('node:util');
