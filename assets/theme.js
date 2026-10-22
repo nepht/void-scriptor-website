@@ -95,6 +95,19 @@
         mq.addListener(handler);
       }
     }
+
+    if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+      var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          if (mutations[i].attributeName === 'lang') {
+            var isDark = document.body ? document.body.classList.contains('theme-dark') : false;
+            updateThemeButton(isDark);
+            break;
+          }
+        }
+      });
+      observer.observe(document.documentElement, { attributes: true });
+    }
   }
 
   if (document.readyState === 'loading') {

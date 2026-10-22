@@ -88,3 +88,24 @@ test('theme toggle contract: public pages carry #btnTheme and theme assets', () 
     );
   }
 });
+
+test('theme toggle contract: 404 error page carries #btnTheme and anti-FOUC loader', () => {
+  const p404 = resolve(ROOT, '404.html');
+  const html = readFileSync(p404, 'utf8');
+  assert.ok(
+    html.includes('id="btnTheme"') || html.includes('class="btn-theme"'),
+    '404.html must include #btnTheme',
+  );
+  assert.ok(
+    html.includes('icon-moon') && html.includes('icon-sun'),
+    '404.html must include theme icons',
+  );
+  assert.ok(
+    html.includes('assets/theme.js'),
+    '404.html must reference assets/theme.js',
+  );
+  assert.ok(
+    html.includes('vs_theme'),
+    '404.html must include anti-FOUC theme loader',
+  );
+});
