@@ -701,3 +701,13 @@ body.theme-light.page-dashboard .vmsg.bad{color:var(--ls-danger-ink)!important}
 body.theme-light.page-dashboard .profile-status.warn{color:var(--ls-warning-ink)!important}
 body.theme-light.page-dashboard .dash-local-status{color:var(--cyan)!important}
 body.theme-light.page-dashboard .hamb{color:var(--ls-ink)!important}
+
+/* ---------- quiz waitlist card: ink for the light surface ---------- */
+/* site.css carries the dark-surface ink as fallbacks; light.css already
+   flips this card to a light fill, so the same elements need dark ink here.
+   Before this block the label/small kept dark-surface ink on white (1.74:1). */
+body.theme-light .qowner-waitlist{
+  --wl-h2:var(--ls-ink);
+  --wl-label:var(--ls-muted);
+  --wl-small:var(--ls-muted);
+}

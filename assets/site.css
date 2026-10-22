@@ -36,6 +36,10 @@
   --radius-feature:30px;
   --shadow-focus:0 0 34px rgba(124,92,255,.24);
   --ease:cubic-bezier(.2,.8,.2,1);
+  /* Ink for controls on the pale carousel stage, which stays light in both
+     themes. Dark ink keeps >= 4.5:1 against it while the page is dark. */
+  --caro-ink:#0b1b2b;
+  --caro-ink-muted:#41556b;
 }
 
 *{box-sizing:border-box}
@@ -129,7 +133,7 @@ p,li{color:var(--ash)}
 .page-home .caro-art{position:absolute;inset:0;z-index:0;margin:0;border:0;border-radius:0;box-shadow:none;background:#08090b}
 .page-home .caro-art::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,5,7,.92) 0%,rgba(5,5,7,.68) 32%,rgba(5,5,7,.12) 72%),linear-gradient(0deg,rgba(5,5,7,.72),transparent 48%)}
 .page-home .caro-art img{width:100%;height:100%;aspect-ratio:auto;object-fit:cover;filter:saturate(.92) contrast(1.04)}
-.page-home .caro-arrow{width:44px;height:44px;border-radius:50%;color:var(--cloud)}
+.page-home .caro-arrow{width:44px;height:44px;border-radius:50%;color:var(--caro-ink)}
 .page-home .caro-dot{width:44px;height:44px;position:relative;padding:0;background:transparent;transform:none}
 .page-home .caro-dot::before{content:"";position:absolute;width:10px;height:10px;inset:50% auto auto 50%;translate:-50% -50%;border-radius:50%;background:rgba(240,233,255,.32);transition:background .25s,transform .25s,box-shadow .25s}
 .page-home .caro-dot.on{background:transparent;transform:none;box-shadow:none}
@@ -949,7 +953,7 @@ body::before{background-image:linear-gradient(180deg,rgba(5,5,7,.32),rgba(5,5,7,
 .page-home .caro-nav .caro-dot{width:38px;height:44px}
 .page-home .caro-nav .caro-dot::before{width:9px;height:9px}
 .page-home .caro-nav .caro-dot.on::before{transform:scale(1.2)}
-.page-home .caro-nav .caro-toggle{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(217,207,255,.42);border-radius:50%;background:rgba(255,255,255,.04);color:var(--cloud);font-size:14px;line-height:1;cursor:pointer}
+.page-home .caro-nav .caro-toggle{width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(11,27,43,.32);border-radius:50%;background:rgba(255,255,255,.55);color:var(--caro-ink-muted);font-size:14px;line-height:1;cursor:pointer}
 .page-home .caro-nav .caro-toggle:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.16)}
 .page-home .caro-nav .caro-toggle:focus-visible{outline:2px solid var(--primary-pale);outline-offset:2px}
 .page-home .caro-slide{padding-bottom:clamp(92px,9vw,122px)}
@@ -1412,14 +1416,14 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .carousel .caro-cta,.page-home .carousel .caro-slide .caro-cta--primary{border-color:rgba(157,184,255,.5);border-radius:0;color:var(--primary);background:rgba(157,184,255,.08);box-shadow:none}
 .page-home .carousel .caro-cta:hover,.page-home .carousel .caro-slide .caro-cta--primary:hover{border-color:var(--primary);background:rgba(157,184,255,.14);box-shadow:none}
 .page-home .carousel .caro-nav{position:relative;right:auto;bottom:auto;left:auto;translate:none;justify-content:flex-start;gap:12px;margin:0;padding:16px clamp(30px,4.4vw,60px) 0;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
-.page-home .carousel .caro-nav .caro-arrow{width:44px;height:44px;border:0;border-radius:0;color:var(--primary);background:transparent;font-size:18px}
+.page-home .carousel .caro-nav .caro-arrow{width:44px;height:44px;border:0;border-radius:0;color:var(--caro-ink);background:transparent;font-size:18px}
 .page-home .carousel .caro-nav .caro-arrow:hover{border-color:transparent;background:rgba(157,184,255,.08)}
 .page-home .carousel .caro-nav .caro-dots{gap:8px}
 .page-home .carousel .caro-nav .caro-dot{width:44px;height:2px;position:static;padding:0;border:0;border-radius:0;background:rgba(255,255,255,.22);transform:none}
 .page-home .carousel .caro-nav .caro-dot::before{display:none}
 .page-home .carousel .caro-nav .caro-dot.on{background:var(--primary);transform:none;box-shadow:0 0 10px rgba(157,184,255,.45)}
-.page-home .carousel .caro-nav .caro-index{margin-left:4px;color:var(--fog);font:11px/1 var(--font-mono);letter-spacing:.08em;white-space:nowrap}
-.page-home .carousel .caro-nav .caro-toggle{min-width:44px;min-height:44px;width:auto;height:auto;margin-left:auto;border:0;border-left:1px solid rgba(255,255,255,.1);border-radius:0;background:transparent;color:var(--fog);font-size:12px}
+.page-home .carousel .caro-nav .caro-index{margin-left:4px;color:var(--caro-ink-muted);font:11px/1 var(--font-mono);letter-spacing:.08em;white-space:nowrap}
+.page-home .carousel .caro-nav .caro-toggle{min-width:44px;min-height:44px;width:auto;height:auto;margin-left:auto;border:0;border-left:1px solid rgba(11,27,43,.18);border-radius:0;background:transparent;color:var(--caro-ink-muted);font-size:12px}
 .page-home .carousel .caro-nav .caro-toggle:hover{border-color:rgba(255,255,255,.1);background:rgba(157,184,255,.08);color:var(--primary)}
 .page-home .carousel .caro-arrow:focus-visible,.page-home .carousel .caro-dot:focus-visible,.page-home .carousel .caro-toggle:focus-visible,.page-home .carousel .caro-cta:focus-visible,.page-home .hero .actions .secondary:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
 @media(max-width:760px){.page-home .carousel .caro-nav{right:auto;bottom:auto;translate:none;padding:16px 24px 0}.page-home .carousel .caro-slide{padding-bottom:clamp(112px,24vw,144px)}}
@@ -1838,10 +1842,6 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-home .carousel .caro-brandmark,.page-home .carousel .kicker{color:var(--stage-accent);text-shadow:none}
 .page-home .carousel .caro-cta,.page-home .carousel .caro-cta--primary{color:#fff!important;border-color:#16283e!important;background:#16283e!important;box-shadow:0 8px 24px rgba(22,40,62,.16)!important}
 .page-home .carousel .caro-cta--secondary{color:#16283e!important;border-color:#52657b!important;background:rgba(255,255,255,.82)!important;box-shadow:none!important}
-.page-home header{background:rgba(255,255,255,.94)!important;border-bottom-color:rgba(22,40,62,.16)!important;box-shadow:0 6px 22px rgba(22,40,62,.08)!important}
-.page-home header .brand,.page-home header nav a,.page-home header .navrow>div>a{color:#13263d!important;text-shadow:none!important}
-.page-home header .outline,.page-home header .btn-out,.page-home header .btn-lang{color:#13263d!important;border-color:#52657b!important;background:rgba(255,255,255,.88)!important}
-.page-home header .brand span{color:#243b55}
 .page-home .presentation-switch__rail{background:rgba(250,252,255,.92);border-color:rgba(28,50,76,.28);box-shadow:0 12px 34px rgba(43,61,84,.18)}
 .page-home .presentation-switch__tab{color:#30465f}
 .page-home .presentation-switch__tab[aria-selected=true]{background:#16283e;color:#fff}
@@ -1852,7 +1852,10 @@ body.page-home::after{background:radial-gradient(circle,rgba(157,184,255,.13),rg
 .page-quiz .hero::before{filter:brightness(1.18) saturate(.76) contrast(.92);opacity:.5}
 .page-quiz .hero::after{background:linear-gradient(90deg,rgba(255,250,240,.99),rgba(255,250,240,.92) 56%,rgba(255,250,240,.58)),linear-gradient(180deg,rgba(255,250,240,.24),rgba(255,250,240,.88))}
 .page-quiz .hero h1{color:#35204f;text-shadow:none}
+.page-quiz .hero h1 span:first-child{color:#35204f;text-shadow:none}
+.page-quiz .hero h1 span:last-child{color:#241634;text-shadow:none}
 .page-quiz .hero .lead,.page-quiz .hero .quote-en,.page-quiz .hero .source{color:#30291f;text-shadow:none}
+.page-quiz .hero .origin-note{color:#524338;text-shadow:none}
 .page-quiz .hero .eyebrow,.page-quiz .hero .kicker{color:#245369;text-shadow:none}
 .page-quiz .hero .primary{background:#56357d;color:#fff;border-color:#56357d}
 .page-quiz .hero .secondary{background:rgba(255,255,255,.88);color:#35204f;border-color:#6f568c}
