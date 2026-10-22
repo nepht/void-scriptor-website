@@ -16,6 +16,6 @@ for (const file of ['about.html', 'en/about.html']) {
 test('inline content links have a non-color distinction', () => {
   assert.match(
     css,
-    /\.page-about \.hero-card p a,\.page-legal p a,\.page-legal li a,\.page-contact p a,\.page-contact li a\{text-decoration:underline;text-underline-offset:3px\}/,
+    /\.page-about \.hero-card p a,\.page-legal p a,\.page-legal li a,\.page-contact p a,\.page-contact li a\{text-decoration:underline;text-underline-offset:3px(?:;color:var\(--primary-pale\))?\}/,
   );
 });

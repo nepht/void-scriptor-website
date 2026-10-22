@@ -56,9 +56,9 @@ button,a,input,select,textarea{transition:border-color .2s var(--ease),backgroun
 .shell{width:min(1200px,calc(100% - 64px));margin-inline:auto}
 header{height:76px;position:sticky;top:0;z-index:40;background:rgba(9,10,11,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .navrow{height:100%;display:flex;align-items:center;gap:28px}
-.brand{display:inline-flex;align-items:center;gap:12px;min-height:44px;min-width:44px}
+.brand{display:inline-flex;align-items:center;gap:12px;min-height:44px;min-width:44px;color:var(--cloud);text-decoration:none}
 .brand img{width:34px;height:44px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(124,92,255,.35))}
-.brand span{font-family:var(--font-body);font-size:14px;font-weight:650;letter-spacing:.08em;white-space:nowrap}
+.brand span{font-family:var(--font-body);font-size:14px;font-weight:650;letter-spacing:.08em;white-space:nowrap;color:var(--pure)}
 .brand small{font-family:var(--font-mono);font-size:9px;color:var(--fog);letter-spacing:.08em}
 nav{margin-left:auto;display:flex;align-items:center;gap:28px}
 nav a{min-height:44px;display:inline-flex;align-items:center;color:var(--ash);font-size:13px}
@@ -295,7 +295,7 @@ p,li{color:var(--ash)}
 @media(max-width:850px){.page-changelog .changelog-grid{grid-template-columns:1fr 1fr}.page-changelog .status-item:first-child{grid-column:1/-1}}
 @media(max-width:600px){.page-changelog .changelog-grid,.page-changelog .roadmap-list{grid-template-columns:1fr}.page-changelog .status-item:first-child{grid-column:auto}.page-changelog .status-item{padding:21px}}
 .page-legal .docnav a{min-height:44px;display:inline-flex;align-items:center;border-radius:var(--radius-control)}
-.page-about .hero-card p a,.page-legal p a,.page-legal li a,.page-contact p a,.page-contact li a{text-decoration:underline;text-underline-offset:3px}
+.page-about .hero-card p a,.page-legal p a,.page-legal li a,.page-contact p a,.page-contact li a{text-decoration:underline;text-underline-offset:3px;color:var(--primary-pale)}
 .page-privacy{--accent:#00b3dd;--accent-dim:rgba(0,179,221,.48);--accent-bg:rgba(0,179,221,.1)}
 .page-terms{--accent:#7c5cff;--accent-dim:rgba(124,92,255,.52);--accent-bg:rgba(124,92,255,.11)}
 
