@@ -156,8 +156,12 @@ body.theme-light nav a:hover,body.theme-light nav a[aria-current=page]{color:var
     background:var(--ls-violet-pale)!important;
   }
 }
-body.theme-light .btn-lang,body.theme-light .back,body.theme-light .outline,body.theme-light .btn-out,body.theme-light .outline-gate,body.theme-light .plain,body.theme-light .plain-gate{
+body.theme-light .btn-lang,body.theme-light .btn-theme,body.theme-light .back,body.theme-light .outline,body.theme-light .btn-out,body.theme-light .outline-gate,body.theme-light .plain,body.theme-light .plain-gate{
   background:rgba(255,255,255,.72);border:1px solid var(--ls-line-2);color:var(--ls-ink)}
+body.theme-light .btn-theme{min-width:44px;min-height:44px;background:rgba(255,255,255,.72)!important;border:1px solid var(--ls-line-2)!important;color:var(--ls-ink)!important}
+body.theme-light .btn-theme:hover{background:#fff!important;border-color:var(--ls-violet)!important;color:var(--ls-violet)!important}
+body.theme-light .btn-theme .icon-sun{display:none}
+body.theme-light .btn-theme .icon-moon{display:block}
 body.theme-light .btn-lang:hover,body.theme-light .back:hover,body.theme-light .outline:hover,body.theme-light .btn-out:hover{background:#fff;border-color:var(--ls-violet);color:var(--ls-ink)}
 body.theme-light .brand img{filter:none}
 body.theme-light .hamb i{background:var(--ls-ink)}

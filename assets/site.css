@@ -65,8 +65,13 @@ nav a{min-height:44px;display:inline-flex;align-items:center;color:var(--ash);fo
 nav a:hover,nav a[aria-current=page]{color:var(--pure)}
 .account{display:flex;align-items:center;gap:10px}
 .page-home .account.auth-pending [data-auth]{visibility:hidden}
-.btn-lang,.back,.plain,.outline,.avatar,.profile,.hamb,.btn-out,.plain-gate,.outline-gate{min-height:44px}
+.btn-lang,.btn-theme,.back,.plain,.outline,.avatar,.profile,.hamb,.btn-out,.plain-gate,.outline-gate{min-height:44px}
 .btn-lang{min-width:44px;justify-content:center;text-align:center}
+.btn-theme{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(217,207,255,.34);border-radius:var(--radius-control);background:rgba(255,255,255,.025);color:var(--cloud);cursor:pointer;transition:border-color .2s var(--ease),background-color .2s var(--ease),color .2s var(--ease)}
+.btn-theme:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.12);color:var(--primary-pale)}
+.btn-theme svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-theme .icon-sun{display:block}
+.btn-theme .icon-moon{display:none}
 .btn-lang,.back,.outline,.btn-out,.outline-gate{border:1px solid rgba(217,207,255,.34);border-radius:var(--radius-control);background:rgba(255,255,255,.025);color:var(--cloud);padding:0 14px;font-family:var(--font-body);font-size:12px;letter-spacing:0;text-transform:none}
 .btn-lang:hover,.back:hover,.outline:hover,.btn-out:hover,.outline-gate:hover{border-color:var(--primary-pale);background:rgba(124,92,255,.12)}
 .plain,.plain-gate{font-family:var(--font-body);font-size:12px;letter-spacing:0;text-transform:none}
