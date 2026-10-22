@@ -50,6 +50,14 @@
     }
 
     updateThemeButton(isDark);
+    updateThemeColor(isDark);
+  }
+
+  function updateThemeColor(isDark) {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', isDark ? '#050507' : '#f2f6fb');
+    }
   }
 
   function updateThemeButton(isDark) {

@@ -38,6 +38,7 @@ test('theme toggle contract: assets/theme.js exists and implements theme switchi
   assert.match(js, /localStorage\.setItem\(['"]vs_theme['"]/, 'must write vs_theme to localStorage');
   assert.match(js, /classList\.(?:add|remove)\(['"]theme-light['"]\)/, 'must toggle theme-light class');
   assert.match(js, /prefers-color-scheme:\s*dark/, 'must support OS dark mode media query preference');
+  assert.match(js, /meta\[name=['"]theme-color['"]\]/, 'must synchronize meta[name="theme-color"] with active theme');
 });
 
 test('theme toggle contract: assets/site.css declares .btn-theme touch target >= 44x44px', () => {
@@ -107,5 +108,14 @@ test('theme toggle contract: 404 error page carries #btnTheme and anti-FOUC load
   assert.ok(
     html.includes('vs_theme'),
     '404.html must include anti-FOUC theme loader',
+  );
+});
+
+test('theme toggle contract: anti-FOUC script synchronizes meta theme-color', () => {
+  const indexHtml = readFileSync(resolve(ROOT, 'index.html'), 'utf8');
+  assert.match(
+    indexHtml,
+    /meta\[name=['\\"]theme-color['\\"]\][^}]*#050507/,
+    'anti-FOUC script must synchronize meta theme-color to #050507 in dark mode',
   );
 });
