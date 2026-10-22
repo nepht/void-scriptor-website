@@ -43,7 +43,16 @@ test('navigation contract: responsive menu toggle keeps its ARIA state chain', (
     assert.ok(html.includes('id="hamb"'), `${file}: hamburger toggle button id="hamb" must exist`);
     assert.ok(html.includes('aria-controls="nav"'), `${file}: hamburger button must point at aria-controls="nav"`);
     assert.ok(html.includes('aria-expanded="false"'), `${file}: hamburger button must default to aria-expanded="false"`);
-    assert.ok(html.includes('<nav id="nav">'), `${file}: nav#nav must ship closed before JavaScript runs`);
+    assert.match(
+      html,
+      /<nav\s+id="nav"[^>]*>/,
+      `${file}: nav#nav must ship closed before JavaScript runs`,
+    );
+    assert.match(
+      html,
+      /<nav\s+id="nav"[^>]*aria-label="[^"]+"[^>]*>/,
+      `${file}: nav#nav must expose an accessible name`,
+    );
   }
 });
 

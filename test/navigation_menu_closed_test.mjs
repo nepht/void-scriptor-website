@@ -12,7 +12,16 @@ test('primary navigation is closed before JavaScript runs on both locales', () =
     const source = fs.readFileSync(page, 'utf8');
     const nav = source.match(/<nav\s+id="nav"[^>]*>/)?.[0] ?? '';
 
-    assert.equal(nav, '<nav id="nav">', `${page}: expected a single primary navigation element`);
+    assert.match(
+      nav,
+      /^<nav\s+id="nav"[^>]*>$/,
+      `${page}: expected a single primary navigation element`,
+    );
+    assert.match(
+      nav,
+      /aria-label="(?:Primary navigation|Navigasi utama)"/,
+      `${page}: primary navigation must expose an accessible name`,
+    );
     assert.match(
       source,
       /@media\(max-width:1100px\)\{body:not\(\.menu-ready\) #nav\{display:none!important\}\}/,
