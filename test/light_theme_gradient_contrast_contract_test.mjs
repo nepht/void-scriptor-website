@@ -127,10 +127,20 @@ test('the light theme exposes a single source of truth for the CTA gradient stop
     /--ls-violet-deep:\s*#[0-9a-fA-F]{3,8};/,
     'light.css must declare --ls-violet-deep as the gradient dark end',
   );
+  assert.match(
+    light,
+    /--ls-violet-hover-2:\s*#[0-9a-fA-F]{3,8};/,
+    'light.css must declare --ls-violet-hover-2 as the hover gradient light end',
+  );
+  assert.match(
+    light,
+    /--ls-violet-hover-deep:\s*#[0-9a-fA-F]{3,8};/,
+    'light.css must declare --ls-violet-hover-deep as the hover gradient dark end',
+  );
 });
 
 test('all HTML pages referencing light.css use the updated cache version token', () => {
-  const expectedToken = 'light.css?v=light-cosmic-20261022d';
+  const expectedToken = 'light.css?v=light-cosmic-20261022e';
   const html = readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.ok(
     html.includes(expectedToken),
