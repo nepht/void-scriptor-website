@@ -100,7 +100,7 @@ test('dashboard light theme keeps per-panel surfaces and controls readable', () 
     'body.theme-light.page-dashboard .profile-field>span',
     'body.theme-light.page-dashboard .profile-field input',
     'body.theme-light.page-dashboard .session-info strong',
-    'body.theme-light.page-dashboard .dash-provider-mark:not(.github){background:#1a73e8!important}',
+    'body.theme-light.page-dashboard .dash-provider-mark:not(.github){background:var(--ls-brand-google)!important}',
     'body.theme-light.page-dashboard .dash-center-avatar i',
     'body.theme-light.page-dashboard .profile-status.ok',
     'body.theme-light.page-dashboard .dash-local-status',
