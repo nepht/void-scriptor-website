@@ -35,18 +35,18 @@ p{color:var(--muted);font-size:15px;line-height:1.75;margin:14px auto 0;max-widt
 .links a{color:var(--purple-bright);font-size:11px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
 .links a:hover{color:#e6d6ff}
 .btn-lang{border:1px solid rgba(var(--purple-rgb),.45);border-radius:5px;padding:7px 12px;background:rgba(90,45,255,.08);color:#d8c4ff;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer}
-.langwrap{position:fixed;top:20px;right:24px;z-index:5}
+.langwrap{position:fixed;top:20px;right:24px;z-index:5;display:flex;align-items:center;gap:10px}
 /* nocturne-fonts */
 h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-weight:400}
 .eyebrow,.kicker,.info>span,.panel h3,dt,.badge,.law .tag,.card .num,.timeline .t-date,th,.fld label,.copy,.or,.platforms .plat em,.back,.upd,code{font-family:var(--font-mono)}
 </style>
 <link rel="stylesheet" href="/assets/site.css?v=light-stage-20261022c"><link rel="stylesheet" href="/assets/light.css?v=light-cosmic-20261022h">
-</head>
+<script>(function(){try{var s=localStorage.getItem("vs_theme")||((window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light");if(s==="dark"){document.documentElement.classList.add("theme-dark");if(document.body){document.body.classList.remove("theme-light");document.body.classList.add("theme-dark");}else{document.addEventListener("DOMContentLoaded",function(){document.body.classList.remove("theme-light");document.body.classList.add("theme-dark");});}}}catch(e){}})();</script></head>
 <body class="page-404 theme-light" style="--page-art:url('/assets/scenes/not-found.webp');--page-art-sm:url('/assets/scenes/not-found-1280.webp')">
 <div class="page-art" aria-hidden="true"></div>
 <a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 <div class="grid"></div><div class="glow"></div>
-<div class="langwrap"><button type="button" class="btn-lang" id="btnLang">EN</button></div>
+<div class="langwrap"><button type="button" class="btn-theme" id="btnTheme" aria-label="Ganti ke tema gelap" title="Tema Gelap / Terang"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button><button type="button" class="btn-lang" id="btnLang">EN</button></div>
 <main id="main-content">
   <img class="logo" src="/assets/void_scriptor_emblem.webp" alt="">
   <div class="code">404</div>
@@ -90,5 +90,6 @@ h1,h2,h3,.metrics strong,.code,.brand span{font-family:var(--font-display);font-
   btn.onclick=function(){apply(document.documentElement.lang==='id'?'en':'id')};
 })();
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>
