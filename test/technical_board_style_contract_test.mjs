@@ -69,3 +69,16 @@ test('the two unverified rows carry the warning pill variant', () => {
     assert.equal(warns.length, 2, `${page}: website and Studio rows need the warning pill`);
   }
 });
+
+test('technical board has dark-mode fallback tokens for inline light-theme rules', () => {
+  for (const page of PAGES) {
+    const css = inlineStyles(read(page));
+    assert.match(css, /body\.page-technical:not\(\.theme-light\) \.technical-state\{color:#f3ecff\}/,
+      `${page}: dark technical state ink fallback is missing`);
+    const fallback = css.match(/body\.page-technical\{([\s\S]*?)\n\}/);
+    assert.ok(fallback, `${page}: dark technical token fallback block is missing`);
+    for (const token of ['--ls-line', '--ls-glass', '--ls-ink', '--ls-muted', '--ls-surface', '--ls-violet-pale']) {
+      assert.match(fallback[1], new RegExp(`${token}:`), `${page}: dark fallback lacks ${token}`);
+    }
+  }
+});
