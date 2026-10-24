@@ -4,12 +4,10 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const IN_REPO_DESIGN_MD = resolve(process.cwd(), 'DESIGN.md');
-const PARENT_DESIGN_MD = resolve(process.cwd(), '../DESIGN.md');
 const LIGHT_CSS_PATH = resolve(process.cwd(), 'assets/light.css');
 
-test('DESIGN.md contract: specification file exists in repo and project root', () => {
+test('DESIGN.md contract: tracked specification exists at repository root', () => {
   assert.ok(existsSync(IN_REPO_DESIGN_MD), `DESIGN.md must exist in repo at ${IN_REPO_DESIGN_MD}`);
-  assert.ok(existsSync(PARENT_DESIGN_MD), `DESIGN.md must exist at project root ${PARENT_DESIGN_MD}`);
 });
 
 test('DESIGN.md contract: frontmatter contains valid alpha schema and canonical sections', () => {
