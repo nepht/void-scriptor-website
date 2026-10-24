@@ -11,7 +11,6 @@ import { resolve } from 'node:path';
 
 const SITE_CSS_PATH = resolve(process.cwd(), 'assets/site.css');
 const DESIGN_MD_PATH = resolve(process.cwd(), 'DESIGN.md');
-const PARENT_DESIGN_MD_PATH = resolve(process.cwd(), '../DESIGN.md');
 
 test('font stack: assets/site.css harmonizes Sora, Albert Sans, and Inter across display and body', () => {
   const css = readFileSync(SITE_CSS_PATH, 'utf8');
@@ -38,6 +37,24 @@ test('font stack: assets/site.css harmonizes Sora, Albert Sans, and Inter across
   );
 });
 
+function assertRepoRootDesignReference(source) {
+  const parentRef = ['..', '/', 'DESIGN.md'].join('');
+  assert.equal(source.includes(parentRef), false,
+    'font contract must not read DESIGN.md from outside the repository root');
+}
+
+test('font stack: DESIGN reference remains repository-rooted', () => {
+  const source = readFileSync(new URL('./font_stack_harmonization_contract_test.mjs', import.meta.url), 'utf8');
+  assertRepoRootDesignReference(source);
+});
+
+test('RED witness: an external DESIGN reference fails the hermeticity guard', () => {
+  const source = readFileSync(new URL('./font_stack_harmonization_contract_test.mjs', import.meta.url), 'utf8');
+  const mutated = source.replace("resolve(process.cwd(), 'DESIGN.md')", `resolve(process.cwd(), '${['..', '/', 'DESIGN.md'].join('')}')`);
+  assert.notEqual(mutated, source, 'witness mutation must change the source');
+  assert.throws(() => assertRepoRootDesignReference(mutated), /outside the repository root/);
+});
+
 test('font stack: DESIGN.md synchronizes with runtime typography tokens and hierarchy', () => {
   assert.ok(existsSync(DESIGN_MD_PATH), 'DESIGN.md must exist in site/');
   const md = readFileSync(DESIGN_MD_PATH, 'utf8');
@@ -59,10 +76,4 @@ test('font stack: DESIGN.md synchronizes with runtime typography tokens and hier
     'DESIGN.md must document Albert Sans in the body hierarchy',
   );
 
-  // Synchronize parent DESIGN.md if present
-  if (existsSync(PARENT_DESIGN_MD_PATH)) {
-    const parentMd = readFileSync(PARENT_DESIGN_MD_PATH, 'utf8');
-    assert.match(parentMd, /Sora/i, 'root DESIGN.md must also document Sora');
-    assert.match(parentMd, /Albert Sans/i, 'root DESIGN.md must also document Albert Sans');
-  }
 });
