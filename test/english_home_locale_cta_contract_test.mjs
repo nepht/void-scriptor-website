@@ -6,6 +6,6 @@ const html = fs.readFileSync('en/index.html', 'utf8');
 
 test('English homepage routes Studio and preview CTAs to the English downloads page', () => {
   assert.match(html, /href="\/en\/downloads" data-i18n="eco-studio-cta"/);
-  assert.match(html, /href="\/en\/downloads" data-i18n="hero-cta"/);
+  assert.match(html, /href="\/downloads\/VoidScriptor-1\.2\.0-rc\.2-windows-x64-setup\.exe" download data-i18n="hero-cta"/);
   assert.doesNotMatch(html, /href="\/downloads" data-i18n="(?:eco-studio-cta|hero-cta)"/);
 });

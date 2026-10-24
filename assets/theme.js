@@ -12,6 +12,9 @@
       var saved = localStorage.getItem('vs_theme');
       if (saved === 'dark' || saved === 'light') return saved;
     } catch (e) {}
+    if (document.body && document.body.classList.contains('page-home')) {
+      return 'dark';
+    }
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
     }

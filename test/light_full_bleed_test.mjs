@@ -25,7 +25,7 @@ test('both homepage locales render the three bright full-bleed product artworks'
         `${path} must render the ${product} full-bleed artwork`,
       );
     }
-    assert.match(source, /<meta name="theme-color" content="#f2f6fb">/);
+    assert.match(source, /<meta name="theme-color" content="#050507">/);
   }
 });
 

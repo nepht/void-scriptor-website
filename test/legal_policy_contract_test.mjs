@@ -87,9 +87,22 @@ test('no shipped page carries the retired password form or its vocabulary', () =
   }
 });
 
-test('no shipped page claims data never reaches the server', () => {
-  const retired = /never reaches our servers|tidak pernah sampai ke server|stays in your browser's localStorage/i;
+test('privacy pages disclose the implemented providers and server-side account storage', () => {
+  assert.match(worker, /provider:\s*'github'/, '_worker.js must implement GitHub identity handling');
+  assert.match(worker, /provider:\s*'google'/, '_worker.js must implement Google identity handling');
+  assert.match(worker, /env\.ACCOUNTS_DB/, '_worker.js must use the account database binding');
+  for (const page of ['privacy.html', 'en/privacy.html']) {
+    const html = fs.readFileSync(page, 'utf8');
+    assert.match(html, /GitHub/);
+    assert.match(html, /Google/);
+    assert.match(html, /Cloudflare D1/);
+    assert.match(html, /server-side|server side|server/i);
+  }
+});
+
+test('no shipped page carries retired stateless or prototype account claims', () => {
+  const retired = /never reaches our servers|tidak pernah sampai ke server|stays in your browser's localStorage|localStorage-only|browser-only account|akun(?:\s+website)?\s+prototipe|prototype account|no account database|without an account database|tidak ada basis data akun|tanpa basis data akun/i;
   for (const page of pages) {
-    assert.doesNotMatch(fs.readFileSync(page, 'utf8'), retired, `${page} must not make the retired claim`);
+    assert.doesNotMatch(fs.readFileSync(page, 'utf8'), retired, `${page} must not make a retired account-storage claim`);
   }
 });

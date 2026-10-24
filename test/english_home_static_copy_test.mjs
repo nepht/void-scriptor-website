@@ -24,7 +24,7 @@ test('English homepage has English static navigation before JavaScript runs', ()
   assert.match(source, /data-i18n="hero-h1b">the known\.<\/span>/);
   assert.match(source, /data-i18n="hero-lead">Creative tools and a local companion/);
   assert.match(source, /data-i18n="hero-desc">Start with a real Windows project:/);
-  assert.match(source, /data-i18n="hero-cta"[^>]*>⊞&nbsp; Check preview status \(RC\)<\/a>/);
+  assert.match(source, /data-i18n="hero-cta"[^>]*>⊞&nbsp; Download preview \(RC\)<\/a>/);
   assert.match(source, /data-i18n="hero-products-link">Explore Studio, QOWNER &amp; Byte<\/a>/);
   assert.match(source, /data-i18n="prod-kicker">THREE PRODUCTS<\/span>/);
   assert.match(source, /data-i18n="prod-h2">One creative flow, from structure to the next step\.<\/h2>/);
