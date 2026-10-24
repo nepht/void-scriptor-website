@@ -27,6 +27,14 @@ test('release integrity workflow runs on main release changes and manual dispatc
   assert.match(workflow, /node --test test\/\*\.mjs/);
 });
 
+test('release integrity workflow uses Node 24 GitHub Actions runtimes', () => {
+  const workflow = fs.readFileSync(workflowPath, 'utf8');
+
+  assert.match(workflow, /uses:\s*actions\/checkout@v7(?:\.|\s|$)/);
+  assert.match(workflow, /uses:\s*actions\/setup-node@v7(?:\.|\s|$)/);
+  assert.doesNotMatch(workflow, /uses:\s*actions\/(?:checkout|setup-node)@v4(?:\.|\s|$)/);
+});
+
 test('release integrity workflow cannot publish or consume signing secrets', () => {
   const workflow = fs.readFileSync(workflowPath, 'utf8');
 
