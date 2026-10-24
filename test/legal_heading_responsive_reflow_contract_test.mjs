@@ -53,7 +53,7 @@ test('site.css has a narrow mobile query scaling .page-legal h1 for small device
 });
 
 test('all HTML pages referencing site.css use the updated cache version token', () => {
-  const expectedToken = 'site.css?v=dark-cosmic-20261023a';
+  const expectedToken = 'site.css?v=dark-cosmic-20261024a';
   const htmlFiles = walkHtml(siteRoot);
   let checked = 0;
   for (const file of htmlFiles) {

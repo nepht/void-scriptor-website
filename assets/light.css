@@ -437,6 +437,7 @@ body.theme-light .docs-muted{color:var(--ls-muted)}
 body.theme-light .docs-card--accent{border-color:rgba(14,143,184,.34);background:linear-gradient(145deg,rgba(230,245,251,.96),rgba(242,236,255,.94))}
 body.theme-light .docnav a,
 body.theme-light .docnav a[aria-current=page]{color:var(--ls-ink)}
+body.theme-light.page-legal .docnav a{color:var(--ls-ink)!important}
 body.theme-light .docs-steps span,
 body.theme-light .docs-steps strong{color:#fff}
 body.theme-light.page-home .caro-arrow{color:var(--ls-carousel-arrow-ink)!important}

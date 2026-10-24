@@ -140,7 +140,7 @@ test('the light theme exposes a single source of truth for the CTA gradient stop
 });
 
 test('all HTML pages referencing light.css use the updated cache version token', () => {
-  const expectedToken = 'light.css?v=light-cosmic-20261022i';
+  const expectedToken = 'light.css?v=light-cosmic-20261024a';
   const html = readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.ok(
     html.includes(expectedToken),
